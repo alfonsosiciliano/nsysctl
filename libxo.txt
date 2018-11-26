@@ -1,0 +1,9 @@
+man
+
+--libxo		--libxo <options>
+      		--libxo=<options>
+		--libxo:<brief-options>
+
+		see xo_parse_args(3).
+
+
