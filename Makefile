@@ -4,25 +4,19 @@
 
 CC = cc
 
-# lib
-LIB_SRC =  libsysctl.c opaque.c
-LIB_OBJ = ${LIB_SRC:.c=.o}
-
-CCFLAGS = -Wall # -g -O0
-LDFLAGS = -lxo 
-INCLUDEDIR = ./
-EXAMPLES = nsysctl hello list_example tree_example object_example wrap_example name_example 
-SOURCES = ${EXAMPLES:=.c}
+CCFLAGS = -I/usr/local/include -Wall -g -O0 # -I../libsysctl
+LDFLAGS = -lxo -L/usr/local/lib -lsysctl # ../libsysctl/libsysctl.a
+OUTPUT = nsysctl 
+SOURCES = nsysctl.c opaque.c
 OBJECTS = ${SOURCES:.c=.o}
 
-all : ${LIB_OBJ} ${EXAMPLES}
+all : ${OUTPUT}
 
 clean:
-	rm -f ${EXAMPLES} *.o *~
+	rm -f ${OUTPUT} *.o *~ *.core
 
-${EXAMPLES}: ${OBJECTS}
-	${CC} ${LDFLAGS} ${LIB_OBJ} ${.TARGET}.o -o ${.PREFIX}
+${OUTPUT}: ${OBJECTS}
+	${CC} ${LDFLAGS} ${OBJECTS} -o ${.PREFIX}
 
-.PATH.c : ./test
 .c.o:
-	${CC} -I${INCLUDEDIR} ${CCFLAGS} -c ${.IMPSRC} -o ${.TARGET}
+	${CC} ${CCFLAGS} -c ${.IMPSRC} -o ${.TARGET}

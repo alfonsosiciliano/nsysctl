@@ -132,13 +132,13 @@ int main(int argc, char *argv[argc])
     }
     else if (aflag) // ('-a' option) the roots are oids of level 1
     {
-	rootslist = libsysctl_filterlist(filter_level_one, LIBSYSCTL_ALLFIELDS);
+	rootslist = libsysctl_filterlist(filter_level_one, LIBSYSCTL_FALL);
 	xo_open_list("tree");
 	while (!SLIST_EMPTY(rootslist))
 	{
 	    root = SLIST_FIRST(rootslist);
 	    root = libsysctl_tree(root->id, root->idlen,
-			       LIBSYSCTL_ALLFIELDS, LIBSYSCTL_MAXEDGES);
+			       LIBSYSCTL_FALL, LIBSYSCTL_MAXEDGES);
 	    display_tree(root);
 	    SLIST_REMOVE_HEAD(rootslist, object_link);
 	    libsysctl_freetree(root);
@@ -241,7 +241,7 @@ void display_value(struct libsysctl_object *object)
     if((object->kind & CTLTYPE) == CTLTYPE_NODE)
 	return;
     
-    if(libsysctl_value(object->id,object->idlen,value,&value_size)<0)
+    if(libsysctl_getvalue(object->id,object->idlen,value,&value_size)<0)
     {
 	if(!( (object->kind & CTLTYPE) & CTLTYPE_OPAQUE))
 	{
@@ -325,17 +325,17 @@ int parse_argv_or_line(char* input)
 
     if(strlen(oid) == strlen(input))
     {
-	object = libsysctl_tree(id,idlevel,LIBSYSCTL_ALLFIELDS,LIBSYSCTL_MAXEDGES);
+	object = libsysctl_tree(id,idlevel,LIBSYSCTL_FALL,LIBSYSCTL_MAXEDGES);
 	display_tree(object);
 	libsysctl_freetree(object);
     }
     else // a value is given
     {
- 	object = libsysctl_object(id,idlevel,LIBSYSCTL_ALLFIELDS);
+ 	object = libsysctl_object(id,idlevel,LIBSYSCTL_FALL);
 	switch(GET_TYPE(object))
 	{
 	case CTLTYPE_STRING:
-	    libsysctl_newvalue(id,idlevel,parsestring,sizeof(parsestring));
+	    libsysctl_setvalue(id,idlevel,parsestring,sizeof(parsestring));
 	    break;
 	case CTLTYPE_OPAQUE:
 	    break;
