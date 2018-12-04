@@ -5,12 +5,10 @@
 #include <stdio.h>
 #include <string.h>
 #include <libxo/xo.h>
-
-#include "libsysctl.h"
+#include <libsysctl.h>
 
 
 #define IS_LEAF(node) (node->childs == NULL || SLIST_EMPTY(node->childs))
-#define GET_TYPE(node) (node->kind & CTLTYPE )
 
 static const char *ctl_typename[CTLTYPE+1] = {
 	[CTLTYPE_INT] = "integer",
@@ -32,7 +30,7 @@ static const char *ctl_typename[CTLTYPE+1] = {
 
 int Sflag, Iflag;
 int aflag, dflag, eflag, nflag, oflag, xflag, hflag, tflag;
-int yflag, kflag, lflag, Nflag;
+int yflag, Fflag, lflag, Nflag, mflag;
 
 void usage();
 int filter_level_one(struct libsysctl_object*);
@@ -56,13 +54,13 @@ int main(int argc, char *argv[argc])
 
     Sflag = Iflag = 0;
     aflag = dflag = eflag = hflag = nflag = oflag = xflag = tflag = 0;
-    kflag = Nflag = 0;
+    Fflag = Nflag = mflag =0;
 
     argc = xo_parse_args(argc, argv);
     if (argc < 0)
         exit(EXIT_FAILURE);
     
-    while ((ch	= getopt(argc, argv, "adenNoxlklytSIh?")) != -1) {
+    while ((ch	= getopt(argc, argv, "adenNmoxlFlytSIh?")) != -1) {
 	switch (ch) {
 	case 'a':
 	    aflag = 1;
@@ -73,8 +71,8 @@ int main(int argc, char *argv[argc])
 	case 'e':
 	    eflag = 1;
 	    break;
-	case 'k':
-	    kflag = 1;
+	case 'F':
+	    Fflag = 1;
 	    break;
 	case 'h':
 	    hflag = 1;
@@ -84,6 +82,9 @@ int main(int argc, char *argv[argc])
 	    break;
 	case 'l':
 	    lflag = 1;
+	    break;
+	case 'm':
+	    mflag = 1;
 	    break;
 	case 'N':
 	    Nflag=1;
@@ -190,9 +191,11 @@ void display_tree(struct libsysctl_object *object)
 	    if(dflag) // printf description
 		xo_emit("{:description/%s}",object->desc);
 	    else if(tflag)
-		xo_emit("{:type/%s}", ctl_typename[object->kind & CTLTYPE]);
-	    else if(kflag)
-		xo_emit("{:fmt/%x}",object->kind);
+		xo_emit("{:type/%s}", ctl_typename[object->type]);
+	    else if(Fflag)
+		xo_emit("{:flags/%x}",object->flags);
+	    else if(mflag)
+		xo_emit("{:fmt/%s}",object->fmt);
 	    else if(lflag)
 		xo_emit("{:label/%s}", object->label);
 	    else if(yflag)
@@ -233,24 +236,22 @@ void display_tree(struct libsysctl_object *object)
 
 void display_value(struct libsysctl_object *object)
 {
-    unsigned int type = GET_TYPE(object);
-
     unsigned char value[BUFSIZ *100];
     size_t value_size=BUFSIZ *100;
 
-    if((object->kind & CTLTYPE) == CTLTYPE_NODE)
+    if(object->type == CTLTYPE_NODE)
 	return;
     
     if(libsysctl_getvalue(object->id,object->idlen,value,&value_size)<0)
     {
-	if(!( (object->kind & CTLTYPE) & CTLTYPE_OPAQUE))
+	if( !(object->type & CTLTYPE_OPAQUE))
 	{
 	    printf("%s: Cannot get value\n",object->name);
 	    return;
 	}
     }
  
-    switch(type)
+    switch(object->type)
     {
     case CTLTYPE_INT:
 	xo_emit("{:value/%d}", *((int*)value) );
@@ -332,7 +333,7 @@ int parse_argv_or_line(char* input)
     else // a value is given
     {
  	object = libsysctl_object(id,idlevel,LIBSYSCTL_FALL);
-	switch(GET_TYPE(object))
+	switch(object->type)
 	{
 	case CTLTYPE_STRING:
 	    libsysctl_setvalue(id,idlevel,parsestring,sizeof(parsestring));
