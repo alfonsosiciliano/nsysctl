@@ -41,6 +41,14 @@ void display_value(struct libsysctl_object*);
 // delete: cc nsysctl.c libsysctl.c opaque.c -o nsysctl
 void display_opaque_value(struct libsysctl_object*, int, int, int);
 
+void usage()
+{
+    printf("usage: nsysctl [-bdeFhIimNnoqSTtWxy] [ -B <bufsize> ] "\
+	   "[-f filename] name[=value] ...\n");
+    printf("       nsysctl [-bdeFhImNnoqSTtWxy] [ -B <bufsize> ] -a\n");
+    printf("       nsysctl --libxo <libxo_options> [above options]\n");
+}
+
 int main(int argc, char *argv[argc])
 {
     int mib[CTL_MAXNAME];
@@ -60,7 +68,7 @@ int main(int argc, char *argv[argc])
     if (argc < 0)
         exit(EXIT_FAILURE);
     
-    while ((ch	= getopt(argc, argv, "adenNmoxlFlytSIh?")) != -1) {
+    while ((ch	= getopt(argc, argv, "adenNmoxlFlytSIh")) != -1) {
 	switch (ch) {
 	case 'a':
 	    aflag = 1;
@@ -107,9 +115,9 @@ int main(int argc, char *argv[argc])
 	case 'I':
 	    Iflag=1;
 	    break;
-	case '?':
 	default:
 	    usage();
+	    return (1);
 	}
     }
     argc -= optind;
@@ -152,12 +160,6 @@ int main(int argc, char *argv[argc])
     xo_close_container("MIB");
          
     return 0;
-}
-
-
-void usage()
-{
-    printf("Usage\n");
 }
 
 
@@ -317,20 +319,20 @@ int parse_argv_or_line(char* input)
 
     parsestring = strdup(input);
     tofree = oid = strsep(&parsestring, "=");
-    if(libsysctl_idbyname(oid, strlen(oid),
+    if(libsysctl_nametoid(oid, strlen(oid),
 		       id, &idlevel) < 0)
     {
 	printf("sysctl: unknown oid \'%s\'\n", oid);
 	return 1;
     }
 
-    if(strlen(oid) == strlen(input))
+    if(strlen(oid) == strlen(input)) // just a "name"
     {
 	object = libsysctl_tree(id,idlevel,LIBSYSCTL_FALL,LIBSYSCTL_MAXEDGES);
 	display_tree(object);
 	libsysctl_freetree(object);
     }
-    else // a value is given
+    else // "name = value"
     {
  	object = libsysctl_object(id,idlevel,LIBSYSCTL_FALL);
 	switch(object->type)

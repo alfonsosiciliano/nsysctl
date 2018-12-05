@@ -1,9 +1,7 @@
 #	PUBLIC DOMAIN - NO WARRANTY
-#
-#	Alfonso S. Siciliano http://alfix.gitlab.io
 
 CC = cc
-CCFLAGS = -I/usr/local/include -Wall -g -O0
+CCFLAGS = -I/usr/local/include -Wall -g
 LDFLAGS = -lxo -L/usr/local/lib -lsysctl
 OUTPUT = nsysctl 
 SOURCES = nsysctl.c opaque.c
