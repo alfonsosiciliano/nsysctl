@@ -1,7 +1,7 @@
 #!/bin/sh
 
-sysctl -o  kern >> sysctl.txt
-./nsysctl -o  kern >> nsysctl.txt
+sysctl -ta>> sysctl.txt
+./nsysctl -ta  >> nsysctl.txt
 
 diff sysctl.txt nsysctl.txt | diffstat -m
 #diff -y -W 120 sysctl.txt nsysctl.txt 

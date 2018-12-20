@@ -28,9 +28,10 @@ static const char *ctl_typename[CTLTYPE+1] = {
 	[CTLTYPE_OPAQUE] = "opaque",
 };
 
-int Sflag, Iflag;
-int aflag, dflag, eflag, nflag, oflag, xflag, hflag, tflag;
-int yflag, Fflag, lflag, Nflag, mflag;
+
+int aflag,/*bflag, Bflag,*/ dflag, eflag, Fflag,/*fflag,*/ nflag, hflag;
+int Iflag, iflag, lflag, Mflag, mflag, Nflag, nflag, oflag, qflag;
+int Sflag, Tflag, tflag, Wflag, xflag, yflag;
 
 void usage();
 int filter_level_one(struct libsysctl_object*);
@@ -43,9 +44,9 @@ void display_opaque_value(struct libsysctl_object*, int, int, int);
 
 void usage()
 {
-    printf("usage: nsysctl [-bdeFhIimNnoqSTtWxy] [ -B <bufsize> ] "\
+    printf("usage: nsysctl [-AadeFhiIlMmNnoqSTtWXxy] [ -B <bufsize> ] "\
 	   "[-f filename] name[=value] ...\n");
-    printf("       nsysctl [-bdeFhImNnoqSTtWxy] [ -B <bufsize> ] -a\n");
+    printf("       nsysctl [-AadeFhIlMmNnoqSTtWXxy] [ -B <bufsize> ] -a\n");
     printf("       nsysctl --libxo <libxo_options> [above options]\n");
 }
 
@@ -56,23 +57,37 @@ int main(int argc, char *argv[argc])
     int ch;
     struct libsysctl_object *root;
     struct libsysctl_object_list *rootslist = NULL;
+    int error = 0;
 
     atexit(xo_finish_atexit);
     xo_set_flags(NULL, XOF_UNITS);
 
-    Sflag = Iflag = 0;
-    aflag = dflag = eflag = hflag = nflag = oflag = xflag = tflag = 0;
-    Fflag = Nflag = mflag =0;
+    aflag =/*bflag = Bflag =*/ dflag = eflag = Fflag =/*fflag =*/ 0;
+    nflag = hflag = Iflag = iflag = lflag = Mflag = mflag = Nflag = 0;
+    nflag = oflag = qflag = Sflag = Tflag = tflag = Wflag = xflag = 0;
+    yflag = 0;
 
     argc = xo_parse_args(argc, argv);
     if (argc < 0)
         exit(EXIT_FAILURE);
     
-    while ((ch	= getopt(argc, argv, "adenNmoxlFlytSIh")) != -1) {
+    while ((ch	= getopt(argc, argv, "AadeFhiIlMmNnoqSTtWXxy")) != -1) {
 	switch (ch) {
+	case 'A':
+	    aflag = 1;
+	    oflag = 1;
+	    break;
 	case 'a':
 	    aflag = 1;
 	    break;
+	    /*
+	case 'B':
+	    Bflag = 1;
+	    break;
+	case 'b':
+	    bflag = 1;
+	    break;
+	    */
 	case 'd':
 	    dflag = 1;
 	    break;
@@ -82,14 +97,25 @@ int main(int argc, char *argv[argc])
 	case 'F':
 	    Fflag = 1;
 	    break;
+	    /*
+	case 'f':
+	    Fflag = 1;
+	    break;
+	    */
 	case 'h':
 	    hflag = 1;
 	    break;
-	case 'y':
-	    yflag = 1;
+	case 'I':
+	    Iflag=1;
+	    break;
+	case 'i':
+	    iflag = 1;
 	    break;
 	case 'l':
 	    lflag = 1;
+	    break;
+	case 'M':
+	    Mflag = 1;
 	    break;
 	case 'm':
 	    mflag = 1;
@@ -103,17 +129,34 @@ int main(int argc, char *argv[argc])
 	case 'o':
 	    oflag=1;
 	    break;
-	case 'x':
-	    xflag=1;
-	    break;
-	case 't':
-	    tflag=1;
+	case 'q':
+	    qflag=1;
 	    break;
 	case 'S':
 	    Sflag=1;
 	    break;
-	case 'I':
-	    Iflag=1;
+	case 'T':
+	    Tflag=1;
+	    break;
+	case 't':
+	    tflag=1;
+	    break;
+	case 'W':
+	    Wflag = 1;
+	    break;
+	case 'w':
+	    /* compatibility */
+	    /* ignored */
+	    break;
+	case 'X':
+	    aflag=1;
+	    xflag=1;
+	    break;
+	case 'x':
+	    xflag=1;
+	    break;
+	case 'y':
+	    yflag = 1;
 	    break;
 	default:
 	    usage();
@@ -128,14 +171,15 @@ int main(int argc, char *argv[argc])
 
     /* get some "root tree" to pass to display_tree() */
 
-    xo_open_container("MIB");
+    if(Mflag)
+	xo_open_container("MIB");
 	
     if(argc > 0) // the roots are given in input
     {
 	argc=0;
 	while(argv[argc])
 	{
-	    parse_argv_or_line(argv[argc]);
+	    error += parse_argv_or_line(argv[argc]);
 	    argc++;
 	}
     }
@@ -156,10 +200,11 @@ int main(int argc, char *argv[argc])
     }
     else // no roots
 	usage();
-    
+
+    if(Mflag)
     xo_close_container("MIB");
          
-    return 0;
+    return error;
 }
 
 
@@ -176,8 +221,11 @@ int filter_level_one(struct libsysctl_object* object)
 
 
 void display_tree(struct libsysctl_object *object)
-{   
-    if(Iflag || IS_LEAF(object) )
+{
+
+    if( (!Wflag || ( (object->flags & CTLFLAG_WR) && !(object->flags & CTLFLAG_STATS))) &&
+	(!Tflag || (object->flags & CTLFLAG_TUN)) &&
+	(Iflag || IS_LEAF(object)) )
     {
 	xo_open_instance("object");
 
@@ -218,6 +266,7 @@ void display_tree(struct libsysctl_object *object)
 	}
 	xo_emit("{L:\n}");
     }
+
 	
     struct libsysctl_object *child;
 
@@ -242,6 +291,10 @@ void display_value(struct libsysctl_object *object)
     size_t value_size=BUFSIZ *100;
 
     if(object->type == CTLTYPE_NODE)
+	return;
+
+    // BUG --libxo=xml => segmentation fault
+    if(strcmp(object->name,"debug.witness.fullgraph") ==0)
 	return;
     
     if(libsysctl_getvalue(object->id,object->idlen,value,&value_size)<0)
@@ -322,6 +375,11 @@ int parse_argv_or_line(char* input)
     if(libsysctl_nametoid(oid, strlen(oid),
 		       id, &idlevel) < 0)
     {
+	if(qflag)
+	    return 1;
+	if(iflag)
+	    return 0;
+
 	printf("sysctl: unknown oid \'%s\'\n", oid);
 	return 1;
     }
