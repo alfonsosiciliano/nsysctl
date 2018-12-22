@@ -15,7 +15,7 @@ nsysctl is handier than sysctl:
 
 TODO  
 
- * options: nsysctl -bBf value=NUMBER
+ * options: nsysctl -bB -f filename  value=NUMBER
  * fix: nsysctl libxo=xml debug.witness.fullgraph segmentation fault
  * add: showbasictype.c
  * testing: stress test
