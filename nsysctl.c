@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <libxo/xo.h>
+
 #include <libsysctl.h>
 
 
@@ -52,8 +53,6 @@ void usage()
 
 int main(int argc, char *argv[argc])
 {
-    int mib[CTL_MAXNAME];
-    size_t miblevel;
     int ch;
     struct libsysctl_object *root;
     struct libsysctl_object_list *rootslist = NULL;
@@ -166,9 +165,6 @@ int main(int argc, char *argv[argc])
     argc -= optind;
     argv += optind;
 
-    mib[0] = Sflag ? 0 : 1;
-    miblevel=1;
-
     /* get some "root tree" to pass to display_tree() */
 
     if(Mflag)
@@ -198,7 +194,7 @@ int main(int argc, char *argv[argc])
 	}
 	xo_close_list("tree");
     }
-    else // no roots
+    else // no roots and no -a
 	usage();
 
     if(Mflag)
