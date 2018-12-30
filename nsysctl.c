@@ -318,7 +318,7 @@ void display_value(struct libsysctl_object *object)
     if(strcmp(object->name,"debug.witness.fullgraph") ==0)
 	return;
     
-    if(libsysctl_getvalue(object->id,object->idlen,value,&value_size)<0)
+    if(LIBSYSCTL_GETVALUE(object->id,object->idlen,value,&value_size)<0)
     {
 	if( !(object->type & CTLTYPE_OPAQUE))
 	{
@@ -417,7 +417,7 @@ int parse_argv_or_line(char* input)
 	switch(object->type)
 	{
 	case CTLTYPE_STRING:
-	    libsysctl_setvalue(id,idlevel,parsestring,sizeof(parsestring));
+	    LIBSYSCTL_SETVALUE(id,idlevel,parsestring,sizeof(parsestring));
 	    break;
 	case CTLTYPE_OPAQUE:
 	    break;
