@@ -261,8 +261,8 @@ void display_tree(struct libsysctl_object *object)
 	
 	if(!Nflag)
 	{
-	    if(dflag) // printf description
-		xo_emit("{:description/%s}",object->desc);
+	    if(dflag) /* entry without descr could return "\0" or NULL */
+		xo_emit("{:description/%s}", object->desc == NULL ? "" : object->desc);
 	    else if(tflag)
 		xo_emit("{:type/%s}", ctl_typename[object->type]);
 	    else if(Fflag)
