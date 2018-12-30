@@ -1,4 +1,5 @@
-#	PUBLIC DOMAIN - NO WARRANTY
+# PUBLIC DOMAIN - NO WARRANTY
+# written by Alfonso S. Siciliano
 
 CC = cc
 CCFLAGS = -I/usr/local/include -Wall -g
