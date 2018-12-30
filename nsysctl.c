@@ -30,9 +30,9 @@
 #include <stdio.h>
 #include <string.h>
 #include <libxo/xo.h>
-
 #include <libsysctl.h>
 
+#include "nsysctl.h"
 
 #define IS_LEAF(node) (node->childs == NULL || SLIST_EMPTY(node->childs))
 
@@ -65,8 +65,7 @@ void parse_file(char *);
 int parse_argv_or_line(char *);
 void display_tree(struct libsysctl_object *);
 void display_value(struct libsysctl_object*);
-// delete: cc nsysctl.c libsysctl.c opaque.c -o nsysctl
-void display_opaque_value(struct libsysctl_object*, int, int, int);
+
 
 void usage()
 {
