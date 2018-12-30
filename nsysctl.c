@@ -36,6 +36,16 @@
 
 #define IS_LEAF(node) (node->childs == NULL || SLIST_EMPTY(node->childs))
 
+/* Functons declaration */
+void usage();
+int filter_level_one(struct libsysctl_object*);
+void parse_file(char *);
+int parse_argv_or_line(char *);
+void display_tree(struct libsysctl_object *);
+void display_basic_type(struct libsysctl_object*);
+
+/* global variables */
+
 static const char *ctl_typename[CTLTYPE+1] = {
 	[CTLTYPE_INT] = "integer",
 	[CTLTYPE_UINT] = "unsigned integer",
@@ -59,21 +69,6 @@ int aflag,/*bflag, Bflag,*/ dflag, eflag, Fflag,/*fflag,*/ nflag, hflag;
 int Iflag, iflag, lflag, Mflag, mflag, Nflag, nflag, oflag, qflag;
 int Sflag, Tflag, tflag, Wflag, xflag, yflag;
 
-void usage();
-int filter_level_one(struct libsysctl_object*);
-void parse_file(char *);
-int parse_argv_or_line(char *);
-void display_tree(struct libsysctl_object *);
-void display_value(struct libsysctl_object*);
-
-
-void usage()
-{
-    printf("usage: nsysctl [-AadeFhiIlMmNnoqSTtWXxy] [ -B <bufsize> ] "\
-	   "[-f filename] name[=value] ...\n");
-    printf("       nsysctl [-AadeFhIlMmNnoqSTtWXxy] [ -B <bufsize> ] -a\n");
-    printf("       nsysctl --libxo <libxo_options> [above options]\n");
-}
 
 int main(int argc, char *argv[argc])
 {
@@ -227,6 +222,14 @@ int main(int argc, char *argv[argc])
     return error;
 }
 
+void usage()
+{
+    printf("usage: nsysctl [-AadeFhiIlMmNnoqSTtWXxy] [ -B <bufsize> ] "\
+	   "[-f filename] name[=value] ...\n");
+    printf("       nsysctl [-AadeFhIlMmNnoqSTtWXxy] [ -B <bufsize> ] -a\n");
+    printf("       nsysctl --libxo <libxo_options> [above options]\n");
+}
+
 
 int filter_level_one(struct libsysctl_object* object)
 {
@@ -280,9 +283,14 @@ void display_tree(struct libsysctl_object *object)
 		}
 		xo_close_container("id");
 	    }
-	    else
-		if(IS_LEAF(object))//print value
-		    display_value(object);
+	    else /* print value */
+		if(IS_LEAF(object))
+		{
+		    if(object->type == CTLTYPE_OPAQUE)
+			display_opaque_value(object, hflag, oflag, xflag);
+		    else
+			display_basic_type(object);
+		}
 	}
 	xo_emit("{L:\n}");
     }
@@ -305,25 +313,19 @@ void display_tree(struct libsysctl_object *object)
 }
 
 
-void display_value(struct libsysctl_object *object)
+void display_basic_type(struct libsysctl_object *object)
 {
     unsigned char value[BUFSIZ *100];
     size_t value_size=BUFSIZ *100;
-
-    if(object->type == CTLTYPE_NODE)
-	return;
 
     // BUG --libxo=xml => segmentation fault
     if(strcmp(object->name,"debug.witness.fullgraph") ==0)
 	return;
     
-    if(LIBSYSCTL_GETVALUE(object->id,object->idlen,value,&value_size)<0)
+    if(LIBSYSCTL_GETVALUE(object->id,object->idlen,value,&value_size) < 0)
     {
-	if( !(object->type & CTLTYPE_OPAQUE))
-	{
-	    printf("%s: Cannot get value\n",object->name);
-	    return;
-	}
+	printf("%s: Cannot get value\n",object->name);
+	return;
     }
  
     switch(object->type)
@@ -370,13 +372,6 @@ void display_value(struct libsysctl_object *object)
     case CTLTYPE_STRING:
 	xo_emit("{:value/%s}", (char*)value );
 	break;
-    case CTLTYPE_OPAQUE:
-	display_opaque_value(object, hflag, oflag, xflag);
-	break;
-	/* #define	CTLTYPE_STRUCT	CTLTYPE_OPAQUE
-	   case CTLTYPE_STRUCT:
-	   break;
-	*/
     default:
 	printf("Error bad type!\n");
     }
