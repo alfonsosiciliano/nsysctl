@@ -8,14 +8,16 @@ rewrite, it depends on http://gitlab.com/alfix/libsysctl
 nsysctl is handier than sysctl: 
 
  * libsysctl provides a simple API avoiding to use undocumented kernel sysctl-mib-tree API, 
- * currently has splitted and less code than sysctl.c, 
  * all code about "opaque values" is in opaque.c, 
  * [--libxo](https://wiki.freebsd.org/LibXo) and -FIlMmSy options. 
  * useful code will be add to http://gitlab.com/alfix/sysctlview too.
 
 TODO  
 
- * options: nsysctl -bB -f filename  value=NUMBER
+ * options: nsysctl value=NUMBER
+ * options: nsysctl -f filename
+ * options: nsysctl -b
+ * options: nsysctl -B
  * fix: nsysctl libxo=xml debug.witness.fullgraph segmentation fault
  * testing: stress test
  * doc: nsysctl.8
