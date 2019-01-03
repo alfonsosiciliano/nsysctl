@@ -35,6 +35,7 @@
 #include "nsysctl.h"
 
 #define IS_LEAF(node) (node->childs == NULL || SLIST_EMPTY(node->childs))
+#define GET_VALUE_SIZE(id,idlen,size) sysctl(id,idlen,NULL,size,NULL,0)
 
 /* Functons declaration */
 void usage();
@@ -315,12 +316,20 @@ void display_tree(struct libsysctl_object *object)
 
 void display_basic_type(struct libsysctl_object *object)
 {
-    unsigned char value[BUFSIZ *100];
-    size_t value_size=BUFSIZ *100;
+    size_t value_size=0;
+    void *value;
 
     // BUG --libxo=xml => segmentation fault
     if(strcmp(object->name,"debug.witness.fullgraph") ==0)
 	return;
+
+    GET_VALUE_SIZE(object->id, object->idlen, &value_size);
+    printf("%zu\n",value_size);
+    if (( value = malloc(value_size)) == NULL)
+    {
+	printf("%s: Cannot get value MALLOC\n",object->name);
+	return;
+    }
     
     if(LIBSYSCTL_GETVALUE(object->id,object->idlen,value,&value_size) < 0)
     {
