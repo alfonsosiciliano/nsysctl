@@ -17,7 +17,6 @@ TODO
 
  * options: nsysctl -bB -f filename  value=NUMBER
  * fix: nsysctl libxo=xml debug.witness.fullgraph segmentation fault
- * add: showbasictype.c
  * testing: stress test
  * doc: nsysctl.8
  * FreeBSD port
