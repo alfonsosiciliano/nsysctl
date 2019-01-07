@@ -91,7 +91,7 @@ void display_opaque_value(struct libsysctl_object* object, int hflag, int oflag,
 	xo_open_container(object->fmt + 2);
 	
 	xo_emit("{Lc:Format}{:format/%s}",object->fmt);
-	LIBSYSCTL_GETVALUE(object->id,object->idlen,opaquevalue,&sizevalue);
+	LIBSYSCTL_GETVALUE(object->id,object->idlevel,opaquevalue,&sizevalue);
 	xo_emit("{P: }{Lc:Length}{:lenght/%lu}",sizevalue);
 	xo_emit("{P: }{Lc:Dump}0x"/*{:dump/%16x}...",opaquevalue*/);
 
@@ -118,7 +118,7 @@ S_clockinfo(struct libsysctl_object* object, int hflag)
     struct clockinfo ci;
     char *hfield = hflag ? "h" : NULL;
 
-    if(LIBSYSCTL_GETVALUE(object->id,object->idlen,(void*)&ci,&ci_size) < 0) {
+    if(LIBSYSCTL_GETVALUE(object->id,object->idlevel,(void*)&ci,&ci_size) < 0) {
 	xo_warnx("Impossible get clockinfo");
 	return (1);
     }
@@ -149,7 +149,7 @@ S_loadavg(struct libsysctl_object* object, int hflag)
     char *hfield = /*hflag ? "h" :*/ NULL;
     /*libxo 'h' modifier does not affect the size and treatment of %f */
 
-    if(LIBSYSCTL_GETVALUE(object->id,object->idlen,(void*)&tv,&tv_size) < 0) {
+    if(LIBSYSCTL_GETVALUE(object->id,object->idlevel,(void*)&tv,&tv_size) < 0) {
 	xo_warnx("Impossible get loadavg");
 	return (1);
     }
@@ -178,7 +178,7 @@ S_timeval(struct libsysctl_object* object, int hflag)
     char *p1;
     char *hfield = hflag ? "h,hn-decimal" : NULL;
 
-    if(LIBSYSCTL_GETVALUE(object->id,object->idlen,(void*)&tv,&tv_size) < 0) {
+    if(LIBSYSCTL_GETVALUE(object->id,object->idlevel,(void*)&tv,&tv_size) < 0) {
 	xo_warnx("Impossible get timeval");
 	return (1);
     }
@@ -210,7 +210,7 @@ S_vmtotal(struct libsysctl_object* object, int hflag)
     char *hfield = hflag ? "h,hn-decimal" : NULL;
     int pageKilo;
 
-    if(LIBSYSCTL_GETVALUE(object->id,object->idlen,(void*)&v,&v_size) < 0) {
+    if(LIBSYSCTL_GETVALUE(object->id,object->idlevel,(void*)&v,&v_size) < 0) {
 	xo_warnx("Impossible get vmtotal");
 	return (1);
     }

@@ -34,8 +34,8 @@
 
 #include "nsysctl.h"
 
-#define IS_LEAF(node) (node->childs == NULL || SLIST_EMPTY(node->childs))
-#define GET_VALUE_SIZE(id,idlen,size) sysctl(id,idlen,NULL,size,NULL,0)
+#define IS_LEAF(node) (node->children == NULL || SLIST_EMPTY(node->children))
+#define GET_VALUE_SIZE(id,idlevel,size) sysctl(id,idlevel,NULL,size,NULL,0)
 
 /* Functons declaration */
 void usage();
@@ -206,8 +206,8 @@ int main(int argc, char *argv[argc])
 	while (!SLIST_EMPTY(rootslist))
 	{
 	    root = SLIST_FIRST(rootslist);
-	    root = libsysctl_tree(root->id, root->idlen,
-			       LIBSYSCTL_FALL, LIBSYSCTL_MAXEDGES);
+	    root = libsysctl_tree(root->id, root->idlevel,
+			       LIBSYSCTL_FALL, LIBSYSCTL_MAXDEPTH);
 	    display_tree(root);
 	    SLIST_REMOVE_HEAD(rootslist, object_link);
 	    libsysctl_freetree(root);
@@ -237,7 +237,7 @@ int filter_level_one(struct libsysctl_object* object)
     if(!Sflag && object->id[0] == 0)
 	return -1;
 	    
-    if(object->idlen == 1)
+    if(object->idlevel == 1)
 	return 0;
     
     return -1;
@@ -276,10 +276,10 @@ void display_tree(struct libsysctl_object *object)
 	    {
 		xo_open_container("id");
 		int i;
-		for(i=0; i < object->idlen; i++)
+		for(i=0; i < object->idlevel; i++)
 		{
 		    xo_emit("{:id/%x}", object->id[i]);
-		    if(i+1<object->idlen)
+		    if(i+1<object->idlevel)
 			xo_emit("{L:.}");
 		}
 		xo_close_container("id");
@@ -299,15 +299,15 @@ void display_tree(struct libsysctl_object *object)
 	
     struct libsysctl_object *child;
 
-    if(object->childs != NULL)
-	if(!SLIST_EMPTY(object->childs))
+    if(object->children != NULL)
+	if(!SLIST_EMPTY(object->children))
 	{
 	    if(Iflag)
-		xo_open_container("childs");
-	    SLIST_FOREACH(child, object->childs, object_link)
+		xo_open_container("children");
+	    SLIST_FOREACH(child, object->children, object_link)
 		display_tree(child);
 	    if(Iflag)
-		xo_close_container("childs");
+		xo_close_container("children");
 	}
 
     xo_close_instance("object");
@@ -323,15 +323,14 @@ void display_basic_type(struct libsysctl_object *object)
     if(strcmp(object->name,"debug.witness.fullgraph") ==0)
 	return;
 
-    GET_VALUE_SIZE(object->id, object->idlen, &value_size);
-    printf("%zu\n",value_size);
+    GET_VALUE_SIZE(object->id, object->idlevel, &value_size);
     if (( value = malloc(value_size)) == NULL)
     {
 	printf("%s: Cannot get value MALLOC\n",object->name);
 	return;
     }
     
-    if(LIBSYSCTL_GETVALUE(object->id,object->idlen,value,&value_size) < 0)
+    if(LIBSYSCTL_GETVALUE(object->id,object->idlevel,value,&value_size) < 0)
     {
 	printf("%s: Cannot get value\n",object->name);
 	return;
@@ -410,7 +409,7 @@ int parse_argv_or_line(char* input)
 
     if(strlen(oid) == strlen(input)) // just a "name"
     {
-	object = libsysctl_tree(id,idlevel,LIBSYSCTL_FALL,LIBSYSCTL_MAXEDGES);
+	object = libsysctl_tree(id,idlevel,LIBSYSCTL_FALL,LIBSYSCTL_MAXDEPTH);
 	display_tree(object);
 	libsysctl_freetree(object);
     }
@@ -465,7 +464,7 @@ int parse_argv_or_line(char* input)
 	    break;
 	    */
 	default: // error
-	    printf("Bad type to set\n");
+	    printf("parse_argv_or_line: Bad type to set\n");
 	    break;	   
 	}
     }
