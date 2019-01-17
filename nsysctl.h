@@ -27,7 +27,7 @@
 #define NSYSCTL_H
 
 
-void display_opaque_value(struct libsysctl_object*, int, int, int);
+void display_opaque_value(struct sysctlmif_object*, int, int, int);
 
 
 #endif /* NSYSCTL_H */

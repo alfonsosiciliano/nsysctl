@@ -3,7 +3,7 @@
 
 CC = cc
 CCFLAGS = -I/usr/local/include -Wall -g
-LDFLAGS = -lxo -L/usr/local/lib -lsysctl
+LDFLAGS = -lxo -L/usr/local/lib -lsysctlmibinfo
 OUTPUT = nsysctl 
 SOURCES = nsysctl.c opaque.c
 OBJECTS = ${SOURCES:.c=.o}

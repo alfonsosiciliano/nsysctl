@@ -30,7 +30,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <libxo/xo.h>
-#include <libsysctl.h>
+#include <sysctlmibinfo.h>
 
 #include "nsysctl.h"
 
@@ -39,11 +39,11 @@
 
 /* Functons declaration */
 void usage();
-int filter_level_one(struct libsysctl_object*);
+int filter_level_one(struct sysctlmif_object*);
 void parse_file(char *);
 int parse_argv_or_line(char *);
-void display_tree(struct libsysctl_object *);
-void display_basic_type(struct libsysctl_object*);
+void display_tree(struct sysctlmif_object *);
+void display_basic_type(struct sysctlmif_object*);
 
 /* global variables */
 
@@ -74,8 +74,8 @@ int Sflag, Tflag, tflag, Wflag, xflag, yflag;
 int main(int argc, char *argv[argc])
 {
     int ch;
-    struct libsysctl_object *root;
-    struct libsysctl_object_list *rootslist = NULL;
+    struct sysctlmif_object *root;
+    struct sysctlmif_object_list *rootslist = NULL;
     int error = 0;
 
     atexit(xo_finish_atexit);
@@ -201,16 +201,16 @@ int main(int argc, char *argv[argc])
     }
     else if (aflag) // ('-a' option) the roots are oids of level 1
     {
-	rootslist = libsysctl_filterlist(filter_level_one, LIBSYSCTL_FALL);
+	rootslist = sysctlmif_filterlist(filter_level_one, SYSCTLMIF_FALL);
 	xo_open_list("tree");
 	while (!SLIST_EMPTY(rootslist))
 	{
 	    root = SLIST_FIRST(rootslist);
-	    root = libsysctl_tree(root->id, root->idlevel,
-			       LIBSYSCTL_FALL, LIBSYSCTL_MAXDEPTH);
+	    root = sysctlmif_tree(root->id, root->idlevel,
+			       SYSCTLMIF_FALL, SYSCTLMIF_MAXDEPTH);
 	    display_tree(root);
 	    SLIST_REMOVE_HEAD(rootslist, object_link);
-	    libsysctl_freetree(root);
+	    sysctlmif_freetree(root);
 	}
 	xo_close_list("tree");
     }
@@ -232,7 +232,7 @@ void usage()
 }
 
 
-int filter_level_one(struct libsysctl_object* object)
+int filter_level_one(struct sysctlmif_object* object)
 {
     if(!Sflag && object->id[0] == 0)
 	return -1;
@@ -244,7 +244,7 @@ int filter_level_one(struct libsysctl_object* object)
 }
 
 
-void display_tree(struct libsysctl_object *object)
+void display_tree(struct sysctlmif_object *object)
 {
 
     if( (!Wflag || ( (object->flags & CTLFLAG_WR) && !(object->flags & CTLFLAG_STATS))) &&
@@ -297,7 +297,7 @@ void display_tree(struct libsysctl_object *object)
     }
 
 	
-    struct libsysctl_object *child;
+    struct sysctlmif_object *child;
 
     if(object->children != NULL)
 	if(!SLIST_EMPTY(object->children))
@@ -314,7 +314,7 @@ void display_tree(struct libsysctl_object *object)
 }
 
 
-void display_basic_type(struct libsysctl_object *object)
+void display_basic_type(struct sysctlmif_object *object)
 {
     size_t value_size=0;
     void *value;
@@ -330,7 +330,7 @@ void display_basic_type(struct libsysctl_object *object)
 	return;
     }
     
-    if(LIBSYSCTL_GETVALUE(object->id,object->idlevel,value,&value_size) < 0)
+    if(sysctl(object->id,object->idlevel,value,&value_size,NULL,0) < 0)
     {
 	printf("%s: Cannot get value\n",object->name);
 	return;
@@ -391,11 +391,11 @@ int parse_argv_or_line(char* input)
     int id[CTL_MAXNAME];
     size_t idlevel= CTL_MAXNAME;
     char *tofree, *oid, *parsestring;
-    struct libsysctl_object *object;
+    struct sysctlmif_object *object;
 
     parsestring = strdup(input);
     tofree = oid = strsep(&parsestring, "=");
-    if(libsysctl_nametoid(oid, strlen(oid),
+    if(sysctlmif_nametoid(oid, strlen(oid),
 		       id, &idlevel) < 0)
     {
 	if(qflag)
@@ -409,17 +409,17 @@ int parse_argv_or_line(char* input)
 
     if(strlen(oid) == strlen(input)) // just a "name"
     {
-	object = libsysctl_tree(id,idlevel,LIBSYSCTL_FALL,LIBSYSCTL_MAXDEPTH);
+	object = sysctlmif_tree(id,idlevel,SYSCTLMIF_FALL,SYSCTLMIF_MAXDEPTH);
 	display_tree(object);
-	libsysctl_freetree(object);
+	sysctlmif_freetree(object);
     }
     else // "name = value"
     {
- 	object = libsysctl_object(id,idlevel,LIBSYSCTL_FALL);
+ 	object = sysctlmif_object(id,idlevel,SYSCTLMIF_FALL);
 	switch(object->type)
 	{
 	case CTLTYPE_STRING:
-	    LIBSYSCTL_SETVALUE(id,idlevel,parsestring,sizeof(parsestring));
+	    sysctl(id,idlevel,NULL,0,parsestring,sizeof(parsestring));
 	    break;
 	case CTLTYPE_OPAQUE:
 	    break;

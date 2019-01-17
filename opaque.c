@@ -49,21 +49,21 @@
 #include <assert.h> // assert
 
 #include <libxo/xo.h>
-#include "libsysctl.h" // struct libsysctl_object
+#include <sysctlmibinfo.h> // struct sysctlmif_object
 
-static int S_clockinfo(struct libsysctl_object* object, int);
-static int S_loadavg(struct libsysctl_object* object, int);
-static int S_timeval(struct libsysctl_object* object, int);
-static int S_vmtotal(struct libsysctl_object* object, int);
+static int S_clockinfo(struct sysctlmif_object* object, int);
+static int S_loadavg(struct sysctlmif_object* object, int);
+static int S_timeval(struct sysctlmif_object* object, int);
+static int S_vmtotal(struct sysctlmif_object* object, int);
 #ifdef __amd64__
-static int S_efi_map(struct libsysctl_object* object, int);
+static int S_efi_map(struct sysctlmif_object* object, int);
 #endif
 #if defined(__amd64__) || defined(__i386__)
-static int S_bios_smap_xattr(struct libsysctl_object* object, int);
+static int S_bios_smap_xattr(struct sysctlmif_object* object, int);
 #endif
 static int strIKtoi(const char *str, char **endptrp, const char *fmt);
 
-void display_opaque_value(struct libsysctl_object* object, int hflag, int oflag, int xflag)
+void display_opaque_value(struct sysctlmif_object* object, int hflag, int oflag, int xflag)
 {
     unsigned char opaquevalue[BUFSIZ * 500];
     bzero(opaquevalue,BUFSIZ * 500);
@@ -91,7 +91,7 @@ void display_opaque_value(struct libsysctl_object* object, int hflag, int oflag,
 	xo_open_container(object->fmt + 2);
 	
 	xo_emit("{Lc:Format}{:format/%s}",object->fmt);
-	LIBSYSCTL_GETVALUE(object->id,object->idlevel,opaquevalue,&sizevalue);
+	sysctl(object->id,object->idlevel,opaquevalue,&sizevalue,NULL,0);
 	xo_emit("{P: }{Lc:Length}{:lenght/%lu}",sizevalue);
 	xo_emit("{P: }{Lc:Dump}0x"/*{:dump/%16x}...",opaquevalue*/);
 
@@ -112,13 +112,13 @@ void display_opaque_value(struct libsysctl_object* object, int hflag, int oflag,
 }
 
 static int
-S_clockinfo(struct libsysctl_object* object, int hflag)
+S_clockinfo(struct sysctlmif_object* object, int hflag)
 {
     size_t ci_size = sizeof(struct clockinfo);
     struct clockinfo ci;
     char *hfield = hflag ? "h" : NULL;
 
-    if(LIBSYSCTL_GETVALUE(object->id,object->idlevel,(void*)&ci,&ci_size) < 0) {
+    if(sysctl(object->id,object->idlevel,(void*)&ci,&ci_size,NULL,0) < 0) {
 	xo_warnx("Impossible get clockinfo");
 	return (1);
     }
@@ -142,14 +142,14 @@ S_clockinfo(struct libsysctl_object* object, int hflag)
 }
 
 static int
-S_loadavg(struct libsysctl_object* object, int hflag)
+S_loadavg(struct sysctlmif_object* object, int hflag)
 {
     struct loadavg tv;
     size_t tv_size = sizeof(struct loadavg);
     char *hfield = /*hflag ? "h" :*/ NULL;
     /*libxo 'h' modifier does not affect the size and treatment of %f */
 
-    if(LIBSYSCTL_GETVALUE(object->id,object->idlevel,(void*)&tv,&tv_size) < 0) {
+    if(sysctl(object->id,object->idlevel,(void*)&tv,&tv_size,NULL,0) < 0) {
 	xo_warnx("Impossible get loadavg");
 	return (1);
     }
@@ -170,7 +170,7 @@ S_loadavg(struct libsysctl_object* object, int hflag)
 }
 
 static int
-S_timeval(struct libsysctl_object* object, int hflag)
+S_timeval(struct sysctlmif_object* object, int hflag)
 {
     struct timeval tv;
     size_t tv_size = sizeof(struct timeval);
@@ -178,7 +178,7 @@ S_timeval(struct libsysctl_object* object, int hflag)
     char *p1;
     char *hfield = hflag ? "h,hn-decimal" : NULL;
 
-    if(LIBSYSCTL_GETVALUE(object->id,object->idlevel,(void*)&tv,&tv_size) < 0) {
+    if(sysctl(object->id,object->idlevel,(void*)&tv,&tv_size,NULL,0) < 0) {
 	xo_warnx("Impossible get timeval");
 	return (1);
     }
@@ -203,14 +203,14 @@ S_timeval(struct libsysctl_object* object, int hflag)
 }
 
 static int
-S_vmtotal(struct libsysctl_object* object, int hflag)
+S_vmtotal(struct sysctlmif_object* object, int hflag)
 {
     struct vmtotal v;
     size_t v_size = sizeof(struct vmtotal);
     char *hfield = hflag ? "h,hn-decimal" : NULL;
     int pageKilo;
 
-    if(LIBSYSCTL_GETVALUE(object->id,object->idlevel,(void*)&v,&v_size) < 0) {
+    if(sysctl(object->id,object->idlevel,(void*)&v,&v_size,NULL,0) < 0) {
 	xo_warnx("Impossible get vmtotal");
 	return (1);
     }
@@ -271,9 +271,9 @@ S_vmtotal(struct libsysctl_object* object, int hflag)
 
 #ifdef __amd64__
 static int
-S_efi_map(struct libsysctl_object* object, int hflag)
+S_efi_map(struct sysctlmif_object* object, int hflag)
 {
-    //value get from LIBSYSCTL_GETVALUE() remove p, l2 is useless
+    //value get from SYSCTLMIF_GETVALUE() remove p, l2 is useless
     void *p=NULL;
     size_t l2=0;
     //----------------
@@ -360,9 +360,9 @@ S_efi_map(struct libsysctl_object* object, int hflag)
 
 #if defined(__amd64__) || defined(__i386__)
 static int
-S_bios_smap_xattr(struct libsysctl_object* object, int hflag)
+S_bios_smap_xattr(struct sysctlmif_object* object, int hflag)
 {
-    //value get from LIBSYSCTL_GETVALUE() remove p, l2 is useless
+    //value get from SYSCTLMIF_GETVALUE() remove p, l2 is useless
     void *p=NULL;
     size_t l2=0;
     //----------------
