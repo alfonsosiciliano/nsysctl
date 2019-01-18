@@ -23,11 +23,14 @@
  * SUCH DAMAGE.
  */
 
-#ifndef NSYSCTL_H
-#define NSYSCTL_H
+#ifndef _NSYSCTL_H_
+#define _NSYSCTL_H_
+
+#define NSYSCTL_VERSION 	0.1
+
+void
+display_opaque_value(struct sysctlmif_object* object, int hflag, int oflag,
+		     int xflag);
 
 
-void display_opaque_value(struct sysctlmif_object*, int, int, int);
-
-
-#endif /* NSYSCTL_H */
+#endif /* _NSYSCTL_H_ */
