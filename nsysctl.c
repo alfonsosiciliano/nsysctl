@@ -66,7 +66,7 @@ static const char *ctl_typename[CTLTYPE+1] = {
 };
 
 
-int aflag,/*bflag, Bflag,*/ dflag, eflag, Fflag,/*fflag,*/ nflag, hflag;
+int aflag,/*bflag, Bflag,*/ dflag, eflag, Fflag,/*fflag,*/ hflag;
 int Iflag, iflag, lflag, Mflag, mflag, Nflag, nflag, oflag, qflag;
 int Sflag, Tflag, tflag, Wflag, xflag, yflag;
 
@@ -82,7 +82,7 @@ int main(int argc, char *argv[argc])
     xo_set_flags(NULL, XOF_UNITS);
 
     aflag =/*bflag = Bflag =*/ dflag = eflag = Fflag =/*fflag =*/ 0;
-    nflag = hflag = Iflag = iflag = lflag = Mflag = mflag = Nflag = 0;
+    hflag = Iflag = iflag = lflag = Mflag = mflag = Nflag = 0;
     nflag = oflag = qflag = Sflag = Tflag = tflag = Wflag = xflag = 0;
     yflag = 0;
 
@@ -289,7 +289,10 @@ void display_tree(struct sysctlmif_object *object)
 		{
 		    if(object->type == CTLTYPE_OPAQUE)
 			display_opaque_value(object, hflag, oflag, xflag);
-		    else
+
+		    /*sysctl.* leaves have node type,sysctl.name2id integer*/
+		    else if(object->type != CTLTYPE_NODE &&
+			    strcmp(object->name, "sysctl.name2oid") != 0)
 			display_basic_type(object);
 		}
 	}
