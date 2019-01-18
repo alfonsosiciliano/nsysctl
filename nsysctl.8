@@ -28,13 +28,13 @@
 .\" SUCH DAMAGE.
 .\"
 .\"	From: @(#)sysctl.8	8.1 (Berkeley) 6/6/93
-.\" $FreeBSD: head/sbin/sysctl/sysctl.8 338920 2018-09-24 20:46:45Z 0mp $
+.\" $FreeBSD$
 .\"
-.Dd September 24, 2018
-.Dt SYSCTL 8
+.Dd January 18, 2019
+.Dt NSYSCTL 8
 .Os
 .Sh NAME
-.Nm sysctl
+.Nm nsysctl
 .Nd get or set kernel state
 .Sh SYNOPSIS
 .Nm
@@ -45,6 +45,11 @@
 .Ar ...
 .Nm
 .Op Fl bdehNnoRTtqx
+.Op Fl B Ar bufsize
+.Fl a
+.Nm
+.Fl -libxo Ar options
+.Op Fl bdehMNnoRTtqx
 .Op Fl B Ar bufsize
 .Fl a
 .Sh DESCRIPTION
@@ -60,6 +65,10 @@ components.
 .Pp
 The following options are available:
 .Bl -tag -width indent
+.It Fl -libxo Ar options
+Generate output via libxo(3) in a selection of different human
+and machine readable formats.
+See xo_parse_args(3)
 .It Fl A
 Equivalent to
 .Fl o a
@@ -102,7 +111,7 @@ and value pairs in the command line argument.
 .It Fl h
 Format output for human, rather than machine, readability.
 .It Fl i
-Ignore unknown OIDs.
+Ignore unknown mib-entries.
 The purpose is to make use of
 .Nm
 for collecting data from a variety of machines (not all of which
@@ -115,15 +124,15 @@ To enable completion of variable names in
 .Xr zsh 1 Pq Pa ports/shells/zsh ,
 use the following code:
 .Bd -literal -offset indent
-listsysctls () { set -A reply $(sysctl -AN ${1%.*}) }
-compctl -K listsysctls sysctl
+listnsysctls () { set -A reply $(nsysctl -AN ${1%.*}) }
+compctl -K listnsysctls nsysctl
 .Ed
 .Pp
 To enable completion of variable names in
 .Xr tcsh 1 ,
 use:
 .Pp
-.Dl "complete sysctl 'n/*/`sysctl -Na`/'"
+.Dl "complete nsysctl 'n/*/`nsysctl -Na`/'"
 .It Fl n
 Show only variable values, not their names.
 This option is useful for setting shell variables.
@@ -131,7 +140,7 @@ For instance, to save the pagesize in variable
 .Va psize ,
 use:
 .Pp
-.Dl "set psize=`sysctl -n hw.pagesize`"
+.Dl "set psize=`nsysctl -n hw.pagesize`"
 .It Fl o
 Show opaque variables (which are normally suppressed).
 The format and length are printed, as well as a hex dump of the first
@@ -146,7 +155,7 @@ Display only variables that are settable via loader (CTLFLAG_TUN).
 Print the type of the variable.
 .It Fl W
 Display only writable variables that are not statistical.
-Useful for determining the set of runtime tunable sysctls.
+Useful for determining the set of runtime tunable nsysctls.
 .It Fl X
 Equivalent to
 .Fl x a
@@ -191,140 +200,46 @@ The changeable column indicates whether a process with appropriate
 privilege can change the value.
 String and integer values can be set using
 .Nm .
-.Bl -column security.bsd.unprivileged_read_msgbuf integerxxx
-.It Sy "Name	Type	Changeable"
-.It "kern.ostype	string	no"
-.It "kern.osrelease	string	no"
-.It "kern.osrevision	integer	no"
-.It "kern.version	string	no"
-.It "kern.maxvnodes	integer	yes"
-.It "kern.maxproc	integer	no"
-.It "kern.maxprocperuid	integer	yes"
-.It "kern.maxfiles	integer	yes"
-.It "kern.maxfilesperproc	integer	yes"
-.It "kern.argmax	integer	no"
-.It "kern.securelevel	integer	raise only"
-.It "kern.hostname	string	yes"
-.It "kern.hostid	integer	yes"
-.It "kern.clockrate	struct	no"
-.It "kern.posix1version	integer	no"
-.It "kern.ngroups	integer	no"
-.It "kern.job_control	integer	no"
-.It "kern.saved_ids	integer	no"
-.It "kern.boottime	struct	no"
-.It "kern.domainname	string	yes"
-.It "kern.filedelay	integer	yes"
-.It "kern.dirdelay	integer	yes"
-.It "kern.metadelay	integer	yes"
-.It "kern.osreldate	integer	no"
-.It "kern.bootfile	string	yes"
-.It "kern.corefile	string	yes"
-.It "kern.logsigexit	integer	yes"
-.It "security.bsd.suser_enabled	integer	yes"
-.It "security.bsd.see_other_uids	integer	yes"
-.It "security.bsd.unprivileged_proc_debug	integer	yes"
-.It "security.bsd.unprivileged_read_msgbuf	integer	yes"
-.It "vm.loadavg	struct	no"
-.It "hw.machine	string	no"
-.It "hw.model	string	no"
-.It "hw.ncpu	integer	no"
-.It "hw.byteorder	integer	no"
-.It "hw.physmem	integer	no"
-.It "hw.usermem	integer	no"
-.It "hw.pagesize	integer	no"
-.It "hw.floatingpoint	integer	no"
-.It "hw.machine_arch	string	no"
-.It "hw.realmem	integer	no"
-.It "machdep.adjkerntz	integer	yes"
-.It "machdep.disable_rtc_set	integer	yes"
-.It "machdep.guessed_bootdev	string	no"
-.It "user.cs_path	string	no"
-.It "user.bc_base_max	integer	no"
-.It "user.bc_dim_max	integer	no"
-.It "user.bc_scale_max	integer	no"
-.It "user.bc_string_max	integer	no"
-.It "user.coll_weights_max	integer	no"
-.It "user.expr_nest_max	integer	no"
-.It "user.line_max	integer	no"
-.It "user.re_dup_max	integer	no"
-.It "user.posix2_version	integer	no"
-.It "user.posix2_c_bind	integer	no"
-.It "user.posix2_c_dev	integer	no"
-.It "user.posix2_char_term	integer	no"
-.It "user.posix2_fort_dev	integer	no"
-.It "user.posix2_fort_run	integer	no"
-.It "user.posix2_localedef	integer	no"
-.It "user.posix2_sw_dev	integer	no"
-.It "user.posix2_upe	integer	no"
-.It "user.stream_max	integer	no"
-.It "user.tzname_max	integer	no"
-.El
-.Sh FILES
-.Bl -tag -width ".In netinet/icmp_var.h" -compact
-.It In sys/sysctl.h
-definitions for top level identifiers, second level kernel and hardware
-identifiers, and user level identifiers
-.It In sys/socket.h
-definitions for second level network identifiers
-.It In sys/gmon.h
-definitions for third level profiling identifiers
-.It In vm/vm_param.h
-definitions for second level virtual memory identifiers
-.It In netinet/in.h
-definitions for third level Internet identifiers and
-fourth level IP identifiers
-.It In netinet/icmp_var.h
-definitions for fourth level ICMP identifiers
-.It In netinet/udp_var.h
-definitions for fourth level UDP identifiers
-.El
 .Sh EXIT STATUS
 .Ex -std
 .Sh EXAMPLES
 For example, to retrieve the maximum number of processes allowed
 in the system, one would use the following request:
 .Pp
-.Dl "sysctl kern.maxproc"
+.Dl "nsysctl kern.maxproc"
 .Pp
 To set the maximum number of processes allowed
 per uid to 1000, one would use the following request:
 .Pp
-.Dl "sysctl kern.maxprocperuid=1000"
+.Dl "nsysctl kern.maxprocperuid=1000"
 .Pp
 Information about the system clock rate may be obtained with:
 .Pp
-.Dl "sysctl kern.clockrate"
+.Dl "nsysctl kern.clockrate"
 .Pp
 Information about the load average history may be obtained with:
 .Pp
-.Dl "sysctl vm.loadavg"
-.Pp
-More variables than these exist, and the best and likely only place
-to search for their deeper meaning is undoubtedly the source where
-they are defined.
+.Dl "nsysctl vm.loadavg"
 .Sh COMPATIBILITY
 The
 .Fl w
 option has been deprecated and is silently ignored.
 .Sh SEE ALSO
 .Xr sysctl 3 ,
+.Xr sysctlmibinfo 3 ,
 .Xr loader.conf 5 ,
-.Xr sysctl.conf 5 ,
-.Xr loader 8
+.Xr sysctl.conf 5
 .Sh HISTORY
-A
-.Nm
-utility first appeared in
-.Bx 4.4 .
-.Pp
-In
-.Fx 2.2 ,
-.Nm
-was significantly remodeled.
-.Sh BUGS
 The
 .Nm
-utility presently exploits an undocumented interface to the kernel
-sysctl facility to traverse the sysctl tree and to retrieve format
-and name information.
-This correct interface is being thought about for the time being.
+utility first appeared in
+.Fx 13.0 .
+.Sh AUTHORS
+The
+.Nm
+utility was written by
+.An Alfonso S. Siciliano Aq Mt alf.siciliano@gmail.com
+.Sh BUGS
+%
+.Nm
+libxo=xml debug.witness.fullgraph -> segmentation fault
