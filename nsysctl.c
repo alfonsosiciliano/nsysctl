@@ -25,12 +25,12 @@
 
 #include <sys/queue.h>
 
-#include <stdlib.h>
-#include <unistd.h>
-#include <stdio.h>
-#include <string.h>
 #include <libxo/xo.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include <sysctlmibinfo.h>
+#include <unistd.h>
 
 #include "nsysctl.h"
 
@@ -41,7 +41,7 @@
 void usage();
 int filter_level_one(struct sysctlmif_object*);
 void parse_file(char *);
-int parse_argv_or_line(char *);
+int set_value(struct sysctlmif_object *, char *);
 void display_tree(struct sysctlmif_object *);
 void display_basic_type(struct sysctlmif_object*);
 
@@ -77,15 +77,18 @@ int main(int argc, char *argv[argc])
     struct sysctlmif_object *root;
     struct sysctlmif_object_list *rootslist = NULL;
     int error = 0;
-
-    atexit(xo_finish_atexit);
-    xo_set_flags(NULL, XOF_UNITS);
+    int rootid[SYSCTLMIF_IDMAXLEVEL];
+    size_t rootidlevel= SYSCTLMIF_IDMAXLEVEL;
+    char *tofree, *rootname, *parsestring;
 
     aflag =/*bflag = Bflag =*/ dflag = eflag = Fflag =/*fflag =*/ 0;
     hflag = Iflag = iflag = lflag = Mflag = mflag = Nflag = 0;
     nflag = oflag = qflag = Sflag = Tflag = tflag = Wflag = xflag = 0;
     yflag = 0;
-
+    
+    atexit(xo_finish_atexit);
+    
+    xo_set_flags(NULL, XOF_UNITS);
     argc = xo_parse_args(argc, argv);
     if (argc < 0)
         exit(EXIT_FAILURE);
@@ -118,7 +121,7 @@ int main(int argc, char *argv[argc])
 	    break;
 	    /*
 	case 'f':
-	    Fflag = 1;
+	    fflag = 1;
 	    break;
 	    */
 	case 'h':
@@ -185,21 +188,52 @@ int main(int argc, char *argv[argc])
     argc -= optind;
     argv += optind;
 
-    /* get some "root tree" to pass to display_tree() */
-
     if(Mflag)
 	xo_open_container("MIB");
 	
-    if(argc > 0) // the roots are given in input
+    if(argc > 0) /* the roots are given in input */
     {
+	aflag=0; /* set to 0 for display_tree() */
 	argc=0;
 	while(argv[argc])
 	{
-	    error += parse_argv_or_line(argv[argc]);
+	    parsestring = strdup(argv[argc]);
+	    tofree = rootname = strsep(&parsestring, "=");
+	    if(sysctlmif_nametoid(rootname, strlen(rootname) +1,
+				  rootid, &rootidlevel) != 0)
+	    {
+		if(!iflag)
+		    error++;
+		
+		if(!iflag && !qflag)
+		    printf("sysctl: unknown oid \'%s\'\n", rootname);
+
+		free(tofree);	    
+		argc++;
+		continue;
+	    }
+
+	    if(strlen(rootname) == strlen(argv[argc]))/* only "name" */
+	    {
+		root = sysctlmif_tree(rootid, rootidlevel,
+				      SYSCTLMIF_FALL,SYSCTLMIF_MAXDEPTH);
+		display_tree(root);
+		sysctlmif_freetree(root);
+	    }
+	    else /* a value is given*/
+	    {
+		root = sysctlmif_object(rootid,rootidlevel,
+					SYSCTLMIF_FNAME | SYSCTLMIF_FTYPE);
+		set_value(root,parsestring);
+		sysctlmif_freeobject(root);
+	    }
+	    
+	    free(tofree);	    
 	    argc++;
 	}
     }
-    else if (aflag) // ('-a' option) the roots are oids of level 1
+    
+    else if (aflag) /* the roots are objects with level 1 */
     {
 	rootslist = sysctlmif_filterlist(filter_level_one, SYSCTLMIF_FALL);
 	xo_open_list("tree");
@@ -214,7 +248,7 @@ int main(int argc, char *argv[argc])
 	}
 	xo_close_list("tree");
     }
-    else // no roots and no -a
+    else /* no roots and no -a */
 	usage();
 
     if(Mflag)
@@ -255,27 +289,9 @@ void display_tree(struct sysctlmif_object *object)
     if(Tflag && !(object->flags & CTLFLAG_TUN))
 	showable = 0;
     
-    if(!Iflag && (!IS_LEAF(object) || object->type == CTLTYPE_NODE))
+    if(!Iflag && (!IS_LEAF(object)))
 	showable = 0;
 
-    if(aflag && object->type == CTLTYPE_OPAQUE)
-	showable = 0;
-
-    /* like sysctl */
-    size_t value_size=0;
-    void *value;
-    sysctl(object->id, object->idlevel,NULL, &value_size,NULL,0);
-    if (( value = malloc(value_size)) == NULL)
-    {
-	printf("%s: Cannot get value MALLOC\n",object->name);
-	abort();
-    }
-    memset(value, 0, value_size);
-    
-    if(sysctl(object->id,object->idlevel,value,&value_size,NULL,0) < 0)
-	showable = 0;
-    free(value);
-    
     if(showable)
     {
 	xo_open_instance("object");
@@ -363,11 +379,9 @@ void display_basic_type(struct sysctlmif_object *object)
     
     if(sysctl(object->id,object->idlevel,value,&value_size,NULL,0) < 0)
     {
-	return 1;
+	return;
     }
 
-    //printf("%s, %s, %lu\n",object->name,value,value_size);
- 
     switch(object->type)
     {
     case CTLTYPE_INT:
@@ -418,44 +432,17 @@ void display_basic_type(struct sysctlmif_object *object)
 
     free(value);
 
-    return 0;
+    return;
 }
 
 
-int parse_argv_or_line(char* input)
+int set_value(struct sysctlmif_object *object, char* input)
 {
-    int id[CTL_MAXNAME];
-    size_t idlevel= CTL_MAXNAME;
-    char *tofree, *oid, *parsestring;
-    struct sysctlmif_object *object;
-
-    parsestring = strdup(input);
-    tofree = oid = strsep(&parsestring, "=");
-    if(sysctlmif_nametoid(oid, strlen(oid),
-		       id, &idlevel) < 0)
-    {
-	if(qflag)
-	    return 1;
-	if(iflag)
-	    return 0;
-
-	printf("sysctl: unknown oid \'%s\'\n", oid);
-	return 1;
-    }
-
-    if(strlen(oid) == strlen(input)) // just a "name"
-    {
-	object = sysctlmif_tree(id,idlevel,SYSCTLMIF_FALL,SYSCTLMIF_MAXDEPTH);
-	display_tree(object);
-	sysctlmif_freetree(object);
-    }
-    else // "name = value"
-    {
- 	object = sysctlmif_object(id,idlevel,SYSCTLMIF_FALL);
 	switch(object->type)
 	{
 	case CTLTYPE_STRING:
-	    sysctl(id,idlevel,NULL,0,parsestring,sizeof(parsestring));
+	    sysctl(object->id,object->idlevel, NULL, 0,
+		   input,sizeof(input));
 	    break;
 	case CTLTYPE_OPAQUE:
 	    break;
@@ -503,9 +490,6 @@ int parse_argv_or_line(char* input)
 	    printf("parse_argv_or_line: Bad type to set\n");
 	    break;	   
 	}
-    }
-
-    free(tofree);
 
     return 0;
 }
