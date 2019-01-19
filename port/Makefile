@@ -3,7 +3,6 @@
 PORTNAME=	nsysctl
 PORTVERSION=	0.1
 CATEGORIES=	sysutils
-MASTER_SITES=
 
 MAINTAINER=	alfix86@gmail.com
 COMMENT=	Sysctl utility clone with libxo and extra options
