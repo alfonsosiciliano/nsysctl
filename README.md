@@ -6,7 +6,7 @@ clone, it depends on http://gitlab.com/alfix/libsysctl (renamed sysctlmibinfo(3)
 
 **nsysctl** improvements: 
 
- * handy: sysctlmibinfo(3) provides a simple API to the kernel sysctl-mib API, 
+ * handy: sysctlmibinfo(3) provides a simple API to the kernel sysctl-mib, 
  * all code about "opaque values" is in opaque.c, 
  * output via [libxo(3)](https://wiki.freebsd.org/LibXo) in human and machine readable formats,
  * new options [-FIlMmSy],
