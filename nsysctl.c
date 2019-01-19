@@ -1,5 +1,5 @@
 /*-
- * Copyright (c) 2018 Alfonso Sabato Siciliano
+ * Copyright (c) 2018-2019 Alfonso Sabato Siciliano
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,15 +37,12 @@
 #define IS_LEAF(node) (node->children == NULL || SLIST_EMPTY(node->children))
 #define GET_VALUE_SIZE(id,idlevel,size) sysctl(id,idlevel,NULL,size,NULL,0)
 
-/* Functons declaration */
 void usage();
 int filter_level_one(struct sysctlmif_object*);
 void parse_file(char *);
 int set_value(struct sysctlmif_object *, char *);
 void display_tree(struct sysctlmif_object *);
 void display_basic_type(struct sysctlmif_object*);
-
-/* global variables */
 
 static const char *ctl_typename[CTLTYPE+1] = {
 	[CTLTYPE_INT] = "integer",
@@ -65,7 +62,6 @@ static const char *ctl_typename[CTLTYPE+1] = {
 	[CTLTYPE_OPAQUE] = "opaque",
 };
 
-
 int aflag,/*bflag, Bflag,*/ dflag, eflag, Fflag,/*fflag,*/ hflag;
 int Iflag, iflag, lflag, Mflag, mflag, Nflag, nflag, oflag, qflag;
 int Sflag, Tflag, tflag, Wflag, xflag, yflag;
@@ -73,13 +69,13 @@ int Sflag, Tflag, tflag, Wflag, xflag, yflag;
 
 int main(int argc, char *argv[argc])
 {
-    int ch;
+    int ch, error, rootid[SYSCTLMIF_IDMAXLEVEL];
+    size_t rootidlevel= SYSCTLMIF_IDMAXLEVEL;
     struct sysctlmif_object *root;
     struct sysctlmif_object_list *rootslist = NULL;
-    int error = 0;
-    int rootid[SYSCTLMIF_IDMAXLEVEL];
-    size_t rootidlevel= SYSCTLMIF_IDMAXLEVEL;
     char *tofree, *rootname, *parsestring;
+
+    error=0;
 
     aflag =/*bflag = Bflag =*/ dflag = eflag = Fflag =/*fflag =*/ 0;
     hflag = Iflag = iflag = lflag = Mflag = mflag = Nflag = 0;
