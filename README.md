@@ -18,14 +18,10 @@ Version 1.0 TODO
  * [ ] options: nsysctl -f filename
  * [ ] options: nsysctl -b
  * [ ] options: nsysctl -B
- 
  * [ ] fix: nsysctl libxo=xml debug.witness.fullgraph -> segmentation fault
  * [ ] fix: nsysctl libxo=text debug.fail_point
- 
- * [X] testing: add regression comparetest.sh
- 
- * [X] manual page: add nsysctl.8
+ * [X] ~~testing: add regression comparetest.sh~~
+ * [X] ~~manual page: add nsysctl.8~~
  * [ ] manual page: add new options to nsysctl.8
- 
  * [ ] FreeBSD port
 
