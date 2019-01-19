@@ -26,5 +26,5 @@ TODO Version 1.0
  * [X] ~~testing: add regression comparetest.sh~~
  * [X] ~~manual page: add nsysctl.8~~
  * [ ] manual page: add new options to nsysctl.8
- * [ ] FreeBSD port
+ * [X] ~~FreeBSD port~~
 
