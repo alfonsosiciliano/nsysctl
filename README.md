@@ -2,10 +2,9 @@ README
 ======
 
 **nsysctl** is a [sbin/sysctl(8)](https://www.freebsd.org/cgi/man.cgi?query=sysctl&sektion=8&manpath=FreeBSD+13-current) 
-clone, it depends on http://gitlab.com/alfix/libsysctl   
-(nsysctl was just the "main()" to test sysctlmibinfo(3)).   
+clone, it depends on http://gitlab.com/alfix/libsysctl (renamed sysctlmibinfo(3)).   
 
-**nsysctl:: improvements: 
+**nsysctl** improvements: 
 
  * handy: sysctlmibinfo(3) provides a simple API to the kernel sysctl-mib API, 
  * all code about "opaque values" is in opaque.c, 
