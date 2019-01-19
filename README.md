@@ -1,8 +1,8 @@
 README
 ======
 
-**nsysctl** is a [sbin/sysctl(8)](https://www.freebsd.org/cgi/man.cgi?query=sysctl&sektion=8&manpath=FreeBSD+13-current) 
-clone, it depends on http://gitlab.com/alfix/libsysctl (renamed sysctlmibinfo(3)).   
+**nsysctl** is a [sysctl](https://www.freebsd.org/cgi/man.cgi?query=sysctl&sektion=8&manpath=FreeBSD+13-current) 
+utility clone, it depends on [libsysctl](http://gitlab.com/alfix/libsysctl) (renamed sysctlmibinfo(3)).   
 
 **nsysctl** improvements: 
 
