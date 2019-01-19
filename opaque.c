@@ -51,6 +51,8 @@
 #include <libxo/xo.h>
 #include <sysctlmibinfo.h> // struct sysctlmif_object
 
+/* Func declarations */
+
 static int S_clockinfo(struct sysctlmif_object* object, int);
 static int S_loadavg(struct sysctlmif_object* object, int);
 static int S_timeval(struct sysctlmif_object* object, int);
@@ -62,6 +64,22 @@ static int S_efi_map(struct sysctlmif_object* object, int);
 static int S_bios_smap_xattr(struct sysctlmif_object* object, int);
 #endif
 static int strIKtoi(const char *str, char **endptrp, const char *fmt);
+
+
+int is_opaque_defined(const char* fmt)
+{
+    int exists = 0;
+
+    if((strcmp(fmt, "S,clockinfo") == 0 ||
+	strcmp(fmt, "S,timeval") == 0 ||
+	strcmp(fmt, "S,loadavg") == 0 ||
+	strcmp(fmt, "S,vmtotal") == 0 ||
+	strcmp(fmt, "S,efi_map_header") == 0 ||
+	strcmp(fmt, "S,bios_smap_xattr") == 0 ))
+	exists = 1;
+
+    return exists;
+}
 
 void display_opaque_value(struct sysctlmif_object* object, int hflag, int oflag, int xflag)
 {

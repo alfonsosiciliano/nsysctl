@@ -233,23 +233,50 @@ void usage()
 
 
 int filter_level_one(struct sysctlmif_object* object)
-{
-    if(!Sflag && object->id[0] == 0)
-	return -1;
-	    
+{	    
     if(object->idlevel == 1)
 	return 0;
     
     return -1;
 }
 
-
+/* Preorder visit */
 void display_tree(struct sysctlmif_object *object)
 {
+    int showable = 1;
 
-    if( (!Wflag || ( (object->flags & CTLFLAG_WR) && !(object->flags & CTLFLAG_STATS))) &&
-	(!Tflag || (object->flags & CTLFLAG_TUN)) &&
-	(Iflag || IS_LEAF(object)) )
+    if(object->id[0] == 0 && !Sflag)
+	showable = 0;
+
+    if(Wflag &&
+       !((object->flags & CTLFLAG_WR) && !(object->flags & CTLFLAG_STATS)))
+	showable = 0;
+
+    if(Tflag && !(object->flags & CTLFLAG_TUN))
+	showable = 0;
+    
+    if(!Iflag && (!IS_LEAF(object) || object->type == CTLTYPE_NODE))
+	showable = 0;
+
+    if(aflag && object->type == CTLTYPE_OPAQUE)
+	showable = 0;
+
+    /* like sysctl */
+    size_t value_size=0;
+    void *value;
+    sysctl(object->id, object->idlevel,NULL, &value_size,NULL,0);
+    if (( value = malloc(value_size)) == NULL)
+    {
+	printf("%s: Cannot get value MALLOC\n",object->name);
+	abort();
+    }
+    memset(value, 0, value_size);
+    
+    if(sysctl(object->id,object->idlevel,value,&value_size,NULL,0) < 0)
+	showable = 0;
+    free(value);
+    
+    if(showable)
     {
 	xo_open_instance("object");
 
@@ -269,7 +296,7 @@ void display_tree(struct sysctlmif_object *object)
 	    else if(Fflag)
 		xo_emit("{:flags/%x}",object->flags);
 	    else if(mflag)
-		xo_emit("{:fmt/%s}",object->fmt);
+		xo_emit("{:format/%s}",object->fmt);
 	    else if(lflag)
 		xo_emit("{:label/%s}", object->label);
 	    else if(yflag)
@@ -287,9 +314,9 @@ void display_tree(struct sysctlmif_object *object)
 	    else /* print value */
 		if(IS_LEAF(object))
 		{
+		    /* don't show opaque with -a opt */
 		    if(object->type == CTLTYPE_OPAQUE)
 			display_opaque_value(object, hflag, oflag, xflag);
-
 		    /*sysctl.* leaves have node type,sysctl.name2id integer*/
 		    else if(object->type != CTLTYPE_NODE &&
 			    strcmp(object->name, "sysctl.name2oid") != 0)
@@ -323,8 +350,8 @@ void display_basic_type(struct sysctlmif_object *object)
     void *value;
 
     // BUG --libxo=xml => segmentation fault
-    if(strcmp(object->name,"debug.witness.fullgraph") ==0)
-	return;
+    //if(strcmp(object->name,"debug.witness.fullgraph") ==0)
+    //return;
 
     GET_VALUE_SIZE(object->id, object->idlevel, &value_size);
     if (( value = malloc(value_size)) == NULL)
@@ -332,12 +359,14 @@ void display_basic_type(struct sysctlmif_object *object)
 	printf("%s: Cannot get value MALLOC\n",object->name);
 	return;
     }
+    memset(value, 0, value_size);
     
     if(sysctl(object->id,object->idlevel,value,&value_size,NULL,0) < 0)
     {
-	printf("%s: Cannot get value\n",object->name);
-	return;
+	return 1;
     }
+
+    //printf("%s, %s, %lu\n",object->name,value,value_size);
  
     switch(object->type)
     {
@@ -384,8 +413,12 @@ void display_basic_type(struct sysctlmif_object *object)
 	xo_emit("{:value/%s}", (char*)value );
 	break;
     default:
-	printf("Error bad type!\n");
+	printf("%s, Error bad type!\n",object->name);
     }
+
+    free(value);
+
+    return 0;
 }
 
 
