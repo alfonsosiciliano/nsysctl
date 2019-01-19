@@ -1,16 +1,17 @@
 README
 ======
 
-nsysctl is a [sbin/sysctl(8)](https://www.freebsd.org/cgi/man.cgi?query=sysctl&sektion=8&manpath=FreeBSD+13-current) 
-rewrite, it depends on http://gitlab.com/alfix/libsysctl (renamed sysctlmibinfo(3))   
+**nsysctl** is a [sbin/sysctl(8)](https://www.freebsd.org/cgi/man.cgi?query=sysctl&sektion=8&manpath=FreeBSD+13-current) 
+clone, it depends on http://gitlab.com/alfix/libsysctl   
 (nsysctl was just the "main()" to test sysctlmibinfo(3)).   
 
-nsysctl is handier than sysctl: 
+**nsysctl:: improvements: 
 
- * libsysctl provides a simple API to the kernel sysctl-mib API, 
+ * handy: sysctlmibinfo(3) provides a simple API to the kernel sysctl-mib API, 
  * all code about "opaque values" is in opaque.c, 
- * [--libxo](https://wiki.freebsd.org/LibXo) and -FIlMmSy options. 
- * useful code will be added to http://gitlab.com/alfix/sysctlview too.
+ * output via [libxo(3)](https://wiki.freebsd.org/LibXo) in human and machine readable formats,
+ * new options [-FIlMmSy],
+ * useful code will be added to [sysctlview](http://gitlab.com/alfix/sysctlview), too.
 
 Version 1.0 TODO  
 
