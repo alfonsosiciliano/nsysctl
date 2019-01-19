@@ -18,8 +18,9 @@ TODO
  * options: nsysctl -f filename
  * options: nsysctl -b
  * options: nsysctl -B
- * fix: nsysctl libxo=xml debug.witness.fullgraph segmentation fault
- * testing: stress test
+ * fix: nsysctl libxo=xml debug.witness.fullgraph -> segmentation fault
+ * fix: nsysctl libxo=text debug.fail_point
+ * __auto/regression testing: comparetest.sh__
  * doc: nsysctl.8
  * FreeBSD port
 
