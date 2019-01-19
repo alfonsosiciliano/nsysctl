@@ -12,15 +12,16 @@ nsysctl is handier than sysctl:
  * [--libxo](https://wiki.freebsd.org/LibXo) and -FIlMmSy options. 
  * useful code will be add to http://gitlab.com/alfix/sysctlview too.
 
-TODO  
+Version 1.0 TODO  
 
- * options: nsysctl value=NUMBER
- * options: nsysctl -f filename
- * options: nsysctl -b
- * options: nsysctl -B
- * fix: nsysctl libxo=xml debug.witness.fullgraph -> segmentation fault
- * fix: nsysctl libxo=text debug.fail_point
- * __auto/regression testing: comparetest.sh__
- * doc: nsysctl.8
- * FreeBSD port
+ * [ ] options: nsysctl value=NUMBER
+ * [ ] options: nsysctl -f filename
+ * [ ] options: nsysctl -b
+ * [ ] options: nsysctl -B
+ * [ ] fix: nsysctl libxo=xml debug.witness.fullgraph -> segmentation fault
+ * [ ] fix: nsysctl libxo=text debug.fail_point
+ * [X] testing: add regression comparetest.sh
+ * [X] manual page: add nsysctl.8
+ * [ ] manual page: add new options to nsysctl.8
+ * [ ] FreeBSD port
 
