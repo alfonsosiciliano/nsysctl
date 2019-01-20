@@ -26,7 +26,7 @@
 #ifndef _NSYSCTL_H_
 #define _NSYSCTL_H_
 
-#define NSYSCTL_VERSION    0.1
+#define NSYSCTL_VERSION    0.2
 
 void
 display_opaque_value(struct sysctlmif_object *object, int hflag, int oflag,
