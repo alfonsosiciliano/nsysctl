@@ -1,11 +1,11 @@
 README
 ======
 
-**Legal notice** 
-[FreeBSD](http://www.freebsd.org)&copy; is a registered trademark of the [FreeBSD Foundation](https://www.freebsdfoundation.org).
 
 **nsysctl** is a FreeBSD [sysctl](https://www.freebsd.org/cgi/man.cgi?query=sysctl&sektion=8&manpath=FreeBSD+13-current) 
 utility clone, it depends on [sysctlmibinfo](http://gitlab.com/alfix/sysctlmibinfo) library.   
+Note: [FreeBSD](http://www.freebsd.org)&copy; is a registered trademark of the [FreeBSD Foundation](https://www.freebsdfoundation.org).  
+
 
 **nsysctl** improvements: 
 
