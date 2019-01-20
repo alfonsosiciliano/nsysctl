@@ -37,7 +37,7 @@
 #define IS_LEAF(node)    (node->children == NULL || SLIST_EMPTY(node->children))
 
 void usage();
-int filter_level_one(struct sysctlmif_object *);
+int filter_toplevel(struct sysctlmif_object *);
 int set_value(struct sysctlmif_object *, char *);
 void display_tree(struct sysctlmif_object *);
 void display_basic_type(struct sysctlmif_object *);
@@ -190,27 +190,29 @@ int main(int argc, char *argv[argc])
 	    tofree = rootname = strsep(&parsestring, "=");
 	    if (sysctlmif_nametoid(rootname, strlen(rootname) +1,
 				   rootid, &rootidlevel) != 0) {
+		/* rootname doesn't exist*/
 		if (!iflag)
 		    error++;
 
 		if (!iflag && !qflag)
 		    printf("sysctl: unknown oid \'%s\'\n", rootname);
-
-		free(tofree);
-		argc++;
-		continue;
 	    }
-
-	    if (strlen(rootname) == strlen(argv[argc])) {/* only "name" */
+	    else if (strlen(rootname) == strlen(argv[argc])) {/* only rootname */
 		root = sysctlmif_tree(rootid, rootidlevel,
 				      SYSCTLMIF_FALL, SYSCTLMIF_MAXDEPTH);
 		display_tree(root);
 		sysctlmif_freetree(root);
 	    }
-	    else { /* a value is given*/
+	    else { /* rootname=value */
 		root = sysctlmif_object(rootid, rootidlevel,
 					SYSCTLMIF_FNAME | SYSCTLMIF_FTYPE);
-		set_value(root, parsestring);
+		if(!IS_LEAF(root)){
+		    xo_warnx("oid \'%s\' isn't a leaf node",root->name);
+		    error++;
+		}
+		else
+		    set_value(root, parsestring);
+		
 		sysctlmif_freeobject(root);
 	    }
 
@@ -220,7 +222,7 @@ int main(int argc, char *argv[argc])
     }
     
     else if (aflag) { /* the roots are objects with level 1 */
-	rootslist = sysctlmif_filterlist(filter_level_one, SYSCTLMIF_FALL);
+	rootslist = sysctlmif_filterlist(filter_toplevel, SYSCTLMIF_FALL);
 	xo_open_list("tree");
 	while (!SLIST_EMPTY(rootslist)) {
 	    root = SLIST_FIRST(rootslist);
@@ -252,7 +254,7 @@ void usage()
 }
 
 
-int filter_level_one(struct sysctlmif_object *object)
+int filter_toplevel(struct sysctlmif_object *object)
 {
     return object->idlevel == 1 ? 0 : -1;
 }
@@ -346,7 +348,9 @@ void display_tree(struct sysctlmif_object *object)
     xo_close_instance("object");
 }
 
-
+/*
+ * this func will be merged with set_value() in version 1.0 
+*/
 void display_basic_type(struct sysctlmif_object *object)
 {
     size_t value_size = 0;
@@ -420,8 +424,43 @@ void display_basic_type(struct sysctlmif_object *object)
 
 int set_value(struct sysctlmif_object *object, char *input)
 {
+    long long llivalue = strtoll(input, NULL, 10);
+    unsigned long long ullvalue =strtoull(input, NULL, 10);
     int error = 0;
+    size_t llsize, ullsize;
+    int intvalue;
+    long longvalue;
+    int8_t  sint8value;
+    int16_t sint16value;
+    int32_t sint32value;
+    int64_t sint64value;
+    u_int uintvalue;
+    u_long ulongvalue;
+    uint8_t uint8value;
+    uint16_t uint16value;
+    uint32_t uint32value;
+    uint64_t uint64value;
+    
+    llsize=sizeof(long long);
+    ullsize=sizeof(unsigned long long);
 
+    display_basic_type(object);
+
+#define STVL(typedvalue, type, longinput, formatstr)	\
+    do {						\
+	typedvalue = (type)longinput;			\
+	if(sysctl(object->id,object->idlevel,NULL,0,	\
+		  & typedvalue,sizeof(type)) !=0)	\
+	{						\
+	    xo_emit("{L: -> }");			\
+	    xo_emit_field("", "newvalue", formatstr,	\
+			  NULL, typedvalue);		\
+	    xo_emit("{L:\n}");				\
+	}						\
+	else						\
+	    xo_warnx("cannot set new value %s",input);	\
+    } while(0)
+    
     switch (object->type) {
     case CTLTYPE_STRING:
 	sysctl(object->id, object->idlevel, NULL, 0,
@@ -436,40 +475,40 @@ int set_value(struct sysctlmif_object *object, char *input)
 	error = 1;
 	break;
     case CTLTYPE_INT:
-	xo_emit("{:input/%d}", *((int *)input));
+	STVL(intvalue, int, llivalue, "%d");
 	break;
     case CTLTYPE_LONG:
-	xo_emit("{:input/%ld}", *((long *)input));
+	STVL(longvalue, long, llivalue, "%ld");
 	break;
     case CTLTYPE_S8:
-	xo_emit("{:input/%d}", *((int8_t *)input));
+	STVL(sint8value, int8_t, llivalue,"%d");
 	break;
     case CTLTYPE_S16:
-	xo_emit("{:input/%d}", *((int16_t *)input));
+	STVL(sint16value, int16_t, llivalue,"%d");
 	break;
     case CTLTYPE_S32:
-	xo_emit("{:input/%d}", *((int32_t *)input));
+	STVL(sint32value, int32_t, llivalue,"%d");
 	break;
     case CTLTYPE_S64:
-	xo_emit("{:input/%ld}", *((int64_t *)input));
+	STVL(sint64value, int64_t, llivalue,"%ld");
 	break;
     case CTLTYPE_UINT:
-	xo_emit("{:input/%u}", *((u_int *)input));
+	STVL(uintvalue, u_int, ullvalue,"%u");
 	break;
     case CTLTYPE_ULONG:
-	xo_emit("{:input/%lu}", *((u_long *)input));
+	STVL(ulongvalue, u_long, ullvalue,"%lu");
 	break;
     case CTLTYPE_U8:
-	xo_emit("{:input/%u}", *((uint8_t *)input));
+	STVL(uint8value, uint8_t, ullvalue,"%u");
 	break;
     case CTLTYPE_U16:
-	xo_emit("{:input/%u}", *((uint16_t *)input));
+	STVL(uint16value, uint16_t, ullvalue,"%u");
 	break;
     case CTLTYPE_U32:
-	xo_emit("{:input/%u}", *((uint32_t *)input));
+	STVL(uint32value, uint32_t, ullvalue,"%u");
 	break;
     case CTLTYPE_U64:
-	xo_emit("{:input/%lu}", *((uint64_t *)input));
+	STVL(uint64value, uint64_t, ullvalue,"%lu");
 	break;
     default:
 	xo_warnx("Unknown type");

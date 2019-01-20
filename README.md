@@ -12,9 +12,9 @@ utility clone, it depends on [libsysctl](http://gitlab.com/alfix/libsysctl) (ren
  * new options [-FIlMmSy],
  * useful code will be added to [sysctlview](http://gitlab.com/alfix/sysctlview), too.
 
-TODO Version 1.0 
+TODO Version 0.9
 
- * [ ] options: nsysctl value=NUMBER
+ * [X] ~~options: nsysctl value=NUMBER~~
  * [ ] options: nsysctl -f filename
  * [ ] options: nsysctl -b
  * [ ] options: nsysctl -B
@@ -27,4 +27,9 @@ TODO Version 1.0
  * [X] ~~manual page: add nsysctl.8~~
  * [ ] manual page: add new options to nsysctl.8
  * [X] ~~FreeBSD port~~
+
+TODO Version 1.0
+
+ * [ ] merge set_value() with display\_basic\_value()
+ * [ ] improve xml output for name=value
 
