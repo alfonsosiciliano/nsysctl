@@ -16,7 +16,7 @@ utility clone, it depends on [sysctlmibinfo](http://gitlab.com/alfix/sysctlmibin
  * new options [-FIlMmSy],
  * useful code will be added to [sysctlview](http://gitlab.com/alfix/sysctlview), too.
 
-TODO VErsion 0.1
+TODO Version 0.1
 
  * [X] ~~Update lib API libsysctl -> sysctlmibinfo~~
 
