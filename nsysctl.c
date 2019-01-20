@@ -34,62 +34,60 @@
 
 #include "nsysctl.h"
 
-#define IS_LEAF(node) (node->children == NULL || SLIST_EMPTY(node->children))
-#define GET_VALUE_SIZE(id,idlevel,size) sysctl(id,idlevel,NULL,size,NULL,0)
+#define IS_LEAF(node)    (node->children == NULL || SLIST_EMPTY(node->children))
 
 void usage();
-int filter_level_one(struct sysctlmif_object*);
-void parse_file(char *);
+int filter_level_one(struct sysctlmif_object *);
 int set_value(struct sysctlmif_object *, char *);
 void display_tree(struct sysctlmif_object *);
-void display_basic_type(struct sysctlmif_object*);
+void display_basic_type(struct sysctlmif_object *);
 
-static const char *ctl_typename[CTLTYPE+1] = {
-	[CTLTYPE_INT] = "integer",
-	[CTLTYPE_UINT] = "unsigned integer",
-	[CTLTYPE_LONG] = "long integer",
-	[CTLTYPE_ULONG] = "unsigned long",
-	[CTLTYPE_U8] = "uint8_t",
-	[CTLTYPE_U16] = "uint16_t",
-	[CTLTYPE_U32] = "uint32_t",
-	[CTLTYPE_U64] = "uint64_t",
-	[CTLTYPE_S8] = "int8_t",
-	[CTLTYPE_S16] = "int16_t",
-	[CTLTYPE_S32] = "int32_t",
-	[CTLTYPE_S64] = "int64_t",
-	[CTLTYPE_NODE] = "node",
-	[CTLTYPE_STRING] = "string",
-	[CTLTYPE_OPAQUE] = "opaque",
+static const char *ctl_typename[CTLTYPE+1] =
+{
+    [CTLTYPE_INT] = "integer",
+    [CTLTYPE_UINT] = "unsigned integer",
+    [CTLTYPE_LONG] = "long integer",
+    [CTLTYPE_ULONG] = "unsigned long",
+    [CTLTYPE_U8] = "uint8_t",
+    [CTLTYPE_U16] = "uint16_t",
+    [CTLTYPE_U32] = "uint32_t",
+    [CTLTYPE_U64] = "uint64_t",
+    [CTLTYPE_S8] = "int8_t",
+    [CTLTYPE_S16] = "int16_t",
+    [CTLTYPE_S32] = "int32_t",
+    [CTLTYPE_S64] = "int64_t",
+    [CTLTYPE_NODE] = "node",
+    [CTLTYPE_STRING] = "string",
+    [CTLTYPE_OPAQUE] = "opaque",
 };
 
-int aflag,/*bflag, Bflag,*/ dflag, eflag, Fflag,/*fflag,*/ hflag;
-int Iflag, iflag, lflag, Mflag, mflag, Nflag, nflag, oflag, qflag;
-int Sflag, Tflag, tflag, Wflag, xflag, yflag;
-
+int aflag, bflag, Bflag, dflag, eflag, Fflag, fflag, hflag, Iflag;
+int iflag, lflag, Mflag, mflag, Nflag, nflag, oflag, qflag, Sflag;
+int Tflag, tflag, Wflag, xflag, yflag;
 
 int main(int argc, char *argv[argc])
 {
     int ch, error, rootid[SYSCTLMIF_IDMAXLEVEL];
-    size_t rootidlevel= SYSCTLMIF_IDMAXLEVEL;
+    size_t rootidlevel = SYSCTLMIF_IDMAXLEVEL;
     struct sysctlmif_object *root;
     struct sysctlmif_object_list *rootslist = NULL;
     char *tofree, *rootname, *parsestring;
 
-    error=0;
+    error = 0;
 
-    aflag =/*bflag = Bflag =*/ dflag = eflag = Fflag =/*fflag =*/ 0;
+    aflag = bflag = Bflag = dflag = eflag = Fflag = fflag = 0;
     hflag = Iflag = iflag = lflag = Mflag = mflag = Nflag = 0;
-    nflag = oflag = qflag = Sflag = Tflag = tflag = Wflag = xflag = 0;
-    yflag = 0;
-    
+    nflag = oflag = qflag = Sflag = Tflag = tflag = Wflag = 0;
+    xflag = yflag = 0;
+
     atexit(xo_finish_atexit);
-    
+
     xo_set_flags(NULL, XOF_UNITS);
     argc = xo_parse_args(argc, argv);
     if (argc < 0)
-        exit(EXIT_FAILURE);
-    
-    while ((ch	= getopt(argc, argv, "AadeFhiIlMmNnoqSTtWXxy")) != -1) {
+	exit(EXIT_FAILURE);
+
+    while ((ch = getopt(argc, argv, "AadeFhiIlMmNnoqSTtWXxy")) != -1) {
 	switch (ch) {
 	case 'A':
 	    aflag = 1;
@@ -98,14 +96,12 @@ int main(int argc, char *argv[argc])
 	case 'a':
 	    aflag = 1;
 	    break;
-	    /*
 	case 'B':
 	    Bflag = 1;
 	    break;
 	case 'b':
 	    bflag = 1;
 	    break;
-	    */
 	case 'd':
 	    dflag = 1;
 	    break;
@@ -115,16 +111,14 @@ int main(int argc, char *argv[argc])
 	case 'F':
 	    Fflag = 1;
 	    break;
-	    /*
 	case 'f':
 	    fflag = 1;
 	    break;
-	    */
 	case 'h':
 	    hflag = 1;
 	    break;
 	case 'I':
-	    Iflag=1;
+	    Iflag = 1;
 	    break;
 	case 'i':
 	    iflag = 1;
@@ -139,39 +133,38 @@ int main(int argc, char *argv[argc])
 	    mflag = 1;
 	    break;
 	case 'N':
-	    Nflag=1;
+	    Nflag = 1;
 	    break;
 	case 'n':
-	    nflag=1;
+	    nflag = 1;
 	    break;
 	case 'o':
-	    oflag=1;
+	    oflag = 1;
 	    break;
 	case 'q':
-	    qflag=1;
+	    qflag = 1;
 	    break;
 	case 'S':
-	    Sflag=1;
+	    Sflag = 1;
 	    break;
 	case 'T':
-	    Tflag=1;
+	    Tflag = 1;
 	    break;
 	case 't':
-	    tflag=1;
+	    tflag = 1;
 	    break;
 	case 'W':
 	    Wflag = 1;
 	    break;
 	case 'w':
-	    /* compatibility */
-	    /* ignored */
+	    /* compatibility, ignored */
 	    break;
 	case 'X':
-	    aflag=1;
-	    xflag=1;
+	    aflag = 1;
+	    xflag = 1;
 	    break;
 	case 'x':
-	    xflag=1;
+	    xflag = 1;
 	    break;
 	case 'y':
 	    yflag = 1;
@@ -184,173 +177,171 @@ int main(int argc, char *argv[argc])
     argc -= optind;
     argv += optind;
 
-    if(Mflag)
+    if (Mflag)
 	xo_open_container("MIB");
-	
-    if(argc > 0) /* the roots are given in input */
+
+    if (argc > 0) /* the roots are given in input */
     {
-	aflag=0; /* set to 0 for display_tree() */
-	argc=0;
-	while(argv[argc])
+	aflag = 0; /* set to 0 for display_tree() */
+	argc = 0;
+	while (argv[argc])
 	{
 	    parsestring = strdup(argv[argc]);
 	    tofree = rootname = strsep(&parsestring, "=");
-	    if(sysctlmif_nametoid(rootname, strlen(rootname) +1,
-				  rootid, &rootidlevel) != 0)
-	    {
-		if(!iflag)
+	    if (sysctlmif_nametoid(rootname, strlen(rootname) +1,
+				   rootid, &rootidlevel) != 0) {
+		if (!iflag)
 		    error++;
-		
-		if(!iflag && !qflag)
+
+		if (!iflag && !qflag)
 		    printf("sysctl: unknown oid \'%s\'\n", rootname);
 
-		free(tofree);	    
+		free(tofree);
 		argc++;
 		continue;
 	    }
 
-	    if(strlen(rootname) == strlen(argv[argc]))/* only "name" */
-	    {
+	    if (strlen(rootname) == strlen(argv[argc])) {/* only "name" */
 		root = sysctlmif_tree(rootid, rootidlevel,
-				      SYSCTLMIF_FALL,SYSCTLMIF_MAXDEPTH);
+				      SYSCTLMIF_FALL, SYSCTLMIF_MAXDEPTH);
 		display_tree(root);
 		sysctlmif_freetree(root);
 	    }
-	    else /* a value is given*/
-	    {
-		root = sysctlmif_object(rootid,rootidlevel,
+	    else { /* a value is given*/
+		root = sysctlmif_object(rootid, rootidlevel,
 					SYSCTLMIF_FNAME | SYSCTLMIF_FTYPE);
-		set_value(root,parsestring);
+		set_value(root, parsestring);
 		sysctlmif_freeobject(root);
 	    }
-	    
-	    free(tofree);	    
+
+	    free(tofree);
 	    argc++;
 	}
     }
     
-    else if (aflag) /* the roots are objects with level 1 */
-    {
+    else if (aflag) { /* the roots are objects with level 1 */
 	rootslist = sysctlmif_filterlist(filter_level_one, SYSCTLMIF_FALL);
 	xo_open_list("tree");
-	while (!SLIST_EMPTY(rootslist))
-	{
+	while (!SLIST_EMPTY(rootslist)) {
 	    root = SLIST_FIRST(rootslist);
 	    root = sysctlmif_tree(root->id, root->idlevel,
-			       SYSCTLMIF_FALL, SYSCTLMIF_MAXDEPTH);
+				  SYSCTLMIF_FALL, SYSCTLMIF_MAXDEPTH);
 	    display_tree(root);
 	    SLIST_REMOVE_HEAD(rootslist, object_link);
 	    sysctlmif_freetree(root);
 	}
 	xo_close_list("tree");
     }
+    
     else /* no roots and no -a */
 	usage();
 
-    if(Mflag)
-    xo_close_container("MIB");
-         
-    return error;
+    if (Mflag)
+	xo_close_container("MIB");
+
+    return (error);
 }
+
 
 void usage()
 {
-    printf("usage: nsysctl [-AadeFhiIlMmNnoqSTtWXxy] [ -B <bufsize> ] "\
+    printf("usage: nsysctl [-AadeFhiIlMmNnoqSTtWXxy] [ -B <bufsize> ] " \
 	   "[-f filename] name[=value] ...\n");
     printf("       nsysctl [-AadeFhIlMmNnoqSTtWXxy] [ -B <bufsize> ] -a\n");
     printf("       nsysctl --libxo <libxo_options> [above options]\n");
 }
 
 
-int filter_level_one(struct sysctlmif_object* object)
-{	    
-    if(object->idlevel == 1)
-	return 0;
-    
-    return -1;
+int filter_level_one(struct sysctlmif_object *object)
+{
+    return object->idlevel == 1 ? 0 : -1;
 }
+
 
 /* Preorder visit */
 void display_tree(struct sysctlmif_object *object)
 {
     int showable = 1;
 
-    if(object->id[0] == 0 && !Sflag)
+    if ((object->id[0] == 0) && !Sflag)
 	showable = 0;
 
-    if(Wflag &&
-       !((object->flags & CTLFLAG_WR) && !(object->flags & CTLFLAG_STATS)))
+    if (Wflag && !((object->flags & CTLFLAG_WR) && !(object->flags & CTLFLAG_STATS)))
 	showable = 0;
 
-    if(Tflag && !(object->flags & CTLFLAG_TUN))
-	showable = 0;
-    
-    if(!Iflag && (!IS_LEAF(object)))
+    if (Tflag && !(object->flags & CTLFLAG_TUN))
 	showable = 0;
 
-    if(showable)
+    if (!Iflag && (!IS_LEAF(object)))
+	showable = 0;
+
+    if (showable)
     {
 	xo_open_instance("object");
 
-	if(!nflag)
+	if (!nflag)
 	{
-	    xo_emit("{:name/%s}",object->name);
-	    if(!Nflag)
-		eflag ? xo_emit("{L:=}"): xo_emit("{Pcw:}");
+	    xo_emit("{:name/%s}", object->name);
+	    if (!Nflag) {
+		eflag ? xo_emit("{L:=}") : xo_emit("{Pcw:}");
+	    }
 	}
-	
-	if(!Nflag)
-	{
-	    if(dflag) /* entry without descr could return "\0" or NULL */
+
+	if (!Nflag) {
+	    if (dflag) /* entry without descr could return "\0" or NULL */
 		xo_emit("{:description/%s}", object->desc == NULL ? "" : object->desc);
-	    else if(tflag)
+	    else if (tflag)
 		xo_emit("{:type/%s}", ctl_typename[object->type]);
-	    else if(Fflag)
-		xo_emit("{:flags/%x}",object->flags);
-	    else if(mflag)
-		xo_emit("{:format/%s}",object->fmt);
-	    else if(lflag)
+	    else if (Fflag)
+		xo_emit("{:flags/%x}", object->flags);
+	    else if (mflag)
+		xo_emit("{:format/%s}", object->fmt);
+	    else if (lflag)
 		xo_emit("{:label/%s}", object->label);
-	    else if(yflag)
+	    else if (yflag)
 	    {
 		xo_open_container("id");
 		int i;
-		for(i=0; i < object->idlevel; i++)
+		for (i = 0; i < object->idlevel; i++)
 		{
 		    xo_emit("{:id/%x}", object->id[i]);
-		    if(i+1<object->idlevel)
+		    if (i+1 < object->idlevel)
 			xo_emit("{L:.}");
 		}
 		xo_close_container("id");
 	    }
 	    else /* print value */
-		if(IS_LEAF(object))
-		{
+		if (IS_LEAF(object)) {
 		    /* don't show opaque with -a opt */
-		    if(object->type == CTLTYPE_OPAQUE)
-			display_opaque_value(object, hflag, oflag, xflag);
+		    if (object->type == CTLTYPE_OPAQUE) {
+			display_opaque_value(object, hflag,
+					     oflag, xflag);
+		    }
 		    /*sysctl.* leaves have node type,sysctl.name2id integer*/
-		    else if(object->type != CTLTYPE_NODE &&
-			    strcmp(object->name, "sysctl.name2oid") != 0)
+		    else if ((object->type != CTLTYPE_NODE) &&
+			     (strcmp(object->name,
+				     "sysctl.name2oid") != 0)) {
 			display_basic_type(object);
+		    }
 		}
 	}
 	xo_emit("{L:\n}");
     }
 
-	
+
     struct sysctlmif_object *child;
 
-    if(object->children != NULL)
-	if(!SLIST_EMPTY(object->children))
-	{
-	    if(Iflag)
+    if (object->children != NULL) {
+	if (!SLIST_EMPTY(object->children)) {
+	    if (Iflag)
 		xo_open_container("children");
+
 	    SLIST_FOREACH(child, object->children, object_link)
 		display_tree(child);
-	    if(Iflag)
+	    if (Iflag)
 		xo_close_container("children");
 	}
+    }
 
     xo_close_instance("object");
 }
@@ -358,135 +349,133 @@ void display_tree(struct sysctlmif_object *object)
 
 void display_basic_type(struct sysctlmif_object *object)
 {
-    size_t value_size=0;
+    size_t value_size = 0;
     void *value;
 
     // BUG --libxo=xml => segmentation fault
     //if(strcmp(object->name,"debug.witness.fullgraph") ==0)
     //return;
 
-    GET_VALUE_SIZE(object->id, object->idlevel, &value_size);
-    if (( value = malloc(value_size)) == NULL)
-    {
-	printf("%s: Cannot get value MALLOC\n",object->name);
+    sysctl(object->id, object->idlevel, NULL, &value_size, NULL, 0);
+    if ((value = malloc(value_size)) == NULL) {
+	printf("%s: Cannot get value MALLOC\n", object->name);
 	return;
     }
     memset(value, 0, value_size);
-    
-    if(sysctl(object->id,object->idlevel,value,&value_size,NULL,0) < 0)
-    {
+
+    if (sysctl(object->id, object->idlevel, value, &value_size, NULL, 0) < 0) {
 	return;
     }
 
-    switch(object->type)
-    {
+    switch (object->type) {
     case CTLTYPE_INT:
-	xo_emit("{:value/%d}", *((int*)value) );
+	xo_emit("{:value/%d}", *((int *)value));
 	break;
     case CTLTYPE_LONG:
-	xo_emit("{:value/%ld}", *((long*)value) );
+	xo_emit("{:value/%ld}", *((long *)value));
 	break;
     case CTLTYPE_S8:
-	xo_emit("{:value/%d}", *((int8_t*)value) );
+	xo_emit("{:value/%d}", *((int8_t *)value));
 	break;
     case CTLTYPE_S16:
-	xo_emit("{:value/%d}", *((int16_t*)value) );
+	xo_emit("{:value/%d}", *((int16_t *)value));
 	break;
     case CTLTYPE_S32:
-	xo_emit("{:value/%d}", *((int32_t*)value) );
+	xo_emit("{:value/%d}", *((int32_t *)value));
 	break;
     case CTLTYPE_S64:
-	xo_emit("{:value/%ld}", *((int64_t*)value) );
+	xo_emit("{:value/%ld}", *((int64_t *)value));
 	break;
     case CTLTYPE_UINT:
-	xo_emit("{:value/%u}", *((u_int*)value) );
+	xo_emit("{:value/%u}", *((u_int *)value));
 	break;
     case CTLTYPE_ULONG:
-	xo_emit("{:value/%lu}", *((u_long*)value) );
+	xo_emit("{:value/%lu}", *((u_long *)value));
 	break;
     case CTLTYPE_U8:
-	xo_emit("{:value/%u}", *((uint8_t*)value) );
+	xo_emit("{:value/%u}", *((uint8_t *)value));
 	break;
     case CTLTYPE_U16:
-	xo_emit("{:value/%u}", *((uint16_t*)value) );
+	xo_emit("{:value/%u}", *((uint16_t *)value));
 	break;
     case CTLTYPE_U32:
-	xo_emit("{:value/%u}", *((uint32_t*)value) );
+	xo_emit("{:value/%u}", *((uint32_t *)value));
 	break;
     case CTLTYPE_U64:
-	xo_emit("{:value/%lu}", *((uint64_t*)value) );
+	xo_emit("{:value/%lu}", *((uint64_t *)value));
 	break;
     case CTLTYPE_NODE:
-	xo_emit("{:value/%s}", "--- TYPE NODE ---" );
+	xo_emit("{:value/%s}", "--- TYPE NODE ---");
 	break;
     case CTLTYPE_STRING:
-	xo_emit("{:value/%s}", (char*)value );
+	xo_emit("{:value/%s}", (char *)value);
 	break;
     default:
-	printf("%s, Error bad type!\n",object->name);
+	printf("%s, Error bad type!\n", object->name);
     }
 
     free(value);
-
-    return;
 }
 
 
-int set_value(struct sysctlmif_object *object, char* input)
+int set_value(struct sysctlmif_object *object, char *input)
 {
-	switch(object->type)
-	{
-	case CTLTYPE_STRING:
-	    sysctl(object->id,object->idlevel, NULL, 0,
-		   input,sizeof(input));
-	    break;
-	case CTLTYPE_OPAQUE:
-	    break;
-	case CTLTYPE_NODE:
-	    break;
-	    /*
-	case CTLTYPE_INT:
-	    xo_emit("{:value/%d}", *((int*)value) );
-	    break;
-	case CTLTYPE_LONG:
-	    xo_emit("{:value/%ld}", *((long*)value) );
-	    break;
-	case CTLTYPE_S8:
-	    xo_emit("{:value/%d}", *((int8_t*)value) );
-	    break;
-	case CTLTYPE_S16:
-	    xo_emit("{:value/%d}", *((int16_t*)value) );
-	    break;
-	case CTLTYPE_S32:
-	    xo_emit("{:value/%d}", *((int32_t*)value) );
-	    break;
-	case CTLTYPE_S64:
-	    xo_emit("{:value/%ld}", *((int64_t*)value) );
-	    break;
-	case CTLTYPE_UINT:
-	    xo_emit("{:value/%u}", *((u_int*)value) );
-	    break;
-	case CTLTYPE_ULONG:
-	    xo_emit("{:value/%lu}", *((u_long*)value) );
-	    break;
-	case CTLTYPE_U8:
-	    xo_emit("{:value/%u}", *((uint8_t*)value) );
-	    break;
-	case CTLTYPE_U16:
-	    xo_emit("{:value/%u}", *((uint16_t*)value) );
-	    break;
-	case CTLTYPE_U32:
-	    xo_emit("{:value/%u}", *((uint32_t*)value) );
-	    break;
-	case CTLTYPE_U64:
-	    xo_emit("{:value/%lu}", *((uint64_t*)value) );
-	    break;
-	    */
-	default: // error
-	    printf("parse_argv_or_line: Bad type to set\n");
-	    break;	   
-	}
+    int error = 0;
 
-    return 0;
+    switch (object->type) {
+    case CTLTYPE_STRING:
+	sysctl(object->id, object->idlevel, NULL, 0,
+	       input, sizeof(input));
+	break;
+    case CTLTYPE_OPAQUE:
+	xo_warnx("Cannot set an opaque input");
+	error = 1;
+	break;
+    case CTLTYPE_NODE:
+	xo_warnx("oid \'%s\' isn't a leaf node",object->name);
+	error = 1;
+	break;
+    case CTLTYPE_INT:
+	xo_emit("{:input/%d}", *((int *)input));
+	break;
+    case CTLTYPE_LONG:
+	xo_emit("{:input/%ld}", *((long *)input));
+	break;
+    case CTLTYPE_S8:
+	xo_emit("{:input/%d}", *((int8_t *)input));
+	break;
+    case CTLTYPE_S16:
+	xo_emit("{:input/%d}", *((int16_t *)input));
+	break;
+    case CTLTYPE_S32:
+	xo_emit("{:input/%d}", *((int32_t *)input));
+	break;
+    case CTLTYPE_S64:
+	xo_emit("{:input/%ld}", *((int64_t *)input));
+	break;
+    case CTLTYPE_UINT:
+	xo_emit("{:input/%u}", *((u_int *)input));
+	break;
+    case CTLTYPE_ULONG:
+	xo_emit("{:input/%lu}", *((u_long *)input));
+	break;
+    case CTLTYPE_U8:
+	xo_emit("{:input/%u}", *((uint8_t *)input));
+	break;
+    case CTLTYPE_U16:
+	xo_emit("{:input/%u}", *((uint16_t *)input));
+	break;
+    case CTLTYPE_U32:
+	xo_emit("{:input/%u}", *((uint32_t *)input));
+	break;
+    case CTLTYPE_U64:
+	xo_emit("{:input/%lu}", *((uint64_t *)input));
+	break;
+    default:
+	xo_warnx("Unknown type");
+	error = 1;
+	break;
+    }
+
+    return (error);
 }
-

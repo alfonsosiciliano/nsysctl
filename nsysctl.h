@@ -26,12 +26,12 @@
 #ifndef _NSYSCTL_H_
 #define _NSYSCTL_H_
 
-#define NSYSCTL_VERSION 	0.1
+#define NSYSCTL_VERSION    0.1
 
 void
-display_opaque_value(struct sysctlmif_object* object, int hflag, int oflag,
-		     int xflag);
+display_opaque_value(struct sysctlmif_object *object, int hflag, int oflag,
+    int xflag);
 
-int is_opaque_defined(const char* fmt);
+int is_opaque_defined(const char *fmt);
 
 #endif /* _NSYSCTL_H_ */
