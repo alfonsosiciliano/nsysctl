@@ -289,7 +289,7 @@ S_vmtotal(struct sysctlmif_object *object, int hflag)
 		xo_emit("{U:K}{N:)}");					  \
 		xo_close_container(contname);				  \
 		xo_emit("{L:\n}");					  \
-	} while (0);
+	} while (0)
 
 	XOVM("virtual-memory", "Virtual Memory", "\t\t",
 	    pg2k(v.t_vm), pg2k(v.t_avm));
