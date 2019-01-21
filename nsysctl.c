@@ -37,8 +37,8 @@
 #define IS_LEAF(node)    (node->children == NULL || SLIST_EMPTY(node->children))
 
 void usage();
-int filter_toplevel(struct sysctlmif_object *);
 int set_value(struct sysctlmif_object *, char *);
+int parse_line_or_argv(char*);
 void display_tree(struct sysctlmif_object *);
 void display_basic_type(struct sysctlmif_object *);
 
@@ -67,11 +67,10 @@ int Tflag, tflag, Wflag, xflag, yflag;
 
 int main(int argc, char *argv[argc])
 {
-    int ch, error, rootid[SYSCTLMIF_IDMAXLEVEL];
-    size_t rootidlevel = SYSCTLMIF_IDMAXLEVEL;
-    struct sysctlmif_object *root;
-    struct sysctlmif_object_list *rootslist = NULL;
-    char *tofree, *rootname, *parsestring;
+    int ch, error;
+    struct sysctlmif_object *root, *nodelevel1;
+    int idroot[1] = {0};
+    size_t idrootlevel = 0;
 
     error = 0;
 
@@ -186,52 +185,20 @@ int main(int argc, char *argv[argc])
 	argc = 0;
 	while (argv[argc])
 	{
-	    parsestring = strdup(argv[argc]);
-	    tofree = rootname = strsep(&parsestring, "=");
-	    if (sysctlmif_nametoid(rootname, strlen(rootname) +1,
-				   rootid, &rootidlevel) != 0) {
-		/* rootname doesn't exist*/
-		if (!iflag)
-		    error++;
-
-		if (!iflag && !qflag)
-		    printf("sysctl: unknown oid \'%s\'\n", rootname);
-	    }
-	    else if (strlen(rootname) == strlen(argv[argc])) {/* only rootname */
-		root = sysctlmif_tree(rootid, rootidlevel,
-				      SYSCTLMIF_FALL, SYSCTLMIF_MAXDEPTH);
-		display_tree(root);
-		sysctlmif_freetree(root);
-	    }
-	    else { /* rootname=value */
-		root = sysctlmif_object(rootid, rootidlevel,
-					SYSCTLMIF_FNAME | SYSCTLMIF_FTYPE);
-		if(!IS_LEAF(root)){
-		    xo_warnx("oid \'%s\' isn't a leaf node",root->name);
-		    error++;
-		}
-		else
-		    set_value(root, parsestring);
-		
-		sysctlmif_freeobject(root);
-	    }
-
-	    free(tofree);
+	    parse_line_or_argv(argv[argc]);
 	    argc++;
 	}
     }
     
     else if (aflag) { /* the roots are objects with level 1 */
-	rootslist = sysctlmif_filterlist(filter_toplevel, SYSCTLMIF_FALL);
 	xo_open_list("tree");
-	while (!SLIST_EMPTY(rootslist)) {
-	    root = SLIST_FIRST(rootslist);
-	    root = sysctlmif_tree(root->id, root->idlevel,
-				  SYSCTLMIF_FALL, SYSCTLMIF_MAXDEPTH);
-	    display_tree(root);
-	    SLIST_REMOVE_HEAD(rootslist, object_link);
-	    sysctlmif_freetree(root);
-	}
+	root = sysctlmif_tree(idroot, idrootlevel, SYSCTLMIF_FALL,
+			      SYSCTLMIF_MAXDEPTH);
+
+	SLIST_FOREACH(nodelevel1, root->children, object_link)
+	    display_tree(nodelevel1);
+
+	sysctlmif_freetree(root);
 	xo_close_list("tree");
     }
     
@@ -244,6 +211,52 @@ int main(int argc, char *argv[argc])
     return (error);
 }
 
+int parse_line_or_argv(char *arg)
+{
+    char *tofree, *nodename, *parsestring;
+    int error = 0;
+    int id[SYSCTLMIF_IDMAXLEVEL];
+    size_t idlevel = SYSCTLMIF_IDMAXLEVEL;
+    struct sysctlmif_object *node;
+    
+    parsestring = strdup(arg);
+    tofree = nodename = strsep(&parsestring, "=");
+    
+    if (sysctlmif_nametoid(nodename, strlen(nodename) +1,
+			   id, &idlevel) != 0)
+    {
+	/* nodename doesn't exist*/
+	if (!iflag)
+	    error++;
+
+	if (!iflag && !qflag)
+	    xo_warnx("unknow \'%s\' oid", nodename);
+    }
+    else if (strlen(nodename) == strlen(arg)) /* only nodename */
+    {
+	node = sysctlmif_tree(id, idlevel,
+			      SYSCTLMIF_FALL, SYSCTLMIF_MAXDEPTH);
+	display_tree(node);
+	sysctlmif_freetree(node);
+    }
+    else  /* nodename=value */
+    {
+	node = sysctlmif_object(id, idlevel,
+				SYSCTLMIF_FNAME | SYSCTLMIF_FTYPE);
+	if(!IS_LEAF(node))
+	{
+	    xo_warnx("oid \'%s\' isn't a leaf node",node->name);
+	    error++;
+	}else
+	    set_value(node, parsestring);
+		
+	sysctlmif_freeobject(node);
+    }
+
+    free(tofree);
+
+    return error;
+}
 
 void usage()
 {
@@ -251,12 +264,6 @@ void usage()
 	   "[-f filename] name[=value] ...\n");
     printf("       nsysctl [-AadeFhIlMmNnoqSTtWXxy] [ -B <bufsize> ] -a\n");
     printf("       nsysctl --libxo <libxo_options> [above options]\n");
-}
-
-
-int filter_toplevel(struct sysctlmif_object *object)
-{
-    return object->idlevel == 1 ? 0 : -1;
 }
 
 
@@ -350,7 +357,7 @@ void display_tree(struct sysctlmif_object *object)
 
 /*
  * this func will be merged with set_value() in version 1.0 
-*/
+ */
 void display_basic_type(struct sysctlmif_object *object)
 {
     size_t value_size = 0;

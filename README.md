@@ -1,7 +1,7 @@
 README
 ======
 
-[Note: [FreeBSD](http://www.freebsd.org)&copy; is a registered trademark of the [FreeBSD Foundation](https://www.freebsdfoundation.org)]  
+Note: [FreeBSD](http://www.freebsd.org)&copy; is a registered trademark of the [FreeBSD Foundation](https://www.freebsdfoundation.org).  
 
 
 **nsysctl** is a FreeBSD [sysctl](https://www.freebsd.org/cgi/man.cgi?query=sysctl&sektion=8&manpath=FreeBSD+13-current) 
@@ -16,11 +16,8 @@ utility clone, it depends on [sysctlmibinfo](http://gitlab.com/alfix/sysctlmibin
  * new options [-FIlMmSy],
  * useful code will be added to [sysctlview](http://gitlab.com/alfix/sysctlview), too.
 
-TODO Version 0.1
 
- * [X] ~~Update lib API libsysctl -> sysctlmibinfo~~
-
-TODO Version 0.2
+TODO Version 1.0
 
  * [X] ~~options: nsysctl value=NUMBER~~
  * [ ] options: nsysctl -f filename
@@ -30,17 +27,13 @@ TODO Version 0.2
  * [ ] failure: return 1
  * [ ] libxo: fix nsysctl libxo=xml debug.witness.fullgraph  (segmentation fault)
  * [ ] libxo: fix nsysctl libxo=text debug.fail_point  (utf8)
+ * [ ] improve output for name=value
+ * [ ] libxo: xo-ish opaque.c
  * [X] ~~testing: add regression comparetest.sh~~
  * [X] ~~manual page: add nsysctl.8~~
  * [ ] manual page: add new options to nsysctl.8
  * [X] ~~create FreeBSD port directory~~
-
-TODO Version 0.3
-
- * [ ] improve xml output for name=value
  * [ ] merge set_value() with display\_basic\_value()
- * [ ] libxo: xo-ish opaque.c
- * [ ] FreeBSD port: submitt a PR
 
 
 
