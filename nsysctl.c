@@ -364,8 +364,8 @@ void display_basic_type(struct sysctlmif_object *object)
     void *value;
 
     // BUG --libxo=xml => segmentation fault
-    //if(strcmp(object->name,"debug.witness.fullgraph") ==0)
-    //return;
+    if(strcmp(object->name,"debug.witness.fullgraph") ==0)
+    	return;
 
     sysctl(object->id, object->idlevel, NULL, &value_size, NULL, 0);
     if ((value = malloc(value_size)) == NULL) {
