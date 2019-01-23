@@ -270,6 +270,7 @@ void usage()
 /* Preorder visit */
 void display_tree(struct sysctlmif_object *object)
 {
+    struct sysctlmif_object *child;
     int showable = 1;
 
     if ((object->id[0] == 0) && !Sflag)
@@ -337,19 +338,15 @@ void display_tree(struct sysctlmif_object *object)
 	xo_emit("{L:\n}");
     }
 
+    if (!IS_LEAF(object)) {
+	if (Iflag)
+	    xo_open_container("children");
 
-    struct sysctlmif_object *child;
-
-    if (object->children != NULL) {
-	if (!SLIST_EMPTY(object->children)) {
-	    if (Iflag)
-		xo_open_container("children");
-
-	    SLIST_FOREACH(child, object->children, object_link)
-		display_tree(child);
-	    if (Iflag)
-		xo_close_container("children");
-	}
+	SLIST_FOREACH(child, object->children, object_link)
+	    display_tree(child);
+	
+	if (Iflag)
+	    xo_close_container("children");
     }
 
     xo_close_instance("object");
