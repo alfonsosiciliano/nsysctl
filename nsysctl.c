@@ -92,6 +92,14 @@ void display_basic_type(struct sysctlmif_object *object)
 	return;
     }
 
+    int i;
+    if (bflag) {
+	for (i = 0; i < value_size; i++) {
+	    xo_emit("{:raw/%c}", ((unsigned char*)(value))[i]);
+	}
+	return;
+    }
+
     if (!nflag) {
 	xo_emit("{:name/%s}", object->name);
 	if (!Nflag) {
@@ -398,7 +406,7 @@ int main(int argc, char *argv[argc])
     if (argc < 0)
 	exit(EXIT_FAILURE);
 
-    while ((ch = getopt(argc, argv, "AadeFhiIlMmNnoqSTtWXxy")) != -1) {
+    while ((ch = getopt(argc, argv, "AabdeFhiIlMmNnoqSTtWXxy")) != -1) {
 	switch (ch) {
 	case 'A':
 	    aflag = 1;

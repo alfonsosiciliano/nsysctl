@@ -21,7 +21,7 @@ TODO Version 1.0
 
  * [X] ~~options: nsysctl value=NUMBER~~
  * [ ] options: nsysctl -f filename
- * [ ] options: nsysctl -b
+ * [X] ~~options: nsysctl -b~~
  * [ ] options: nsysctl -B
  * [ ] failure: add xo\_warn and xo\_err messages
  * [ ] failure: return 1
