@@ -32,7 +32,7 @@
 #include <sysctlmibinfo.h>
 #include <unistd.h>
 
-#include "nsysctl.h"
+#include "opaque.h"
 
 #define IS_LEAF(node)    (node->children == NULL || SLIST_EMPTY(node->children))
 
