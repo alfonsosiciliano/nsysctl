@@ -28,6 +28,6 @@
 
 void
 display_opaque_value(struct sysctlmif_object *object, int hflag, int oflag,
-    int xflag);
+		     int xflag, int eflag, int nflag);
 
 #endif /* _NSYSCTL_OPAQUE_H_ */

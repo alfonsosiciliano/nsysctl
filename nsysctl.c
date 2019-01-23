@@ -321,7 +321,7 @@ void display_tree(struct sysctlmif_object *object)
 	if(!Nflag && showproperties == 0 && IS_LEAF(object))
 	{
 	    if (object->type == CTLTYPE_OPAQUE)
-		display_opaque_value(object, hflag,oflag, xflag);
+		display_opaque_value(object, hflag,oflag, xflag, eflag, nflag);
 	    else if ((object->type != CTLTYPE_NODE) && (object->id[0] != 0))
 		display_basic_type(object);
 	}
