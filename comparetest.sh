@@ -4,7 +4,7 @@
 
 
 # Regression
-for t in -aNe -ade -aNTe -aWNe
+for t in -aNe -ade -aNTe -aWNe -aT
 do
     echo "$t"
     sysctl $t >> sysctl.txt
@@ -15,9 +15,9 @@ done
 
 
 # TO FIX
-echo "aT"
-sysctl -aT >> sysctl.txt
-./nsysctl -aT >> nsysctl.txt
+echo "a"
+sysctl -a >> sysctl.txt
+./nsysctl -a >> nsysctl.txt
 #diff sysctl.txt nsysctl.txt | diffstat -m
 #diff -y -W 120 sysctl.txt nsysctl.txt 
 meld sysctl.txt nsysctl.txt

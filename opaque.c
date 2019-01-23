@@ -55,16 +55,14 @@ static int S_clockinfo(struct sysctlmif_object *object, int);
 static int S_loadavg(struct sysctlmif_object *object, int);
 static int S_timeval(struct sysctlmif_object *object, int);
 static int S_vmtotal(struct sysctlmif_object *object, int);
-
 #ifdef __amd64__
 static int S_efi_map(struct sysctlmif_object *object, int);
-
 #endif
 #if defined(__amd64__) || defined(__i386__)
 static int S_bios_smap_xattr(struct sysctlmif_object *object, int);
-
 #endif
 static int strIKtoi(const char *str, char **endptrp, const char *fmt);
+
 
 void display_opaque_value(struct sysctlmif_object *object, int hflag, int oflag, int xflag)
 {
@@ -74,6 +72,7 @@ void display_opaque_value(struct sysctlmif_object *object, int hflag, int oflag,
 	size_t sizevalue = BUFSIZ *500;
 
 	xo_open_container("value");
+	
 	if (strcmp(object->name, "kern.clockrate") == 0) {
 		S_clockinfo(object, hflag);
 	} else if (strcmp(object->name, "kern.boottime") == 0) {

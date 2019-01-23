@@ -36,11 +36,9 @@
 
 #define IS_LEAF(node)    (node->children == NULL || SLIST_EMPTY(node->children))
 
-void usage();
-int set_basic_value(struct sysctlmif_object *, char *);
-int parse_line_or_argv(char*);
-void display_tree(struct sysctlmif_object *);
-void display_basic_type(struct sysctlmif_object *);
+int aflag, bflag, Bflag, dflag, eflag, Fflag, fflag, hflag, Iflag;
+int iflag, lflag, Mflag, mflag, Nflag, nflag, oflag, qflag, Sflag;
+int Tflag, tflag, Wflag, xflag, yflag;
 
 static const char *ctl_typename[CTLTYPE+1] =
 {
@@ -60,10 +58,6 @@ static const char *ctl_typename[CTLTYPE+1] =
     [CTLTYPE_STRING] = "string",
     [CTLTYPE_OPAQUE] = "opaque",
 };
-
-int aflag, bflag, Bflag, dflag, eflag, Fflag, fflag, hflag, Iflag;
-int iflag, lflag, Mflag, mflag, Nflag, nflag, oflag, qflag, Sflag;
-int Tflag, tflag, Wflag, xflag, yflag;
 
 void usage()
 {
@@ -94,8 +88,15 @@ void display_basic_type(struct sysctlmif_object *object)
     memset(value, 0, value_size);
 
     if (sysctl(object->id, object->idlevel, value, &value_size, NULL, 0) != 0) {
-	xo_warn("cannot get value");
+	//xo_warn("%s",object->name); sysctl compatibility
 	return;
+    }
+
+    if (!nflag) {
+	xo_emit("{:name/%s}", object->name);
+	if (!Nflag) {
+	    eflag ? xo_emit("{L:=}") : xo_emit("{Pcw:}");
+	}
     }
 
     switch (object->type) {
@@ -144,6 +145,8 @@ void display_basic_type(struct sysctlmif_object *object)
     default:
 	printf("%s, Error bad type!\n", object->name);
     }
+
+    xo_emit("{L:\n}");
 
     free(value);
 }
@@ -246,6 +249,90 @@ int set_basic_value(struct sysctlmif_object *object, char *input)
     return (error);
 }
 
+/* Preorder visit */
+void display_tree(struct sysctlmif_object *object)
+{
+    struct sysctlmif_object *child;
+    int showable = 1;
+    int showproperties = 0;
+
+    if ((object->id[0] == 0) && !Sflag)
+	showable = 0;
+
+    if (Wflag && !((object->flags & CTLFLAG_WR) && !(object->flags & CTLFLAG_STATS)))
+	showable = 0;
+
+    if (Tflag && !(object->flags & CTLFLAG_TUN))
+	showable = 0;
+
+    if (!Iflag && (!IS_LEAF(object)))
+	showable = 0;
+
+    if(dflag || tflag || Fflag || mflag || lflag || yflag)
+	showproperties = 1;
+
+    if (showable)
+    {
+	xo_open_instance("object");
+
+	if (Nflag)
+	    xo_emit("{:name/%s}{L:\n}", object->name);
+
+	if (!Nflag && showproperties == 1)
+	{
+	    if (!nflag) {
+		xo_emit("{:name/%s}", object->name);
+		if (!Nflag)
+		    eflag ? xo_emit("{L:=}") : xo_emit("{Pcw:}");
+	    }
+	    if (dflag) /* entry without descr could return "\0" or NULL */
+		xo_emit("{:description/%s}", object->desc == NULL ? "" : object->desc);
+	    else if (tflag)
+		xo_emit("{:type/%s}", ctl_typename[object->type]);
+	    else if (Fflag)
+		xo_emit("{:flags/%x}", object->flags);
+	    else if (mflag)
+		xo_emit("{:format/%s}", object->fmt);
+	    else if (lflag)
+		xo_emit("{:label/%s}", object->label);
+	    else if (yflag)
+	    {
+		xo_open_container("id");
+		int i;
+		for (i = 0; i < object->idlevel; i++)
+		{
+		    xo_emit("{:id/%x}", object->id[i]);
+		    if (i+1 < object->idlevel)
+			xo_emit("{L:.}");
+		}
+		xo_close_container("id");
+	    }
+	    xo_emit("{L:\n}");
+	}
+
+	if(!Nflag && showproperties == 0 && IS_LEAF(object))
+	{
+	    if (object->type == CTLTYPE_OPAQUE)
+		display_opaque_value(object, hflag,oflag, xflag);
+	    else if ((object->type != CTLTYPE_NODE) && (object->id[0] != 0))
+		display_basic_type(object);
+	}
+    }
+
+    if (!IS_LEAF(object)) {
+	if (Iflag)
+	    xo_open_container("children");
+
+	SLIST_FOREACH(child, object->children, object_link)
+	    display_tree(child);
+	
+	if (Iflag)
+	    xo_close_container("children");
+    }
+
+    xo_close_instance("object");
+}
+
 int parse_line_or_argv(char *arg)
 {
     char *tofree, *nodename, *parsestring;
@@ -288,88 +375,6 @@ int parse_line_or_argv(char *arg)
     free(tofree);
 
     return error;
-}
-
-/* Preorder visit */
-void display_tree(struct sysctlmif_object *object)
-{
-    struct sysctlmif_object *child;
-    int showable = 1;
-
-    if ((object->id[0] == 0) && !Sflag)
-	showable = 0;
-
-    if (Wflag && !((object->flags & CTLFLAG_WR) && !(object->flags & CTLFLAG_STATS)))
-	showable = 0;
-
-    if (Tflag && !(object->flags & CTLFLAG_TUN))
-	showable = 0;
-
-    if (!Iflag && (!IS_LEAF(object)))
-	showable = 0;
-
-    if (showable)
-    {
-	xo_open_instance("object");
-
-	if (!nflag)
-	{
-	    xo_emit("{:name/%s}", object->name);
-	    if (!Nflag) {
-		eflag ? xo_emit("{L:=}") : xo_emit("{Pcw:}");
-	    }
-	}
-
-	if (!Nflag) {
-	    if (dflag) /* entry without descr could return "\0" or NULL */
-		xo_emit("{:description/%s}", object->desc == NULL ? "" : object->desc);
-	    else if (tflag)
-		xo_emit("{:type/%s}", ctl_typename[object->type]);
-	    else if (Fflag)
-		xo_emit("{:flags/%x}", object->flags);
-	    else if (mflag)
-		xo_emit("{:format/%s}", object->fmt);
-	    else if (lflag)
-		xo_emit("{:label/%s}", object->label);
-	    else if (yflag)
-	    {
-		xo_open_container("id");
-		int i;
-		for (i = 0; i < object->idlevel; i++)
-		{
-		    xo_emit("{:id/%x}", object->id[i]);
-		    if (i+1 < object->idlevel)
-			xo_emit("{L:.}");
-		}
-		xo_close_container("id");
-	    }
-	    else {
-		if (IS_LEAF(object)) {
-		    if (object->type == CTLTYPE_OPAQUE)
-			display_opaque_value(object, hflag,oflag, xflag);
-		    /*sysctl.* leaves have node type,sysctl.name2id integer*/
-		    else if ((object->type != CTLTYPE_NODE) &&
-			     (object->id[0] != 0))
-			display_basic_type(object);
-		}
-	    }
-	}
-	
-	xo_emit("{L:\n}");
-    }
-
-    if (!IS_LEAF(object)) {
-	if (Iflag)
-	    xo_open_container("children");
-
-	SLIST_FOREACH(child, object->children, object_link)
-	    display_tree(child);
-	
-	if (Iflag)
-	    xo_close_container("children");
-    }
-
-    xo_close_instance("object");
 }
 
 int main(int argc, char *argv[argc])
