@@ -26,6 +26,7 @@
 #include <sys/queue.h>
 
 #include <libxo/xo.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -42,9 +43,9 @@ void display_tree(struct sysctlmif_object *object);
 void display_basic_type(struct sysctlmif_object *object);
 int set_basic_value(struct sysctlmif_object *object, char *input);
 
-int aflag, bflag, Bflag, dflag, eflag, Fflag, fflag, hflag, Iflag;
-int iflag, lflag, Mflag, mflag, Nflag, nflag, oflag, qflag, Sflag;
-int Tflag, tflag, Wflag, xflag, yflag;
+bool aflag, bflag, Bflag, dflag, eflag, Fflag, fflag, hflag, Iflag;
+bool iflag, lflag, Mflag, mflag, Nflag, nflag, oflag, qflag, Sflag;
+bool Tflag, tflag, Wflag, xflag, yflag;
 
 static const char *ctl_typename[CTLTYPE+1] =
 {
@@ -65,6 +66,10 @@ static const char *ctl_typename[CTLTYPE+1] =
     [CTLTYPE_OPAQUE] = "opaque",
 };
 
+/* 
+ * outuput: name - (name:) properties - (name:) value,
+ *          for "name" subtree or -a(ll) tree.
+ */
 void usage()
 {
     printf("usage:\n");
@@ -86,10 +91,10 @@ int main(int argc, char *argv[argc])
 
     error = 0;
 
-    aflag = bflag = Bflag = dflag = eflag = Fflag = fflag = 0;
-    hflag = Iflag = iflag = lflag = Mflag = mflag = Nflag = 0;
-    nflag = oflag = qflag = Sflag = Tflag = tflag = Wflag = 0;
-    xflag = yflag = 0;
+    aflag = bflag = Bflag = dflag = eflag = Fflag = fflag = false;
+    hflag = Iflag = iflag = lflag = Mflag = mflag = Nflag = false;
+    nflag = oflag = qflag = Sflag = Tflag = tflag = Wflag = false;
+    xflag = yflag = false;
 
     atexit(xo_finish_atexit);
 
@@ -101,84 +106,84 @@ int main(int argc, char *argv[argc])
     while ((ch = getopt(argc, argv, "AabdeFhiIlMmNnoqSTtWXxy")) != -1) {
 	switch (ch) {
 	case 'A':
-	    aflag = 1;
-	    oflag = 1;
+	    aflag = true;
+	    oflag = true;
 	    break;
 	case 'a':
-	    aflag = 1;
+	    aflag = true;
 	    break;
 	case 'B':
-	    Bflag = 1;
+	    Bflag = true;
 	    break;
 	case 'b':
-	    bflag = 1;
+	    bflag = true;
 	    break;
 	case 'd':
-	    dflag = 1;
+	    dflag = true;
 	    break;
 	case 'e':
-	    eflag = 1;
+	    eflag = true;
 	    break;
 	case 'F':
-	    Fflag = 1;
+	    Fflag = true;
 	    break;
 	case 'f':
-	    fflag = 1;
+	    fflag = true;
 	    break;
 	case 'h':
-	    hflag = 1;
+	    hflag = true;
 	    break;
 	case 'I':
-	    Iflag = 1;
+	    Iflag = true;
 	    break;
 	case 'i':
-	    iflag = 1;
+	    iflag = true;
 	    break;
 	case 'l':
-	    lflag = 1;
+	    lflag = true;
 	    break;
 	case 'M':
-	    Mflag = 1;
+	    Mflag = true;
 	    break;
 	case 'm':
-	    mflag = 1;
+	    mflag = true;
 	    break;
 	case 'N':
-	    Nflag = 1;
+	    Nflag = true;
 	    break;
 	case 'n':
-	    nflag = 1;
+	    nflag = true;
 	    break;
 	case 'o':
-	    oflag = 1;
+	    oflag = true;
 	    break;
 	case 'q':
-	    qflag = 1;
+	    qflag = true;
 	    break;
 	case 'S':
-	    Sflag = 1;
+	    Sflag = true;
 	    break;
 	case 'T':
-	    Tflag = 1;
+	    Tflag = true;
 	    break;
 	case 't':
-	    tflag = 1;
+	    tflag = true;
 	    break;
 	case 'W':
-	    Wflag = 1;
+	    Wflag = true;
 	    break;
 	case 'w':
 	    /* compatibility, ignored */
 	    break;
 	case 'X':
-	    aflag = 1;
-	    xflag = 1;
+	    aflag = true;
+	    xflag = true;
 	    break;
 	case 'x':
-	    xflag = 1;
+	    xflag = true;
 	    break;
 	case 'y':
-	    yflag = 1;
+	    yflag = true;
 	    break;
 	default:
 	    usage();
