@@ -80,24 +80,24 @@ void display_opaque_value(struct sysctlmif_object *object, int hflag, int oflag,
 
 	xo_open_container("value");
 	
-	if (strcmp(object->name, "kern.clockrate") == 0) {
+	if (strcmp(object->fmt, "S,clockinfo") == 0) {
 	    S_clockinfo(object, hflag, eflag, nflag);
-	} else if (strcmp(object->name, "kern.boottime") == 0) {
+	} else if (strcmp(object->fmt, "S,timeval") == 0) {
 		S_timeval(object, hflag, eflag, nflag);
-	} else if (strcmp(object->name, "vm.loadavg") == 0) {
+	} else if (strcmp(object->fmt, "S,loadavg") == 0) {
 		S_loadavg(object, hflag, eflag, nflag);
-	} else if (strcmp(object->name, "vm.vmtotal") == 0) {
+	} else if (strcmp(object->fmt, "S,vmtotal") == 0) {
 		S_vmtotal(object, hflag, eflag, nflag);
 	}
 #ifdef __amd64__
-	else if (strcmp(object->name, "S,efi_map_header") == 0) {
+	/*else if (strcmp(object->fmt, "S,efi_map_header") == 0) {
 		S_efi_map(object, hflag, eflag, nflag);
-	}
+		}*/
 #endif
 #if defined(__amd64__) || defined(__i386__)
-	else if (strcmp(object->name, "S,bios_smap_xattr") == 0) {
+	/*else if (strcmp(object->fmt, "S,bios_smap_xattr") == 0) {
 		S_bios_smap_xattr(object, hflag, eflag, nflag);
-	}
+		}*/
 #endif
 	else if (oflag || xflag) {
 	    	printf_name(object,eflag, nflag);
@@ -119,9 +119,6 @@ void display_opaque_value(struct sysctlmif_object *object, int hflag, int oflag,
 
 		xo_close_container(object->fmt + 2);
 		xo_emit("{L:\n}");
-	} else {
-		//xo_warnx("Error I dont know opaque type of %s",object->name);
-		/*NOTHING*/
 	}
 
 	xo_close_container("value");
