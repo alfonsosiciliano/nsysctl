@@ -35,7 +35,9 @@
 
 #include "opaque.h"
 
-#define IS_LEAF(node)    (node->children == NULL || SLIST_EMPTY(node->children))
+#define IS_LEAF(node)	(node->children == NULL || SLIST_EMPTY(node->children))
+#define WANTINFO()	(dflag || tflag || Fflag || mflag || lflag || yflag)
+#define VALUEOPTIONS()	(hflag || bflag || oflag || xflag)
 
 void usage(void);
 int parse_line_or_argv(char *arg);
@@ -73,13 +75,13 @@ static const char *ctl_typename[CTLTYPE+1] =
 void usage()
 {
     printf("usage:\n");
-    printf("\tnsysctl [-N] [-f filename] [-IiqTW] name[=value] ...\n");
+    printf("\tnsysctl [-N] [-IiqTW] [-f filename] name[=value] ...\n");
     printf("\tnsysctl [-[n|e]dFlmty] [-IiqTW] [-f filename] name[=value] ...\n");
-    printf("\tnsysctl [-[n|e]h[b|o|x]] [-IiqTW] [-B <bufsize>] [-f filename] name[=value] ...\n");
+    printf("\tnsysctl [-[n|e]h[b|o|x]] [-IiqTW] [-B <bufsize>] [-f filename] name[=value] ...\n\n");
     printf("\tnsysctl [-N] [-IqSTW] -a\n");
     printf("\tnsysctl [-[n|e]dFlmty] [-IqSTW] -a\n");
-    printf("\tnsysctl [-[n|e]h[b|o|x]] [-IqSTW] [-B <bufsize>] -A|a|X\n");
-    printf("\tnsysctl --libxo=<opts> [-M] \"ABOVE OPTIONS\"\n");
+    printf("\tnsysctl [-[n|e]h[b|o|x]] [-IqSTW] [-B <bufsize>] -A|a|X\n\n");
+    printf("\tnsysctl --libxo=<opts> [-DM] <ABOVE-OPTIONS>\n");
 }
 
 int main(int argc, char *argv[argc])
@@ -288,9 +290,6 @@ void display_tree(struct sysctlmif_object *object)
     if (!Iflag && (!IS_LEAF(object)))
 	showable = 0;
 
-    if(dflag || tflag || Fflag || mflag || lflag || yflag)
-	showproperties = 1;
-
     if (showable)
     {
 	xo_open_instance("object");
@@ -298,7 +297,7 @@ void display_tree(struct sysctlmif_object *object)
 	if (Nflag)
 	    xo_emit("{:name/%s}{L:\n}", object->name);
 
-	if (!Nflag && showproperties == 1)
+	if (!Nflag && WANTINFO())
 	{
 	    if (!nflag) {
 		xo_emit("{:name/%s}", object->name);
@@ -330,7 +329,7 @@ void display_tree(struct sysctlmif_object *object)
 	    xo_emit("{L:\n}");
 	}
 
-	if(!Nflag && showproperties == 0 && IS_LEAF(object))
+	if(!Nflag && !WANTINFO() && IS_LEAF(object))
 	{
 	    if (object->type == CTLTYPE_OPAQUE)
 		display_opaque_value(object, hflag,oflag, xflag, eflag, nflag);
@@ -452,7 +451,6 @@ int set_basic_value(struct sysctlmif_object *object, char *input)
 {
     long long llivalue = strtoll(input, NULL, 10);
     unsigned long long ullvalue =strtoull(input, NULL, 10);
-    int error = 0;
     size_t llsize, ullsize;
     int intvalue;
     long longvalue;
@@ -466,6 +464,7 @@ int set_basic_value(struct sysctlmif_object *object, char *input)
     uint16_t uint16value;
     uint32_t uint32value;
     uint64_t uint64value;
+        int error = 0;
     
     llsize=sizeof(long long);
     ullsize=sizeof(unsigned long long);
