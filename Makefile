@@ -1,20 +1,14 @@
 # PUBLIC DOMAIN - NO WARRANTY
 # written by Alfonso S. Siciliano
 
-CC = cc
-CCFLAGS = -I/usr/local/include -Wall -g
-LDFLAGS = -lxo -L/usr/local/lib -lsysctlmibinfo
-OUTPUT = nsysctl 
-SOURCES = nsysctl.c opaque.c
-OBJECTS = ${SOURCES:.c=.o}
+PROG=	nsysctl
+SRCS=	nsysctl.c opaque.c
 
-all : ${OUTPUT}
+MAN=	nsysctl.8
 
-clean:
-	rm -f ${OUTPUT} *.o *~ *.core
+CFLAGS=		-I/usr/local/include -Wall -g
+LDFLAGS=	-lxo -L/usr/local/lib -lsysctlmibinfo
 
-${OUTPUT}: ${OBJECTS}
-	${CC} ${LDFLAGS} ${OBJECTS} -o ${.PREFIX}
+CLEANFILES=	*~ *.core
 
-.c.o:
-	${CC} ${CCFLAGS} -c ${.IMPSRC} -o ${.TARGET}
+.include <bsd.prog.mk>
