@@ -231,8 +231,8 @@ int parse_line_or_argv(char *arg)
 {
     char *tofree, *nodename, *parsestring;
     int error = 0;
-    int id[SYSCTLMIF_IDMAXLEVEL];
-    size_t idlevel = SYSCTLMIF_IDMAXLEVEL;
+    int id[SYSCTLMIF_MAXIDLEVEL];
+    size_t idlevel = SYSCTLMIF_MAXIDLEVEL;
     struct sysctlmif_object *node;
     
     parsestring = strdup(arg);
@@ -464,7 +464,7 @@ int set_basic_value(struct sysctlmif_object *object, char *input)
     uint16_t uint16value;
     uint32_t uint32value;
     uint64_t uint64value;
-        int error = 0;
+    int error = 0;
     
     llsize=sizeof(long long);
     ullsize=sizeof(unsigned long long);
