@@ -5,11 +5,11 @@ NAME
 
 SYNOPSIS
      nsysctl [-N] [-IiqTW] [-f filename] name[=value] ...
-     nsysctl [-[n|e]dFlmty] [-IiqTW] [-f filename] name[=value] ...
+     nsysctl [-[n|e]dFlmtvy] [-IiqTW] [-f filename] name[=value] ...
      nsysctl [-[n|e]h[b|o|x]] [-IiqTW] [-B bufsize] [-f -filename]
              name[=value] ...
      nsysctl [-N] [-IqSTW] -a
-     nsysctl [-[n|e]dFlmty] [-IqSTW] -a
+     nsysctl [-[n|e]dFlmtvy] [-IqSTW] -a
      nsysctl [-[n|e]h[b|o|x]] [-IqSTW] [-B bufsize] -A|a|X
      nsysctl --libxo optxo [-DM] ABOVE-OPTIONS
 
@@ -101,6 +101,8 @@ DESCRIPTION
              (CTLFLAG_TUN).
 
      -t      Print the type of the variable.
+
+     -v      [DOC]
 
      -W      Display only writable variables that are not statistical.  Useful
              for determining the set of runtime tunable nsysctls.

@@ -44,7 +44,7 @@
 .Ar name Ns Op = Ns Ar value
 .Ar ...
 .Nm
-.Op Fl [n|e]dFlmty
+.Op Fl [n|e]dFlmtvy
 .Op Fl IiqTW
 .Op Fl f Ar filename
 .Ar name Ns Op = Ns Ar value
@@ -61,7 +61,7 @@
 .Op Fl IqSTW
 .Fl a
 .Nm
-.Op Fl [n|e]dFlmty
+.Op Fl [n|e]dFlmtvy
 .Op Fl IqSTW
 .Fl a
 .Nm
@@ -186,6 +186,8 @@ to standard error.
 Display only variables that are settable via loader (CTLFLAG_TUN).
 .It Fl t
 Print the type of the variable.
+.It Fl v
+[DOC]
 .It Fl W
 Display only writable variables that are not statistical.
 Useful for determining the set of runtime tunable nsysctls.
