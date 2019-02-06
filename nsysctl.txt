@@ -23,29 +23,29 @@ DESCRIPTION
              Generate output via libxo(3) in a selection of different human
              and machine readable formats.  See xo_parse_args(3)
 
-     -A      Doc.
+     -A      [DOC]
 
-     -a      Doc.
+     -a      [DOC]
 
-     -b      Doc
+     -b      [DOC]
 
      -B bufsize
              [NOT IMPLEMENTED] DOC.
 
-     -d      Doc.
+     -d      [DOC]
 
-     -e      Doc.
+     -e      [DOC]
 
      -F      [DOC]
 
      -f filename
-             [NOT IMPLEMENTED] Doc.
+             [NOT IMPLEMENTED] [DOC]
 
-     -h      Doc.
+     -h      [DOC]
 
      -I      [DOC]
 
-     -i      Doc.
+     -i      [DOC]
 
      -l      [DOC]
 
@@ -53,23 +53,23 @@ DESCRIPTION
 
      -m      [DOC]
 
-     -N      Doc.
+     -N      [DOC]
 
-     -o      Doc.
+     -o      [DOC]
 
-     -q      Doc.
+     -q      [DOC]
 
      -S      [DOC]
 
-     -T      Doc.
+     -T      [DOC]
 
-     -t      Doc
+     -t      [DOC]
 
      -v      [DOC]
 
-     -W      Doc.
+     -W      [DOC]
 
-     -X      Doc.
+     -X      [DOC]
 
      -y      [DOC]
 
