@@ -214,6 +214,7 @@ void display_tree(struct sysctlmif_object *object)
     struct sysctlmif_object *child;
     bool showable = true, showsep = false;
     int i;
+    char idlevelstr[7];
 
     if ((object->id[0] == 0) && !Sflag)
 	showable = false;
@@ -237,11 +238,6 @@ void display_tree(struct sysctlmif_object *object)
     {
 	xo_open_instance("object");
 
-	if (Nflag) {
-	    xo_emit("{:name/%s}", object->name);
-	    showsep = true;
-	}
-
 	if (yflag)
 	{
 	    xo_open_container("id");
@@ -249,7 +245,9 @@ void display_tree(struct sysctlmif_object *object)
 		eflag ? xo_emit("{L:=}") : xo_emit("{Pcw:}");
 	    for (i = 0; i < object->idlevel; i++)
 	    {
-		xo_emit("{:id/%x}", object->id[i]);
+		snprintf(idlevelstr, sizeof(idlevelstr), "level%d", i+1);
+		xo_emit_field(NULL, idlevelstr, "%x", NULL, object->id[i]);
+		//xo_emit("{:id/%x}", object->id[i]);
 		if (i+1 < object->idlevel)
 		    xo_emit("{L:.}");
 	    }
@@ -264,6 +262,9 @@ void display_tree(struct sysctlmif_object *object)
 	    showsep = true;					\
 	}while(0)
 
+	if (Nflag)
+	    XOEMITPROP("{:name/%s}", object->name);
+	
 	if (lflag)
 	    XOEMITPROP("{:label/%s}", object->label);
 
