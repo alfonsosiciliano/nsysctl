@@ -43,9 +43,11 @@ void display_tree(struct sysctlmif_object *object);
 void display_basic_type(struct sysctlmif_object *object);
 int set_basic_value(struct sysctlmif_object *object, char *input);
 
-bool aflag, bflag, Bflag, dflag, eflag, Fflag, fflag, hflag, Iflag;
+bool eflag; /*XXX delete, for opaque*/
+bool aflag, bflag, Bflag, dflag, Fflag, fflag, hflag, Iflag;
 bool iflag, lflag, mflag, Nflag, nflag, oflag, pflag, qflag, Rflag;
 bool Sflag, Tflag, tflag, Vflag, vflag, Wflag, xflag, yflag;
+char *sep;
 
 static const char *ctl_typename[CTLTYPE+1] =
 {
@@ -69,8 +71,10 @@ static const char *ctl_typename[CTLTYPE+1] =
 void usage()
 {
     printf("usage:\n");
-    printf("\tnsysctl [--libxo=opts [-R]] [-DdeFIilmNpqTt[-V|v[h[b|o|x]]]Wy] [-B <bufsize>] [-f filename] name[=value] ...\n");
-    printf("\tnsysctl [--libxo=opts [-R]] [-DdeFIlmNpqSTt[-V|v[h[b|o|x]]]Wy] [-B <bufsize>] -A|a|X\n");
+    printf("\tnsysctl [--libxo=opts [-R]] [-DdFIilmNpqTt[-V|v[h[b|o|x]]]Wy] [-e sep]\n");
+    printf("\t\t[-B <bufsize>] [-f filename] name[=value] ...\n");
+    printf("\tnsysctl [--libxo=opts [-R]] [-DdFIlmNpqSTt[-V|v[h[b|o|x]]]Wy] [-e sep]\n");
+    printf("\t\t[-B <bufsize>] -A|a|X\n");
 }
 
 int main(int argc, char *argv[argc])
@@ -79,10 +83,10 @@ int main(int argc, char *argv[argc])
     struct sysctlmif_object *root, *nodelevel1;
     int idroot[1] = {0};
     size_t idrootlevel = 0;
-
+    
+    sep = ": ";
     error = 0;
-
-    aflag = bflag = Bflag = dflag = eflag = Fflag = fflag = false;
+    aflag = bflag = Bflag = dflag = Fflag = fflag = false;
     hflag = Iflag = iflag = lflag = mflag = Nflag = nflag = false;
     oflag = pflag = qflag = Rflag = Sflag = Tflag = tflag = false;
     Vflag = vflag = Wflag = xflag = yflag = false;
@@ -94,7 +98,7 @@ int main(int argc, char *argv[argc])
     if (argc < 0)
 	exit(EXIT_FAILURE);
 
-    while ((ch = getopt(argc, argv, "AabDdeFhiIlmNnopqRSTtVvWXxy")) != -1) {
+    while ((ch = getopt(argc, argv, "AabDde:FhiIlmNnopqRSTtVvWXxy")) != -1) {
 	switch (ch) {
 	case 'A': aflag = true; oflag = true; break;
 	case 'a': aflag = true; break;
@@ -104,7 +108,7 @@ int main(int argc, char *argv[argc])
 	case 'D': dflag = Fflag = lflag = mflag = true;
 	    	  Nflag = tflag = vflag = yflag = true;
 		  break;
-	case 'e': eflag = true; break;
+	case 'e': sep = optarg; break;
 	case 'F': Fflag = true; break;
 	case 'f': fflag = true; break;
 	case 'h': hflag = true; break;
@@ -246,9 +250,7 @@ void display_tree(struct sysctlmif_object *object)
 	{
 	    xo_open_container("id");
 	    if (pflag)
-		xo_emit("{L:[ID]}");
-	    if (showsep || pflag)
-		eflag ? xo_emit("{L:=}") : xo_emit("{Pcw:}");
+		xo_emit("{L:[ID]: }");
 	    for (i = 0; i < object->idlevel; i++)
 	    {
 		snprintf(idlevelstr, sizeof(idlevelstr), "level%d", i+1);
@@ -261,10 +263,10 @@ void display_tree(struct sysctlmif_object *object)
 	}
 
 #define XOEMITPROP(propname,content,value) do {			\
+	    if(showsep)						\
+		xo_emit("{L:/%s}",sep);				\
 	    if (pflag)						\
-		xo_emit("{L:[" propname "]}");			\
-	    if (showsep)					\
-		eflag ? xo_emit("{L:=}") : xo_emit("{Pcw:}");	\
+		xo_emit("{L:[" propname "]: }");		\
 	    xo_emit(content,value);				\
 	    showsep = true;					\
 	} while(0)
@@ -289,10 +291,10 @@ void display_tree(struct sysctlmif_object *object)
 
 	if((vflag || Vflag) && IS_LEAF(object))
 	{
+	    if(showsep)
+		xo_emit("{L:/%s}",sep);
 	    if (pflag)
-		xo_emit("{L:[VALUE]}");
-	    if (showsep)
-		eflag ? xo_emit("{L:=}") : xo_emit("{Pcw:}");
+		xo_emit("{L:[VALUE]: }");
 	    
 	    if (object->type == CTLTYPE_OPAQUE)
 		display_opaque_value(object, hflag,oflag, xflag, eflag, nflag);
