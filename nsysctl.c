@@ -75,13 +75,8 @@ static const char *ctl_typename[CTLTYPE+1] =
 void usage()
 {
     printf("usage:\n");
-    printf("\tnsysctl [-N] [-IiqTW] [-f filename] name[=value] ...\n");
-    printf("\tnsysctl [-[n|e]dFlmty] [-IiqTW] [-f filename] name[=value] ...\n");
-    printf("\tnsysctl [-[n|e]h[b|o|x]] [-IiqTW] [-B <bufsize>] [-f filename] name[=value] ...\n\n");
-    printf("\tnsysctl [-N] [-IqSTW] -a\n");
-    printf("\tnsysctl [-[n|e]dFlmty] [-IqSTW] -a\n");
-    printf("\tnsysctl [-[n|e]h[b|o|x]] [-IqSTW] [-B <bufsize>] -A|a|X\n\n");
-    printf("\tnsysctl --libxo=<opts> [-DM] <ABOVE-OPTIONS>\n");
+    printf("\tnsysctl [--libxo=opts [-M]] [-deFIilmNqTt[-V|v[h[b|o|x]]]Wy] [-B <bufsize>] [-f filename] name[=value] ...\n");
+    printf("\tnsysctl [--libxo=opts [-M]] [-deFIlmNqSTt[-V|v[h[b|o|x]]]Wy] [-B <bufsize>] -A|a|X\n");
 }
 
 int main(int argc, char *argv[argc])
