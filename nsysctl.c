@@ -44,8 +44,8 @@ void display_basic_type(struct sysctlmif_object *object);
 int set_basic_value(struct sysctlmif_object *object, char *input);
 
 bool aflag, bflag, Bflag, dflag, eflag, Fflag, fflag, hflag, Iflag;
-bool iflag, lflag, mflag, Nflag, nflag, oflag, qflag, Rflag, Sflag;
-bool Tflag, tflag, Vflag, vflag, Wflag, xflag, yflag;
+bool iflag, lflag, mflag, Nflag, nflag, oflag, pflag, qflag, Rflag;
+bool Sflag, Tflag, tflag, Vflag, vflag, Wflag, xflag, yflag;
 
 static const char *ctl_typename[CTLTYPE+1] =
 {
@@ -69,8 +69,8 @@ static const char *ctl_typename[CTLTYPE+1] =
 void usage()
 {
     printf("usage:\n");
-    printf("\tnsysctl [--libxo=opts [-R]] [-deFIilmNqTt[-V|v[h[b|o|x]]]Wy] [-B <bufsize>] [-f filename] name[=value] ...\n");
-    printf("\tnsysctl [--libxo=opts [-R]] [-deFIlmNqSTt[-V|v[h[b|o|x]]]Wy] [-B <bufsize>] -A|a|X\n");
+    printf("\tnsysctl [--libxo=opts [-R]] [-DdeFIilmNpqTt[-V|v[h[b|o|x]]]Wy] [-B <bufsize>] [-f filename] name[=value] ...\n");
+    printf("\tnsysctl [--libxo=opts [-R]] [-DdeFIlmNpqSTt[-V|v[h[b|o|x]]]Wy] [-B <bufsize>] -A|a|X\n");
 }
 
 int main(int argc, char *argv[argc])
@@ -84,8 +84,8 @@ int main(int argc, char *argv[argc])
 
     aflag = bflag = Bflag = dflag = eflag = Fflag = fflag = false;
     hflag = Iflag = iflag = lflag = mflag = Nflag = nflag = false;
-    oflag = qflag = Rflag = Sflag = Tflag = tflag = Vflag = false;
-    vflag = Wflag = xflag = yflag = false;
+    oflag = pflag = qflag = Rflag = Sflag = Tflag = tflag = false;
+    Vflag = vflag = Wflag = xflag = yflag = false;
 
     atexit(xo_finish_atexit);
 
@@ -94,13 +94,16 @@ int main(int argc, char *argv[argc])
     if (argc < 0)
 	exit(EXIT_FAILURE);
 
-    while ((ch = getopt(argc, argv, "AabdeFhiIlmNnoqRSTtVvWXxy")) != -1) {
+    while ((ch = getopt(argc, argv, "AabDdeFhiIlmNnopqRSTtVvWXxy")) != -1) {
 	switch (ch) {
 	case 'A': aflag = true; oflag = true; break;
 	case 'a': aflag = true; break;
 	case 'B': Bflag = true; break;
 	case 'b': bflag = true; break;
 	case 'd': dflag = true; break;
+	case 'D': dflag = Fflag = lflag = mflag = true;
+	    	  Nflag = tflag = vflag = yflag = true;
+		  break;
 	case 'e': eflag = true; break;
 	case 'F': Fflag = true; break;
 	case 'f': fflag = true; break;
@@ -112,6 +115,7 @@ int main(int argc, char *argv[argc])
 	case 'N': Nflag = true; break;
 	case 'n': nflag = true; break;
 	case 'o': oflag = true; break;
+	case 'p': pflag = true; break;
 	case 'q': qflag = true; break;
 	case 'R': Rflag = true; break;
 	case 'S': Sflag = true; break;
@@ -241,13 +245,14 @@ void display_tree(struct sysctlmif_object *object)
 	if (yflag)
 	{
 	    xo_open_container("id");
-	    if (showsep)
+	    if (pflag)
+		xo_emit("{L:[ID]}");
+	    if (showsep || pflag)
 		eflag ? xo_emit("{L:=}") : xo_emit("{Pcw:}");
 	    for (i = 0; i < object->idlevel; i++)
 	    {
 		snprintf(idlevelstr, sizeof(idlevelstr), "level%d", i+1);
 		xo_emit_field(NULL, idlevelstr, "%x", NULL, object->id[i]);
-		//xo_emit("{:id/%x}", object->id[i]);
 		if (i+1 < object->idlevel)
 		    xo_emit("{L:.}");
 	    }
@@ -255,33 +260,37 @@ void display_tree(struct sysctlmif_object *object)
 	    showsep=true;
 	}
 
-#define XOEMITPROP(name,value) do {				\
+#define XOEMITPROP(propname,content,value) do {			\
+	    if (pflag)						\
+		xo_emit("{L:[" propname "]}");			\
 	    if (showsep)					\
 		eflag ? xo_emit("{L:=}") : xo_emit("{Pcw:}");	\
-	    xo_emit(name,value);				\
+	    xo_emit(content,value);				\
 	    showsep = true;					\
-	}while(0)
+	} while(0)
 
 	if (Nflag)
-	    XOEMITPROP("{:name/%s}", object->name);
+	    XOEMITPROP("NAME","{:name/%s}", object->name);
 	
 	if (lflag)
-	    XOEMITPROP("{:label/%s}", object->label);
+	    XOEMITPROP("LABEL","{:label/%s}", object->label);
 
 	if (dflag) /* entry without descr could return "\0" or NULL */
-	    XOEMITPROP("{:description/%s}", object->desc == NULL ? "" : object->desc);
+	    XOEMITPROP("DESCRIPTION","{:description/%s}", object->desc == NULL ? "" : object->desc);
 	
 	if (tflag)
-	    XOEMITPROP("{:type/%s}", ctl_typename[object->type]);
+	    XOEMITPROP("TYPE","{:type/%s}", ctl_typename[object->type]);
 	
 	if (mflag)
-	    XOEMITPROP("{:format/%s}", object->fmt);
+	    XOEMITPROP("FORMAT STRING","{:format/%s}", object->fmt);
 
 	if (Fflag)
-	    XOEMITPROP("{:flags/%x}", object->flags);
+	    XOEMITPROP("FLAGS","{:flags/%x}", object->flags);
 
 	if((vflag || Vflag) && IS_LEAF(object))
 	{
+	    if (pflag)
+		xo_emit("{L:[VALUE]}");
 	    if (showsep)
 		eflag ? xo_emit("{L:=}") : xo_emit("{Pcw:}");
 	    
