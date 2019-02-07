@@ -44,7 +44,7 @@ void display_basic_type(struct sysctlmif_object *object);
 int set_basic_value(struct sysctlmif_object *object, char *input);
 
 bool aflag, bflag, Bflag, dflag, eflag, Fflag, fflag, hflag, Iflag;
-bool iflag, lflag, mflag, Nflag, nflag, oflag, qflag, rflag, Sflag;
+bool iflag, lflag, mflag, Nflag, nflag, oflag, qflag, Rflag, Sflag;
 bool Tflag, tflag, Vflag, vflag, Wflag, xflag, yflag;
 
 static const char *ctl_typename[CTLTYPE+1] =
@@ -84,7 +84,7 @@ int main(int argc, char *argv[argc])
 
     aflag = bflag = Bflag = dflag = eflag = Fflag = fflag = false;
     hflag = Iflag = iflag = lflag = mflag = Nflag = nflag = false;
-    oflag = qflag = rflag = Sflag = Tflag = tflag = Vflag = false;
+    oflag = qflag = Rflag = Sflag = Tflag = tflag = Vflag = false;
     vflag = Wflag = xflag = yflag = false;
 
     atexit(xo_finish_atexit);
@@ -94,7 +94,7 @@ int main(int argc, char *argv[argc])
     if (argc < 0)
 	exit(EXIT_FAILURE);
 
-    while ((ch = getopt(argc, argv, "AabdeFhiIlmNnoqrSTtVvWXxy")) != -1) {
+    while ((ch = getopt(argc, argv, "AabdeFhiIlmNnoqRSTtVvWXxy")) != -1) {
 	switch (ch) {
 	case 'A':
 	    aflag = true;
@@ -116,7 +116,7 @@ int main(int argc, char *argv[argc])
 	case 'n': nflag = true; break;
 	case 'o': oflag = true; break;
 	case 'q': qflag = true; break;
-	case 'r': rflag = true; break;
+	case 'R': Rflag = true; break;
 	case 'S': Sflag = true; break;
 	case 'T': Tflag = true; break;
 	case 't': tflag = true; break;
@@ -140,8 +140,8 @@ int main(int argc, char *argv[argc])
     argc -= optind;
     argv += optind;
 
-    if (rflag)
-	xo_open_container("MIB");
+    if (Rflag)
+	xo_open_container("ROOT");
 
     if (argc > 0) { /* the roots are given in input */
 	aflag = 0; /* set to 0 for display_tree() */
@@ -165,8 +165,8 @@ int main(int argc, char *argv[argc])
     else /* no roots and no -a */
 	usage();
 
-    if (rflag)
-	xo_close_container("MIB");
+    if (Rflag)
+	xo_close_container("ROOT");
 
     
     return (error);
