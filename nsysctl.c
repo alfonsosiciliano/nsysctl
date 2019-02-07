@@ -36,8 +36,6 @@
 #include "opaque.h"
 
 #define IS_LEAF(node)	(node->children == NULL || SLIST_EMPTY(node->children))
-#define WANTINFO()	(dflag || tflag || Fflag || mflag || lflag || yflag)
-#define VALUEOPTIONS()	(hflag || bflag || oflag || xflag)
 
 void usage(void);
 int parse_line_or_argv(char *arg);
@@ -46,8 +44,8 @@ void display_basic_type(struct sysctlmif_object *object);
 int set_basic_value(struct sysctlmif_object *object, char *input);
 
 bool aflag, bflag, Bflag, dflag, eflag, Fflag, fflag, hflag, Iflag;
-bool iflag, lflag, Mflag, mflag, Nflag, nflag, oflag, qflag, Sflag;
-bool Tflag, tflag, Wflag, xflag, yflag;
+bool iflag, lflag, mflag, Nflag, nflag, oflag, qflag, rflag, Sflag;
+bool Tflag, tflag, Vflag, vflag, Wflag, xflag, yflag;
 
 static const char *ctl_typename[CTLTYPE+1] =
 {
@@ -71,8 +69,8 @@ static const char *ctl_typename[CTLTYPE+1] =
 void usage()
 {
     printf("usage:\n");
-    printf("\tnsysctl [--libxo=opts [-M]] [-deFIilmNqTt[-V|v[h[b|o|x]]]Wy] [-B <bufsize>] [-f filename] name[=value] ...\n");
-    printf("\tnsysctl [--libxo=opts [-M]] [-deFIlmNqSTt[-V|v[h[b|o|x]]]Wy] [-B <bufsize>] -A|a|X\n");
+    printf("\tnsysctl [--libxo=opts [-r]] [-deFIilmNqTt[-V|v[h[b|o|x]]]Wy] [-B <bufsize>] [-f filename] name[=value] ...\n");
+    printf("\tnsysctl [--libxo=opts [-r]] [-deFIlmNqSTt[-V|v[h[b|o|x]]]Wy] [-B <bufsize>] -A|a|X\n");
 }
 
 int main(int argc, char *argv[argc])
@@ -85,9 +83,9 @@ int main(int argc, char *argv[argc])
     error = 0;
 
     aflag = bflag = Bflag = dflag = eflag = Fflag = fflag = false;
-    hflag = Iflag = iflag = lflag = Mflag = mflag = Nflag = false;
-    nflag = oflag = qflag = Sflag = Tflag = tflag = Wflag = false;
-    xflag = yflag = false;
+    hflag = Iflag = iflag = lflag = mflag = Nflag = nflag = false;
+    oflag = qflag = rflag = Sflag = Tflag = tflag = Vflag = false;
+    vflag = Wflag = xflag = yflag = false;
 
     atexit(xo_finish_atexit);
 
@@ -96,75 +94,35 @@ int main(int argc, char *argv[argc])
     if (argc < 0)
 	exit(EXIT_FAILURE);
 
-    while ((ch = getopt(argc, argv, "AabdeFhiIlMmNnoqSTtWXxy")) != -1) {
+    while ((ch = getopt(argc, argv, "AabdeFhiIlmNnoqrSTtVvWXxy")) != -1) {
 	switch (ch) {
 	case 'A':
 	    aflag = true;
 	    oflag = true;
 	    break;
-	case 'a':
-	    aflag = true;
-	    break;
-	case 'B':
-	    Bflag = true;
-	    break;
-	case 'b':
-	    bflag = true;
-	    break;
-	case 'd':
-	    dflag = true;
-	    break;
-	case 'e':
-	    eflag = true;
-	    break;
-	case 'F':
-	    Fflag = true;
-	    break;
-	case 'f':
-	    fflag = true;
-	    break;
-	case 'h':
-	    hflag = true;
-	    break;
-	case 'I':
-	    Iflag = true;
-	    break;
-	case 'i':
-	    iflag = true;
-	    break;
-	case 'l':
-	    lflag = true;
-	    break;
-	case 'M':
-	    Mflag = true;
-	    break;
-	case 'm':
-	    mflag = true;
-	    break;
-	case 'N':
-	    Nflag = true;
-	    break;
-	case 'n':
-	    nflag = true;
-	    break;
-	case 'o':
-	    oflag = true;
-	    break;
-	case 'q':
-	    qflag = true;
-	    break;
-	case 'S':
-	    Sflag = true;
-	    break;
-	case 'T':
-	    Tflag = true;
-	    break;
-	case 't':
-	    tflag = true;
-	    break;
-	case 'W':
-	    Wflag = true;
-	    break;
+	case 'a': aflag = true; break;
+	case 'B': Bflag = true; break;
+	case 'b': bflag = true; break;
+	case 'd': dflag = true; break;
+	case 'e': eflag = true; break;
+	case 'F': Fflag = true; break;
+	case 'f': fflag = true; break;
+	case 'h': hflag = true; break;
+	case 'I': Iflag = true; break;
+	case 'i': iflag = true; break;
+	case 'l': lflag = true; break;
+	case 'm': mflag = true; break;
+	case 'N': Nflag = true; break;
+	case 'n': nflag = true; break;
+	case 'o': oflag = true; break;
+	case 'q': qflag = true; break;
+	case 'r': rflag = true; break;
+	case 'S': Sflag = true; break;
+	case 'T': Tflag = true; break;
+	case 't': tflag = true; break;
+	case 'V': Vflag = true; break;
+	case 'v': vflag = true; break;
+	case 'W': Wflag = true; break;
 	case 'w':
 	    /* compatibility, ignored */
 	    break;
@@ -172,12 +130,8 @@ int main(int argc, char *argv[argc])
 	    aflag = true;
 	    xflag = true;
 	    break;
-	case 'x':
-	    xflag = true;
-	    break;
-	case 'y':
-	    yflag = true;
-	    break;
+	case 'x': xflag = true; break;
+	case 'y': yflag = true; break;
 	default:
 	    usage();
 	    return (1);
@@ -186,7 +140,7 @@ int main(int argc, char *argv[argc])
     argc -= optind;
     argv += optind;
 
-    if (Mflag)
+    if (rflag)
 	xo_open_container("MIB");
 
     if (argc > 0) { /* the roots are given in input */
@@ -211,7 +165,7 @@ int main(int argc, char *argv[argc])
     else /* no roots and no -a */
 	usage();
 
-    if (Mflag)
+    if (rflag)
 	xo_close_container("MIB");
 
     
@@ -267,7 +221,6 @@ void display_tree(struct sysctlmif_object *object)
 {
     struct sysctlmif_object *child;
     int showable = 1;
-    int showproperties = 0;
 
     if ((object->id[0] == 0) && !Sflag)
 	showable = 0;
@@ -288,39 +241,36 @@ void display_tree(struct sysctlmif_object *object)
 	if (Nflag)
 	    xo_emit("{:name/%s}{L:\n}", object->name);
 
-	if (!Nflag && WANTINFO())
+	if (dflag) /* entry without descr could return "\0" or NULL */
+	    xo_emit("{:description/%s}", object->desc == NULL ? "" : object->desc);
+	
+	if (tflag)
+	    xo_emit("{:type/%s}", ctl_typename[object->type]);
+	
+	if (Fflag)
+	    xo_emit("{:flags/%x}", object->flags);
+	
+	if (mflag)
+	    xo_emit("{:format/%s}", object->fmt);
+	
+	if (lflag)
+	    xo_emit("{:label/%s}", object->label);
+	
+	if (yflag)
 	{
-	    if (!nflag) {
-		xo_emit("{:name/%s}", object->name);
-		if (!Nflag)
-		    eflag ? xo_emit("{L:=}") : xo_emit("{Pcw:}");
-	    }
-	    if (dflag) /* entry without descr could return "\0" or NULL */
-		xo_emit("{:description/%s}", object->desc == NULL ? "" : object->desc);
-	    else if (tflag)
-		xo_emit("{:type/%s}", ctl_typename[object->type]);
-	    else if (Fflag)
-		xo_emit("{:flags/%x}", object->flags);
-	    else if (mflag)
-		xo_emit("{:format/%s}", object->fmt);
-	    else if (lflag)
-		xo_emit("{:label/%s}", object->label);
-	    else if (yflag)
+	    xo_open_container("id");
+	    int i;
+	    for (i = 0; i < object->idlevel; i++)
 	    {
-		xo_open_container("id");
-		int i;
-		for (i = 0; i < object->idlevel; i++)
-		{
-		    xo_emit("{:id/%x}", object->id[i]);
-		    if (i+1 < object->idlevel)
-			xo_emit("{L:.}");
-		}
-		xo_close_container("id");
+		xo_emit("{:id/%x}", object->id[i]);
+		if (i+1 < object->idlevel)
+		    xo_emit("{L:.}");
 	    }
-	    xo_emit("{L:\n}");
+	    xo_close_container("id");
 	}
+	xo_emit("{L:\n}");
 
-	if(!Nflag && !WANTINFO() && IS_LEAF(object))
+	if((vflag || Vflag) && IS_LEAF(object))
 	{
 	    if (object->type == CTLTYPE_OPAQUE)
 		display_opaque_value(object, hflag,oflag, xflag, eflag, nflag);
@@ -329,6 +279,7 @@ void display_tree(struct sysctlmif_object *object)
 	}
     }
 
+    /* visit children */
     if (!IS_LEAF(object)) {
 	if (Iflag)
 	    xo_open_container("children");
