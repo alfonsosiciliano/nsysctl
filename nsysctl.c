@@ -69,8 +69,8 @@ static const char *ctl_typename[CTLTYPE+1] =
 void usage()
 {
     printf("usage:\n");
-    printf("\tnsysctl [--libxo=opts [-r]] [-deFIilmNqTt[-V|v[h[b|o|x]]]Wy] [-B <bufsize>] [-f filename] name[=value] ...\n");
-    printf("\tnsysctl [--libxo=opts [-r]] [-deFIlmNqSTt[-V|v[h[b|o|x]]]Wy] [-B <bufsize>] -A|a|X\n");
+    printf("\tnsysctl [--libxo=opts [-R]] [-deFIilmNqTt[-V|v[h[b|o|x]]]Wy] [-B <bufsize>] [-f filename] name[=value] ...\n");
+    printf("\tnsysctl [--libxo=opts [-R]] [-deFIlmNqSTt[-V|v[h[b|o|x]]]Wy] [-B <bufsize>] -A|a|X\n");
 }
 
 int main(int argc, char *argv[argc])
@@ -96,10 +96,7 @@ int main(int argc, char *argv[argc])
 
     while ((ch = getopt(argc, argv, "AabdeFhiIlmNnoqRSTtVvWXxy")) != -1) {
 	switch (ch) {
-	case 'A':
-	    aflag = true;
-	    oflag = true;
-	    break;
+	case 'A': aflag = true; oflag = true; break;
 	case 'a': aflag = true; break;
 	case 'B': Bflag = true; break;
 	case 'b': bflag = true; break;
@@ -123,13 +120,8 @@ int main(int argc, char *argv[argc])
 	case 'V': Vflag = true; break;
 	case 'v': vflag = true; break;
 	case 'W': Wflag = true; break;
-	case 'w':
-	    /* compatibility, ignored */
-	    break;
-	case 'X':
-	    aflag = true;
-	    xflag = true;
-	    break;
+	case 'w': /* compatibility, ignored */ break;
+	case 'X': aflag = true; xflag = true; break;
 	case 'x': xflag = true; break;
 	case 'y': yflag = true; break;
 	default:
@@ -220,46 +212,41 @@ int parse_line_or_argv(char *arg)
 void display_tree(struct sysctlmif_object *object)
 {
     struct sysctlmif_object *child;
-    int showable = 1;
+    bool showable = true, showsep = false;
+    int i;
 
     if ((object->id[0] == 0) && !Sflag)
-	showable = 0;
+	showable = false;
 
     if (Wflag && !((object->flags & CTLFLAG_WR) && !(object->flags & CTLFLAG_STATS)))
-	showable = 0;
+	showable = false;
 
     if (Tflag && !(object->flags & CTLFLAG_TUN))
-	showable = 0;
+	showable = false;
 
     if (!Iflag && (!IS_LEAF(object)))
-	showable = 0;
+	showable = false;
 
+    /*if(vflag || Vflag) {
+      sysctl()
+	if(vflag && cannot get value)
+	    showable = false;
+    }*/
+    
     if (showable)
     {
 	xo_open_instance("object");
 
-	if (Nflag)
-	    xo_emit("{:name/%s}{L:\n}", object->name);
+	if (Nflag) {
+	    xo_emit("{:name/%s}", object->name);
+	    showsep = true;
+	}
 
-	if (dflag) /* entry without descr could return "\0" or NULL */
-	    xo_emit("{:description/%s}", object->desc == NULL ? "" : object->desc);
-	
-	if (tflag)
-	    xo_emit("{:type/%s}", ctl_typename[object->type]);
-	
-	if (Fflag)
-	    xo_emit("{:flags/%x}", object->flags);
-	
-	if (mflag)
-	    xo_emit("{:format/%s}", object->fmt);
-	
-	if (lflag)
-	    xo_emit("{:label/%s}", object->label);
-	
 	if (yflag)
 	{
 	    xo_open_container("id");
-	    int i;
+	    if (showsep)
+		eflag ? xo_emit("{L:=}") : xo_emit("{Pcw:}");
 	    for (i = 0; i < object->idlevel; i++)
 	    {
 		xo_emit("{:id/%x}", object->id[i]);
@@ -267,16 +254,43 @@ void display_tree(struct sysctlmif_object *object)
 		    xo_emit("{L:.}");
 	    }
 	    xo_close_container("id");
+	    showsep=true;
 	}
-	xo_emit("{L:\n}");
+
+#define XOEMITPROP(name,value) do {				\
+	    if (showsep)					\
+		eflag ? xo_emit("{L:=}") : xo_emit("{Pcw:}");	\
+	    xo_emit(name,value);				\
+	    showsep = true;					\
+	}while(0)
+
+	if (lflag)
+	    XOEMITPROP("{:label/%s}", object->label);
+
+	if (dflag) /* entry without descr could return "\0" or NULL */
+	    XOEMITPROP("{:description/%s}", object->desc == NULL ? "" : object->desc);
+	
+	if (tflag)
+	    XOEMITPROP("{:type/%s}", ctl_typename[object->type]);
+	
+	if (mflag)
+	    XOEMITPROP("{:format/%s}", object->fmt);
+
+	if (Fflag)
+	    XOEMITPROP("{:flags/%x}", object->flags);
 
 	if((vflag || Vflag) && IS_LEAF(object))
 	{
+	    if (showsep)
+		eflag ? xo_emit("{L:=}") : xo_emit("{Pcw:}");
+	    
 	    if (object->type == CTLTYPE_OPAQUE)
 		display_opaque_value(object, hflag,oflag, xflag, eflag, nflag);
 	    else if ((object->type != CTLTYPE_NODE) && (object->id[0] != 0))
 		display_basic_type(object);
 	}
+
+	xo_emit("{L:\n}");
     }
 
     /* visit children */
@@ -328,14 +342,7 @@ void display_basic_type(struct sysctlmif_object *object)
 	}
 	return;
     }
-
-    if (!nflag) {
-	xo_emit("{:name/%s}", object->name);
-	if (!Nflag) {
-	    eflag ? xo_emit("{L:=}") : xo_emit("{Pcw:}");
-	}
-    }
-
+    
     switch (object->type) {
     case CTLTYPE_INT:
 	xo_emit("{:value/%d}", *((int *)value));
@@ -382,8 +389,6 @@ void display_basic_type(struct sysctlmif_object *object)
     default:
 	printf("%s, Error bad type!\n", object->name);
     }
-
-    xo_emit("{L:\n}");
 
     free(value);
 }
