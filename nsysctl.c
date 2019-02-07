@@ -68,10 +68,6 @@ static const char *ctl_typename[CTLTYPE+1] =
     [CTLTYPE_OPAQUE] = "opaque",
 };
 
-/* 
- * outuput: name - (name:) properties - (name:) value,
- *          for "name" subtree or -a(ll) tree.
- */
 void usage()
 {
     printf("usage:\n");
