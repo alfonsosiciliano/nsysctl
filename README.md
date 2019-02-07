@@ -19,6 +19,7 @@ utility clone, it depends on [sysctlmibinfo](http://gitlab.com/alfix/sysctlmibin
  * new option -l show label,
  * new option -M show <MIB> with libxo
  * new option -m show format string
+ * new option -p show the property name
  * new option -S show magic nodes with -a,
  * new option -y show id.
 
@@ -29,7 +30,7 @@ TODO Version 1.0
  * [ ] options: nsysctl -f filename
  * [X] ~~options: nsysctl -b~~
  * [ ] options: nsysctl -B
- * [ ] options: nsysctl -D
+ * [X] ~~options: nsysctl -D~~
  * [ ] failure: add xo\_warn and xo\_err messages
  * [ ] failure: return 1
  * [ ] libxo: fix nsysctl libxo=xml debug.witness.fullgraph, segmentation fault, bug.c
