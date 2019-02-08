@@ -31,7 +31,7 @@ do
 done
 
 #Regression  % sysctl -a = name: value
-for t in -aT -aTo
+for t in -aT -aTo -aWo
 do
     echo "$t"
     sysctl $t >> sysctl.txt
@@ -41,10 +41,11 @@ do
 done
 
 # TO FIX
-echo "sysctl -aWo"
-sysctl -aWo >> sysctl.txt
-./nsysctl -aWoNV >> nsysctl.txt
+echo "sysctl -aW"
+sysctl -aW >> sysctl.txt
+./nsysctl -aWNV >> nsysctl.txt
 #diff sysctl.txt nsysctl.txt | diffstat -m
 #diff -y -W 120 sysctl.txt nsysctl.txt 
 meld sysctl.txt nsysctl.txt
 rm sysctl.txt nsysctl.txt
+
