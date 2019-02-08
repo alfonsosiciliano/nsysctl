@@ -93,7 +93,7 @@ int main(int argc, char *argv[argc])
 
     atexit(xo_finish_atexit);
 
-    xo_set_flags(NULL, XOF_UNITS);
+    xo_set_flags(NULL, XOF_UNITS/*XOF_FLUSH*/);
     argc = xo_parse_args(argc, argv);
     if (argc < 0)
 	exit(EXIT_FAILURE);
@@ -220,7 +220,7 @@ int parse_line_or_argv(char *arg)
 void display_tree(struct sysctlmif_object *object)
 {
     struct sysctlmif_object *child;
-    bool showable = true, showsep = false;
+    bool showable = true, showsep = false, showvalue = true;
     int i, error = 0;
     char idlevelstr[7];
     size_t value_size = 0;
@@ -251,11 +251,10 @@ void display_tree(struct sysctlmif_object *object)
 	memset(value, 0, value_size);
 
 	error =sysctl(object->id, object->idlevel, value, &value_size, NULL, 0);
-	if (error != 0 || value_size == 0 ||
-	    !IS_LEAF(object)) {
+	if (error != 0 || value_size == 0 || !IS_LEAF(object)) {
 	    if(Vflag)
 		showable = false;
-	    vflag = false;
+	    showvalue = false;
 	}
     }
     
@@ -306,7 +305,7 @@ void display_tree(struct sysctlmif_object *object)
 	if (Fflag)
 	    XOEMITPROP("FLAGS","{:flags/%x}", object->flags);
 
-	if(vflag || Vflag)
+	if(showvalue && (vflag || Vflag))
 	{
 	    if(showsep)
 		xo_emit("{L:/%s}",sep);
@@ -319,9 +318,11 @@ void display_tree(struct sysctlmif_object *object)
 		display_basic_type(object, value, value_size);
 
 	    free(value);
+	    showsep = true;
 	}
 
-	xo_emit("{L:\n}");
+	if(showsep)
+		xo_emit("{L:\n}");
     }
 
     /* visit children */
