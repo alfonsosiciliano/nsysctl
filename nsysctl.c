@@ -252,7 +252,7 @@ void display_tree(struct sysctlmif_object *object)
 
 	error =sysctl(object->id, object->idlevel, value, &value_size, NULL, 0);
 	if (error != 0 || value_size == 0 ||
-	    !IS_LEAF(object) || object->type == CTLTYPE_NODE) {
+	    !IS_LEAF(object)) {
 	    if(Vflag)
 		showable = false;
 	    vflag = false;
