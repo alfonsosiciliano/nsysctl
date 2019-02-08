@@ -51,27 +51,19 @@
 
 /* Func declarations */
 
-static int S_clockinfo(struct sysctlmif_object *object, int, int, int);
-static int S_loadavg(struct sysctlmif_object *object, int, int, int);
-static int S_timeval(struct sysctlmif_object *object, int, int, int);
-static int S_vmtotal(struct sysctlmif_object *object, int, int, int);
+static int S_clockinfo(struct sysctlmif_object *object, int hflag);
+static int S_loadavg(struct sysctlmif_object *object, int hflag);
+static int S_timeval(struct sysctlmif_object *object, int hflag);
+static int S_vmtotal(struct sysctlmif_object *object, int hflag);
 #ifdef __amd64__
-static int S_efi_map(struct sysctlmif_object *object, int, int, int);
+static int S_efi_map(struct sysctlmif_object *object, int hflag);
 #endif
 #if defined(__amd64__) || defined(__i386__)
-static int S_bios_smap_xattr(struct sysctlmif_object *object, int, int, int);
+static int S_bios_smap_xattr(struct sysctlmif_object *object, int hflag);
 #endif
 static int strIKtoi(const char *str, char **endptrp, const char *fmt);
 
-static void printf_name(struct sysctlmif_object *object, int eflag, int nflag)
-{
-    if (!nflag) {
-	xo_emit("{:name/%s}", object->name);
-	eflag ? xo_emit("{L:=}") : xo_emit("{Pcw:}");
-    }
-}
-
-void display_opaque_value(struct sysctlmif_object *object, int hflag, int oflag, int xflag, int eflag, int nflag)
+void display_opaque_value(struct sysctlmif_object *object, int hflag, int oflag, int xflag)
 {
 	unsigned char opaquevalue[BUFSIZ * 500];
 
@@ -81,26 +73,25 @@ void display_opaque_value(struct sysctlmif_object *object, int hflag, int oflag,
 	xo_open_container("value");
 	
 	if (strcmp(object->fmt, "S,clockinfo") == 0) {
-	    S_clockinfo(object, hflag, eflag, nflag);
+	    S_clockinfo(object, hflag);
 	} else if (strcmp(object->fmt, "S,timeval") == 0) {
-		S_timeval(object, hflag, eflag, nflag);
+		S_timeval(object, hflag);
 	} else if (strcmp(object->fmt, "S,loadavg") == 0) {
-		S_loadavg(object, hflag, eflag, nflag);
+		S_loadavg(object, hflag);
 	} else if (strcmp(object->fmt, "S,vmtotal") == 0) {
-		S_vmtotal(object, hflag, eflag, nflag);
+		S_vmtotal(object, hflag);
 	}
 #ifdef __amd64__
 	/*else if (strcmp(object->fmt, "S,efi_map_header") == 0) {
-		S_efi_map(object, hflag, eflag, nflag);
+		S_efi_map(object, hflag);
 		}*/
 #endif
 #if defined(__amd64__) || defined(__i386__)
 	/*else if (strcmp(object->fmt, "S,bios_smap_xattr") == 0) {
-		S_bios_smap_xattr(object, hflag, eflag, nflag);
+		S_bios_smap_xattr(object, hflag);
 		}*/
 #endif
 	else if (oflag || xflag) {
-	    	printf_name(object,eflag, nflag);
 	    	xo_open_container(object->fmt + 2);
 		xo_emit("{Lc:Format}{:format/%s}", object->fmt);
 		sysctl(object->id, object->idlevel, opaquevalue, &sizevalue,
@@ -118,7 +109,6 @@ void display_opaque_value(struct sysctlmif_object *object, int hflag, int oflag,
 		}
 
 		xo_close_container(object->fmt + 2);
-		xo_emit("{L:\n}");
 	}
 
 	xo_close_container("value");
@@ -126,7 +116,7 @@ void display_opaque_value(struct sysctlmif_object *object, int hflag, int oflag,
 
 
 static int
-S_clockinfo(struct sysctlmif_object *object, int hflag,int eflag, int nflag)
+S_clockinfo(struct sysctlmif_object *object, int hflag)
 {
 	size_t ci_size = sizeof(struct clockinfo);
 	struct clockinfo ci;
@@ -138,7 +128,6 @@ S_clockinfo(struct sysctlmif_object *object, int hflag,int eflag, int nflag)
 		return (1);
 	}
 
-	printf_name(object,eflag, nflag);
 	xo_open_container("clockinfo");
 
 	xo_emit("{L:{ }");
@@ -153,14 +142,13 @@ S_clockinfo(struct sysctlmif_object *object, int hflag,int eflag, int nflag)
 	xo_emit("{N: }}");
 
 	xo_close_container("clockinfo");
-	xo_emit("{L:\n}");
 
 	return (0);
 }
 
 
 static int
-S_loadavg(struct sysctlmif_object *object, int hflag, int eflag, int nflag)
+S_loadavg(struct sysctlmif_object *object, int hflag)
 {
 	struct loadavg tv;
 	size_t tv_size = sizeof(struct loadavg);
@@ -176,7 +164,6 @@ S_loadavg(struct sysctlmif_object *object, int hflag, int eflag, int nflag)
 
 #define TV_FSCALE(idx)    ((double)tv.ldavg[idx]/(double)tv.fscale)
 
-	printf_name(object,eflag, nflag);
 	xo_open_container("loadavg");
 	xo_emit("{L:{ }");
 	xo_emit_field(hfield, "ldavg0", "%.2f", NULL, TV_FSCALE(0));
@@ -186,14 +173,13 @@ S_loadavg(struct sysctlmif_object *object, int hflag, int eflag, int nflag)
 	xo_emit_field(hfield, "ldavg2", "%.2f", NULL, TV_FSCALE(2));
 	xo_emit("{N: }}");
 	xo_close_container("loadavg");
-	xo_emit("{L:\n}");
 
 	return (0);
 }
 
 
 static int
-S_timeval(struct sysctlmif_object *object, int hflag, int eflag, int nflag)
+S_timeval(struct sysctlmif_object *object, int hflag)
 {
 	struct timeval tv;
 	size_t tv_size = sizeof(struct timeval);
@@ -207,7 +193,6 @@ S_timeval(struct sysctlmif_object *object, int hflag, int eflag, int nflag)
 		return (1);
 	}
 
-	printf_name(object,eflag,nflag);
 	xo_open_container("timeval");
 
 	xo_emit("{Lw:{ sec =}");
@@ -223,14 +208,13 @@ S_timeval(struct sysctlmif_object *object, int hflag, int eflag, int nflag)
 	free(p1);
 
 	xo_close_container("timeval");
-	xo_emit("{L:\n}");
 
 	return (0);
 }
 
 
 static int
-S_vmtotal(struct sysctlmif_object *object, int hflag, int eflag, int nflag)
+S_vmtotal(struct sysctlmif_object *object, int hflag)
 {
 	struct vmtotal v;
 	size_t v_size = sizeof(struct vmtotal);
@@ -245,7 +229,6 @@ S_vmtotal(struct sysctlmif_object *object, int hflag, int eflag, int nflag)
 
 	pageKilo = getpagesize() / 1024;
 
-	printf_name(object,eflag, nflag);
 	xo_open_container("vmtotal");
 
 #define pg2k(a)    ((uintmax_t)(a) * pageKilo)
@@ -295,7 +278,6 @@ S_vmtotal(struct sysctlmif_object *object, int hflag, int eflag, int nflag)
 	xo_emit("{U:K}");
 
 	xo_close_container("vmtotal");
-	xo_emit("{L:\n}");
 
 	return (0);
 }
@@ -303,7 +285,7 @@ S_vmtotal(struct sysctlmif_object *object, int hflag, int eflag, int nflag)
 
 #ifdef __amd64__
 static int
-S_efi_map(struct sysctlmif_object *object, int hflag, int eflag, int nflag)
+S_efi_map(struct sysctlmif_object *object, int hflag)
 {
 	//value get from SYSCTLMIF_GETVALUE() remove p, l2 is useless
 	void *p = NULL;
@@ -407,7 +389,7 @@ S_efi_map(struct sysctlmif_object *object, int hflag, int eflag, int nflag)
 
 #if defined(__amd64__) || defined(__i386__)
 static int
-S_bios_smap_xattr(struct sysctlmif_object *object, int hflag, int eflag, int nflag)
+S_bios_smap_xattr(struct sysctlmif_object *object, int hflag)
 {
 	//value get from SYSCTLMIF_GETVALUE() remove p, l2 is useless
 	void *p = NULL;

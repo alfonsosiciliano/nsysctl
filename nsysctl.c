@@ -40,7 +40,7 @@
 void usage(void);
 int parse_line_or_argv(char *arg);
 void display_tree(struct sysctlmif_object *object);
-void display_basic_type(struct sysctlmif_object *object);
+void display_basic_type(struct sysctlmif_object *object, void *value, size_t valuesize);
 int set_basic_value(struct sysctlmif_object *object, char *input);
 
 bool eflag; /*XXX delete, for opaque*/
@@ -221,8 +221,10 @@ void display_tree(struct sysctlmif_object *object)
 {
     struct sysctlmif_object *child;
     bool showable = true, showsep = false;
-    int i;
+    int i, error = 0;
     char idlevelstr[7];
+    size_t value_size = 0;
+    void *value;
 
     if ((object->id[0] == 0) && !Sflag)
 	showable = false;
@@ -236,11 +238,26 @@ void display_tree(struct sysctlmif_object *object)
     if (!Iflag && (!IS_LEAF(object)))
 	showable = false;
 
-    /*if(vflag || Vflag) {
-      sysctl()
-	if(vflag && cannot get value)
+    //if(aflag && !is_opaque_defined(object))
+	//showable = false;
+
+    if(vflag || Vflag)
+    {
+	sysctl(object->id, object->idlevel, NULL, &value_size, NULL, 0);
+	if ((value = malloc(value_size)) == NULL) {
+	    printf("%s: Cannot get value MALLOC\n", object->name);
 	    showable = false;
-    }*/
+	}
+	memset(value, 0, value_size);
+
+	error =sysctl(object->id, object->idlevel, value, &value_size, NULL, 0);
+	if (error != 0 || value_size == 0 ||
+	    !IS_LEAF(object) || object->type == CTLTYPE_NODE) {
+	    if(Vflag)
+		showable = false;
+	    vflag = false;
+	}
+    }
     
     if (showable)
     {
@@ -289,7 +306,7 @@ void display_tree(struct sysctlmif_object *object)
 	if (Fflag)
 	    XOEMITPROP("FLAGS","{:flags/%x}", object->flags);
 
-	if((vflag || Vflag) && IS_LEAF(object))
+	if(vflag || Vflag)
 	{
 	    if(showsep)
 		xo_emit("{L:/%s}",sep);
@@ -299,7 +316,9 @@ void display_tree(struct sysctlmif_object *object)
 	    if (object->type == CTLTYPE_OPAQUE)
 		display_opaque_value(object, hflag,oflag, xflag, eflag, nflag);
 	    else if ((object->type != CTLTYPE_NODE) && (object->id[0] != 0))
-		display_basic_type(object);
+		display_basic_type(object, value, value_size);
+
+	    free(value);
 	}
 
 	xo_emit("{L:\n}");
@@ -324,30 +343,14 @@ void display_tree(struct sysctlmif_object *object)
 /*
  * this func will be merged with set_basic_value() in version 1.0 
  */
-void display_basic_type(struct sysctlmif_object *object)
+void display_basic_type(struct sysctlmif_object *object, void *value, size_t value_size)
 {
-    size_t value_size = 0;
-    void *value;
+    int i;
 
     // BUG --libxo=xml => segmentation fault
     if(strcmp(object->name,"debug.witness.fullgraph") ==0)
-    	return;
-
-    sysctl(object->id, object->idlevel, NULL, &value_size, NULL, 0);
-    if ((value = malloc(value_size)) == NULL) {
-	printf("%s: Cannot get value MALLOC\n", object->name);
 	return;
-    }
-    memset(value, 0, value_size);
-
-    if (sysctl(object->id, object->idlevel, value, &value_size, NULL, 0) != 0) {
-	//xo_warn("%s",object->name); sysctl compatibility
-	//id(ddd)
-	//    printf("size: %lu\n", value_size);
-	return;
-    }
-
-    int i;
+    
     if (bflag) {
 	for (i = 0; i < value_size; i++) {
 	    xo_emit("{:raw/%c}", ((unsigned char*)(value))[i]);
@@ -401,8 +404,6 @@ void display_basic_type(struct sysctlmif_object *object)
     default:
 	printf("%s, Error bad type!\n", object->name);
     }
-
-    free(value);
 }
 
 
@@ -428,7 +429,8 @@ int set_basic_value(struct sysctlmif_object *object, char *input)
     llsize=sizeof(long long);
     ullsize=sizeof(unsigned long long);
 
-    display_basic_type(object);
+    /* XXX DECOMMENT */
+    /*display_basic_type(object);*/
 
 #define STVL(typedvalue, type, longinput, formatstr)	\
     do {						\

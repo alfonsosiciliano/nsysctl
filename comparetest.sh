@@ -1,23 +1,49 @@
 #!/bin/sh
 
-## Testing ##
-
-
-# Regression
-for t in -aN -aNT -aWN -ad -aT
+# Regression % sysctl -N = only name
+for t in -aN -aNT -aNW
 do
     echo "$t"
     sysctl $t >> sysctl.txt
-    ./nsysctl $t  >> nsysctl.txt
+    ./nsysctl $t > nsysctl.txt
     diff sysctl.txt nsysctl.txt | diffstat -m
     rm sysctl.txt nsysctl.txt
 done
 
+#Regression  % sysctl -ad = name: description
+for t in -ad -adT -adW
+do
+    echo "$t"
+    sysctl $t >> sysctl.txt
+    ./nsysctl ${t}N  >> nsysctl.txt
+    diff sysctl.txt nsysctl.txt | diffstat -m
+    rm sysctl.txt nsysctl.txt
+done
+
+#Regression  % sysctl -at = name: type
+for t in -at
+do
+    echo "$t"
+    sysctl $t >> sysctl.txt
+    ./nsysctl ${t}N  >> nsysctl.txt
+    diff sysctl.txt nsysctl.txt | diffstat -m
+    rm sysctl.txt nsysctl.txt
+done
+
+#Regression  % sysctl -a = name: value
+for t in -aT -aTo
+do
+    echo "$t"
+    sysctl $t >> sysctl.txt
+    ./nsysctl ${t}NV  >> nsysctl.txt
+    diff sysctl.txt nsysctl.txt | diffstat -m
+    rm sysctl.txt nsysctl.txt
+done
 
 # TO FIX
-echo "aNe"
-sysctl -aNe >> sysctl.txt
-./nsysctl -aNe >> nsysctl.txt
+echo "sysctl -aWo"
+sysctl -aWo >> sysctl.txt
+./nsysctl -aWoNV >> nsysctl.txt
 #diff sysctl.txt nsysctl.txt | diffstat -m
 #diff -y -W 120 sysctl.txt nsysctl.txt 
 meld sysctl.txt nsysctl.txt
