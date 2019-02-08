@@ -238,8 +238,8 @@ void display_tree(struct sysctlmif_object *object)
     if (!Iflag && (!IS_LEAF(object)))
 	showable = false;
 
-    //if(aflag && !is_opaque_defined(object))
-	//showable = false;
+    if(Vflag && object->type == CTLTYPE_OPAQUE && aflag && !xflag && !oflag && !is_opaque_defined(object))
+ 	showable = false;
 
     if(vflag || Vflag)
     {
@@ -312,10 +312,12 @@ void display_tree(struct sysctlmif_object *object)
 	    if (pflag)
 		xo_emit("{L:[VALUE]: }");
 	    
-	    if (object->type == CTLTYPE_OPAQUE)
-		display_opaque_value(object, hflag,oflag, xflag, eflag, nflag);
-	    else if ((object->type != CTLTYPE_NODE) && (object->id[0] != 0))
+	    if (object->type == CTLTYPE_OPAQUE || object->type == CTLTYPE_NODE)
+		display_opaque_value(object, hflag, oflag, xflag);
+	    else if ( object->id[0] != 0)
 		display_basic_type(object, value, value_size);
+
+	    //xo_emit("{L:appena}\n");
 
 	    free(value);
 	    showsep = true;
@@ -355,6 +357,13 @@ void display_basic_type(struct sysctlmif_object *object, void *value, size_t val
     if (bflag) {
 	for (i = 0; i < value_size; i++) {
 	    xo_emit("{:raw/%c}", ((unsigned char*)(value))[i]);
+	}
+	return;
+    }
+
+    if(xflag) {
+	for (i = 0; i < value_size; i++) {
+	    xo_emit("{:dump/%c}", ((unsigned char*)(value))[i]);
 	}
 	return;
     }
@@ -400,6 +409,8 @@ void display_basic_type(struct sysctlmif_object *object, void *value, size_t val
 	xo_emit("{:value/%s}", "--- TYPE NODE ---");
 	break;
     case CTLTYPE_STRING:
+	if( ((char*)value)[value_size]!='\0')
+	    ((char*)value)[value_size]='\0';
 	xo_emit("{:value/%s}", (char *)value);
 	break;
     default:

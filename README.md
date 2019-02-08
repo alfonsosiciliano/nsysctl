@@ -17,7 +17,7 @@ utility clone, it depends on [sysctlmibinfo](http://gitlab.com/alfix/sysctlmibin
  * new option -F show flags,
  * new option -I show internal nodes,
  * new option -l show label,
- * new option -M show <MIB> with libxo
+ * new option -r show <ROOT> with libxo
  * new option -m show format string
  * new option -p show the property name
  * new option -S show magic nodes with -a,
@@ -34,12 +34,11 @@ TODO Version 1.0
  * [ ] failure: add xo\_warn and xo\_err messages
  * [ ] failure: return 1
  * [ ] libxo: fix nsysctl libxo=xml debug.witness.fullgraph, segmentation fault, bug.c
- * [ ] libxo: fix nsysctl libxo=text debug.fail\_point  (utf8)
+ * [X] ~~libxo: fix nsysctl libxo=text debug.fail\_point  (utf8)~~
  * [ ] improve output for name=value
  * [ ] libxo: xo-ish opaque.c
  * [X] ~~testing: add regression comparetest.sh~~
- * [X] ~~manual page: add nsysctl.8~~
- * [ ] manual page: add new options to nsysctl.8
+ * [ ] manual page: nsysctl.8
  * [X] ~~create FreeBSD port directory~~
  * [ ] merge set\_value() with display\_basic\_value()
 
