@@ -40,6 +40,7 @@
 #include <err.h>        //warnx
 #include <errno.h>      //errno
 #include <machine/pc/bios.h>
+#include <stdbool.h>
 #include <stdio.h>      //printf
 #include <stdlib.h>     //free
 #include <string.h>     //strdup
@@ -50,20 +51,37 @@
 #include <sysctlmibinfo.h>
 
 /* Func declarations */
-
-static int S_clockinfo(struct sysctlmif_object *object, int hflag);
-static int S_loadavg(struct sysctlmif_object *object, int hflag);
-static int S_timeval(struct sysctlmif_object *object, int hflag);
-static int S_vmtotal(struct sysctlmif_object *object, int hflag);
+static int S_clockinfo(struct sysctlmif_object *object, bool hflag);
+static int S_loadavg(struct sysctlmif_object *object, bool hflag);
+static int S_timeval(struct sysctlmif_object *object, bool hflag);
+static int S_vmtotal(struct sysctlmif_object *object, bool hflag);
 #ifdef __amd64__
-static int S_efi_map(struct sysctlmif_object *object, int hflag);
+static int S_efi_map(struct sysctlmif_object *object, bool hflag);
 #endif
 #if defined(__amd64__) || defined(__i386__)
-static int S_bios_smap_xattr(struct sysctlmif_object *object, int hflag);
+static int S_bios_smap_xattr(struct sysctlmif_object *object, bool hflag);
 #endif
 static int strIKtoi(const char *str, char **endptrp, const char *fmt);
 
-void display_opaque_value(struct sysctlmif_object *object, int hflag, int oflag, int xflag)
+bool is_opaque_defined(struct sysctlmif_object *object)
+{
+    if ( strcmp(object->fmt, "S,clockinfo") == 0 ||
+	 strcmp(object->fmt, "S,timeval") == 0 ||
+	 strcmp(object->fmt, "S,loadavg") == 0 ||
+	 strcmp(object->fmt, "S,vmtotal") == 0 ||
+#ifdef __amd64__
+	strcmp(object->fmt, "S,efi_map_header") == 0 ||
+#endif
+#if defined(__amd64__) || defined(__i386__)
+	strcmp(object->fmt, "S,bios_smap_xattr") == 0
+#endif
+	)
+	return true;
+
+    return false;
+}
+
+void display_opaque_value(struct sysctlmif_object *object, bool hflag, bool oflag, bool xflag)
 {
 	unsigned char opaquevalue[BUFSIZ * 500];
 
@@ -94,17 +112,19 @@ void display_opaque_value(struct sysctlmif_object *object, int hflag, int oflag,
 	else if (oflag || xflag) {
 	    	xo_open_container(object->fmt + 2);
 		xo_emit("{Lc:Format}{:format/%s}", object->fmt);
-		sysctl(object->id, object->idlevel, opaquevalue, &sizevalue,
-		    NULL, 0);
+		sysctl(object->id, object->idlevel, opaquevalue, &sizevalue, NULL, 0);
 		xo_emit("{P: }{Lc:Length}{:lenght/%lu}", sizevalue);
 		xo_emit("{P: }{Lc:Dump}0x" /*{:dump/%16x}...",opaquevalue*/);
 
 		int i;
-		int to = oflag ? 16 : sizevalue;
+		int to = sizevalue;
+		if(oflag)
+		    to = 16 < sizevalue ? 16 : sizevalue;
+		
 		for (i = 0; i < to; i++) {
 			xo_emit("{:dump/%02x}", opaquevalue[i]);
 		}
-		if (oflag && (sizevalue > 16)) {
+		if (oflag && (sizevalue >= 8)) {
 			xo_emit("{L:...}");
 		}
 
@@ -116,7 +136,7 @@ void display_opaque_value(struct sysctlmif_object *object, int hflag, int oflag,
 
 
 static int
-S_clockinfo(struct sysctlmif_object *object, int hflag)
+S_clockinfo(struct sysctlmif_object *object, bool hflag)
 {
 	size_t ci_size = sizeof(struct clockinfo);
 	struct clockinfo ci;
@@ -148,7 +168,7 @@ S_clockinfo(struct sysctlmif_object *object, int hflag)
 
 
 static int
-S_loadavg(struct sysctlmif_object *object, int hflag)
+S_loadavg(struct sysctlmif_object *object, bool hflag)
 {
 	struct loadavg tv;
 	size_t tv_size = sizeof(struct loadavg);
@@ -179,7 +199,7 @@ S_loadavg(struct sysctlmif_object *object, int hflag)
 
 
 static int
-S_timeval(struct sysctlmif_object *object, int hflag)
+S_timeval(struct sysctlmif_object *object, bool hflag)
 {
 	struct timeval tv;
 	size_t tv_size = sizeof(struct timeval);
@@ -214,7 +234,7 @@ S_timeval(struct sysctlmif_object *object, int hflag)
 
 
 static int
-S_vmtotal(struct sysctlmif_object *object, int hflag)
+S_vmtotal(struct sysctlmif_object *object, bool hflag)
 {
 	struct vmtotal v;
 	size_t v_size = sizeof(struct vmtotal);
@@ -285,7 +305,7 @@ S_vmtotal(struct sysctlmif_object *object, int hflag)
 
 #ifdef __amd64__
 static int
-S_efi_map(struct sysctlmif_object *object, int hflag)
+S_efi_map(struct sysctlmif_object *object, bool hflag)
 {
 	//value get from SYSCTLMIF_GETVALUE() remove p, l2 is useless
 	void *p = NULL;
@@ -389,7 +409,7 @@ S_efi_map(struct sysctlmif_object *object, int hflag)
 
 #if defined(__amd64__) || defined(__i386__)
 static int
-S_bios_smap_xattr(struct sysctlmif_object *object, int hflag)
+S_bios_smap_xattr(struct sysctlmif_object *object, bool hflag)
 {
 	//value get from SYSCTLMIF_GETVALUE() remove p, l2 is useless
 	void *p = NULL;
