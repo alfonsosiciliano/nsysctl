@@ -6,7 +6,7 @@ Note: [FreeBSD](http://www.freebsd.org)&copy; is a registered trademark of the [
 **This software is unstable and under heavy development**  
 
 **nsysctl** is a FreeBSD [sysctl](https://www.freebsd.org/cgi/man.cgi?query=sysctl&sektion=8&manpath=FreeBSD+13-current) 
-utility clone, it depends on [sysctlmibinfo](http://gitlab.com/alfix/sysctlmibinfo) library.   
+utility clone, it depends on [sysctlmibinfo](https://wiki.freebsd.org/AlfonsoSiciliano/sysctlmibinfo) library.   
 
 **nsysctl** improvements: 
 
