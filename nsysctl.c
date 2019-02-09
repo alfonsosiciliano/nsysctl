@@ -43,7 +43,6 @@ void display_tree(struct sysctlmif_object *object);
 void display_basic_type(struct sysctlmif_object *object, void *value, size_t valuesize);
 int set_basic_value(struct sysctlmif_object *object, char *input);
 
-bool eflag; /*XXX delete, for opaque*/
 bool aflag, bflag, Bflag, dflag, Fflag, fflag, hflag, Iflag;
 bool iflag, lflag, mflag, Nflag, nflag, oflag, pflag, qflag, Rflag;
 bool Sflag, Tflag, tflag, Vflag, vflag, Wflag, xflag, yflag;
