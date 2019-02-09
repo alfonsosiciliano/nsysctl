@@ -237,7 +237,7 @@ void display_tree(struct sysctlmif_object *object)
     if (!Iflag && (!IS_LEAF(object)))
 	showable = false;
 
-    if(Vflag && object->type == CTLTYPE_OPAQUE && aflag && !xflag && !oflag && !is_opaque_defined(object))
+    if(Vflag && (object->type == CTLTYPE_OPAQUE || object->type == CTLTYPE_NODE) && aflag && !xflag && !oflag && !is_opaque_defined(object))
  	showable = false;
 
     if(vflag || Vflag)
@@ -360,9 +360,10 @@ void display_basic_type(struct sysctlmif_object *object, void *value, size_t val
 	return;
     }
 
-    if(xflag) {
-	for (i = 0; i < value_size; i++) {
-	    xo_emit("{:dump/%c}", ((unsigned char*)(value))[i]);
+    if(xflag && object->type != CTLTYPE_STRING) {
+	    xo_emit("{L:0x}");
+	for (i = value_size-1; i >= 0; i--) {
+	    xo_emit("{:dump/%02x}", ((unsigned char*)(value))[i]);
 	}
 	return;
     }
