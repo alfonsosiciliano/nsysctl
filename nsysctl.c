@@ -44,9 +44,9 @@ void display_basic_type(struct sysctlmif_object *object, void *value, size_t val
 int set_basic_value(struct sysctlmif_object *object, char *input);
 
 bool aflag, bflag, Bflag, dflag, Fflag, fflag, hflag, Iflag;
-bool iflag, lflag, mflag, Nflag, nflag, oflag, pflag, qflag, Rflag;
+bool iflag, lflag, mflag, Nflag, nflag, oflag, pflag, qflag, rflag;
 bool Sflag, Tflag, tflag, Vflag, vflag, Wflag, xflag, yflag;
-char *sep;
+char *sep, *rflagstr;
 
 static const char *ctl_typename[CTLTYPE+1] =
 {
@@ -70,10 +70,10 @@ static const char *ctl_typename[CTLTYPE+1] =
 void usage()
 {
     printf("usage:\n");
-    printf("\tnsysctl [--libxo=opts [-R]] [-DdFIilmNpqTt[-V|v[h[b|o|x]]]Wy] [-e sep]\n");
-    printf("\t\t[-B <bufsize>] [-f filename] name[=value] ...\n");
-    printf("\tnsysctl [--libxo=opts [-R]] [-DdFIlmNpqSTt[-V|v[h[b|o|x]]]Wy] [-e sep]\n");
-    printf("\t\t[-B <bufsize>] -A|a|X\n");
+    printf("\tnsysctl [--libxo=opts [-r tagname]] [-DdFIilmNpqTt[-V|v[h[b|o|x]]]Wy]\n");
+    printf("\t\t[-e sep] [-B <bufsize>] [-f filename] name[=value] ...\n");
+    printf("\tnsysctl [--libxo=opts [-r tagname]] [-DdFIlmNpqSTt[-V|v[h[b|o|x]]]Wy]\n");
+    printf("\t\t[-e sep] [-B <bufsize>] -A|a|X\n");
 }
 
 int main(int argc, char *argv[argc])
@@ -87,7 +87,7 @@ int main(int argc, char *argv[argc])
     error = 0;
     aflag = bflag = Bflag = dflag = Fflag = fflag = false;
     hflag = Iflag = iflag = lflag = mflag = Nflag = nflag = false;
-    oflag = pflag = qflag = Rflag = Sflag = Tflag = tflag = false;
+    oflag = pflag = qflag = rflag = Sflag = Tflag = tflag = false;
     Vflag = vflag = Wflag = xflag = yflag = false;
 
     atexit(xo_finish_atexit);
@@ -97,7 +97,7 @@ int main(int argc, char *argv[argc])
     if (argc < 0)
 	exit(EXIT_FAILURE);
 
-    while ((ch = getopt(argc, argv, "AabDde:FhiIlmNnopqRSTtVvWXxy")) != -1) {
+    while ((ch = getopt(argc, argv, "AabDde:FhiIlmNnopqr:STtVvWXxy")) != -1) {
 	switch (ch) {
 	case 'A': aflag = true; oflag = true; break;
 	case 'a': aflag = true; break;
@@ -120,7 +120,7 @@ int main(int argc, char *argv[argc])
 	case 'o': oflag = true; break;
 	case 'p': pflag = true; break;
 	case 'q': qflag = true; break;
-	case 'R': Rflag = true; break;
+	case 'r': rflag = true; rflagstr = optarg; break;
 	case 'S': Sflag = true; break;
 	case 'T': Tflag = true; break;
 	case 't': tflag = true; break;
@@ -139,8 +139,8 @@ int main(int argc, char *argv[argc])
     argc -= optind;
     argv += optind;
 
-    if (Rflag)
-	xo_open_container("ROOT");
+    if (rflag)
+	xo_open_container(rflagstr);
 
     if (argc > 0) { /* the roots are given in input */
 	aflag = 0; /* set to 0 for display_tree() */
@@ -164,8 +164,8 @@ int main(int argc, char *argv[argc])
     else /* no roots and no -a */
 	usage();
 
-    if (Rflag)
-	xo_close_container("ROOT");
+    if (rflag)
+	xo_close_container(rflagstr);
 
     
     return (error);

@@ -30,19 +30,17 @@
 .Nd get or set kernel state
 .Sh SYNOPSIS
 .Nm
-.Op Fl -libxo Ar opts [-r]
-.Op Fl deFIilmNqTtWy
-.Op Fl V|v[h[b|o|x]]
-.Op Fl IiqTW
+.Op Fl -libxo Ar opts Op Fl r Ar tagname
+.Op Fl DdFIilmNpqTtWy Op V|v Op h Op b|o|x
+.Op Fl e Ar sep
 .Op Fl B Ar bufsize
 .Op Fl f Ar filename
 .Ar name Ns Op = Ns Ar value
 .Ar ...
 .Nm
-.Op Fl -libxo Ar opts [-r]
-.Op Fl deFIlmNqSTtWy
-.Op Fl V|v[h[b|o|x]]
-.Op Fl IqSTW
+.Op Fl -libxo Ar opts Op Fl r Ar tagname
+.Op Fl DdFIlmNpqSTtWy Op V|v Op h Op b|o|x
+.Op Fl e Ar sep
 .Op Fl B Ar bufsize
 .Fl A|a|X
 .Sh DESCRIPTION
@@ -72,15 +70,17 @@ See xo_parse_args(3)
 .It Fl b
 [DOC]
 .It Fl B Ar bufsize
-[NOT IMPLEMENTED] DOC.
+[DOC]
+.It Fl D
+[DOC]
 .It Fl d
 [DOC]
-.It Fl e
+.It Fl e Ar sep
 [DOC]
 .It Fl F
 [DOC]
 .It Fl f Ar filename
-[NOT IMPLEMENTED] [DOC]
+[DOC]
 .It Fl h
 [DOC]
 .It Fl I
@@ -89,15 +89,17 @@ See xo_parse_args(3)
 [DOC]
 .It Fl l
 [DOC]
-.It Fl M
-[DOC]
 .It Fl m
 [DOC]
 .It Fl N
 [DOC]
 .It Fl o
 [DOC]
+.It Fl p
+[DOC]
 .It Fl q
+[DOC]
+.It Fl r Ar tagname
 [DOC]
 .It Fl S
 [DOC]
@@ -105,11 +107,15 @@ See xo_parse_args(3)
 [DOC]
 .It Fl t
 [DOC]
+.It Fl V
+[DOC]
 .It Fl v
 [DOC]
 .It Fl W
 [DOC]
 .It Fl X
+[DOC]
+.It Fl x
 [DOC]
 .It Fl y
 [DOC]
