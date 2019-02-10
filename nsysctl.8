@@ -143,22 +143,23 @@ The
 .Fl w
 option has been deprecated and is silently ignored.
 .Pp
-% sysctl
-.Ar name
-.Pp
-.Dl % nsysctl -Nv Ar name
-.Pp
-% sysctl -a:
-.Pp
-.Dl % nsysctl -NVa
-.Pp
-% sysctl -na:
-.Pp
-.Dl % nsysctl Va
+Compatibility table:
+.Bd -literal -offset indent -compact
+/sbin/sysctl          /usr/local/sbin/nsysctl
+% sysctl    "name"     % nsysctl -Nv "name"
+% sysctl -N "name"     % nsysctl -N  "name"
+% sysctl -n "name"     % nsysctl -v  "name"
+% sysctl -d "name"     % nsysctl -Nd "name"
+% sysctl -a            % nsysctl -NVa
+% sysctl -aN           % nsysctl -aN
+% sysctl -ad           % nsysctl -aNd
+% sysctl -at           % nsysctl -aNt
+% sysctl -ao           % nsysctl -aNVo
+% sysctl -ax           % nsysctl -aNx
+.Ed
 .Sh SEE ALSO
 .Xr sysctl 3 ,
 .Xr sysctlmibinfo 3 ,
-.Xr loader.conf 5 ,
 .Xr sysctl.conf 5
 .Sh HISTORY
 The
@@ -168,7 +169,7 @@ utility first appeared in
 .Sh AUTHORS
 The
 .Nm
-utility and this manual page were written by
+utility was written  by
 .An Alfonso S. Siciliano Aq Mt alf.siciliano@gmail.com
 .Sh BUGS
 %

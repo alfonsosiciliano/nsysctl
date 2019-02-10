@@ -105,27 +105,28 @@ EXAMPLES
 COMPATIBILITY
      The -w option has been deprecated and is silently ignored.
 
-     % sysctl name
-
-           % nsysctl -Nv name
-
-     % sysctl -a:
-
-           % nsysctl -NVa
-
-     % sysctl -na:
-
-           % nsysctl
+     Compatibility table:
+           /sbin/sysctl          /usr/local/sbin/nsysctl
+           % sysctl    "name"     % nsysctl -Nv "name"
+           % sysctl -N "name"     % nsysctl -N  "name"
+           % sysctl -n "name"     % nsysctl -v  "name"
+           % sysctl -d "name"     % nsysctl -Nd "name"
+           % sysctl -a            % nsysctl -NVa
+           % sysctl -aN           % nsysctl -aN
+           % sysctl -ad           % nsysctl -aNd
+           % sysctl -at           % nsysctl -aNt
+           % sysctl -ao           % nsysctl -aNVo
+           % sysctl -ax           % nsysctl -aNx
 
 SEE ALSO
-     sysctl(3), sysctlmibinfo(3), loader.conf(5), sysctl.conf(5)
+     sysctl(3), sysctlmibinfo(3), sysctl.conf(5)
 
 HISTORY
      The nsysctl utility first appeared in FreeBSD 13.0.
 
 AUTHORS
-     The nsysctl utility and this manual page were written by Alfonso S.
-     Siciliano <alf.siciliano@gmail.com>
+     The nsysctl utility was written  by Alfonso S. Siciliano
+     <alf.siciliano@gmail.com>
 
 BUGS
      % nsysctl libxo=xml debug.witness.fullgraph -> segmentation fault
