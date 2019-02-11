@@ -5,7 +5,7 @@ PORTVERSION=	0.1
 CATEGORIES=	sysutils
 
 MAINTAINER=	alfix86@gmail.com
-COMMENT=	Sysctl utility clone with libxo and extra options
+COMMENT=	New sysctl utility with libxo and extra options
 
 LICENSE=	BSD2CLAUSE
 LICENSE_FILE=	${WRKSRC}/LICENSE
