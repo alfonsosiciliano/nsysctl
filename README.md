@@ -1,26 +1,39 @@
 README
 ======
 
-Note: [FreeBSD](http://www.freebsd.org)&copy; is a registered trademark of the [FreeBSD Foundation](https://www.freebsdfoundation.org).  
+**nsysctl** is a FreeBSD [sysctl](https://man.freebsd.org/sysctl/8) 
+utility clone,  with libxo, [sysctlmibinfo](https://wiki.freebsd.org/AlfonsoSiciliano/sysctlmibinfo) and extra options.  
+
+[FreeBSD](http://www.freebsd.org)&copy; is a registered trademark of the [FreeBSD Foundation](https://www.freebsdfoundation.org).  
 
 **This software is unstable and under heavy development**  
-
-**nsysctl** is a FreeBSD [sysctl](https://www.freebsd.org/cgi/man.cgi?query=sysctl&sektion=8&manpath=FreeBSD+13-current) 
-utility clone, it depends on [sysctlmibinfo](https://wiki.freebsd.org/AlfonsoSiciliano/sysctlmibinfo) library.   
+```
+usage:
+	nsysctl [--libxo=opts [-r tagname]] [-DdFIilmNpqTt[-V|v[h[b|o|x]]]Wy]
+		[-e sep] [-B <bufsize>] [-f filename] name[=value] ...
+	nsysctl [--libxo=opts [-r tagname]] [-DdFIlmNpqSTt[-V|v[h[b|o|x]]]Wy]
+		[-e sep] [-B <bufsize>] -A|a|X
+```
 
 **nsysctl** improvements: 
 
- * [sysctlmibinfo(3)](http://gitlab.com/alfix/sysctlmibinfo) provides a simple API to the sysctl MIB, 
+ * [sysctlmibinfo(3)](https://wiki.freebsd.org/AlfonsoSiciliano/sysctlmibinfo) provides a simple API to the sysctl MIB, 
  * all code about "opaque values" is in opaque.c, 
  * output via [libxo(3)](https://wiki.freebsd.org/LibXo) in human and machine readable formats,
+ * output is explicitly indicated by the options,
  * new option -D show all properties,
+ * update option -e specific <sep> as a separator,
  * new option -F show flags,
  * new option -I show internal nodes,
  * new option -l show label,
- * new option -r show <tag-root> with libxo
- * new option -m show format string
- * new option -p show <property-name> _sep_ <property-value>
+ * new option -r show <tag-root> with libxo,
+ * new option -m show format string,
+ * delete option -n simply do not use -N,
+ * updated option -N force to show name,
+ * new option -p show [<property-name>]: <property-value>,
  * new option -S show magic nodes with -a,
+ * new option -V display value is "showable", otherwise hide the state,
+ * new option -v force to show value,
  * new option -y show id.
 
 
