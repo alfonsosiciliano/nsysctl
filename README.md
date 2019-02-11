@@ -5,7 +5,6 @@ Legal notice: [FreeBSD](http://www.freebsd.org)&copy; is a registered trademark 
 
 **nsysctl** is a FreeBSD [sysctl](https://man.freebsd.org/sysctl/8) 
 utility clone,  with libxo, [sysctlmibinfo](https://wiki.freebsd.org/AlfonsoSiciliano/sysctlmibinfo) and extra options.  
-
 **This software is unstable and under heavy development**  
 ```
 usage:
