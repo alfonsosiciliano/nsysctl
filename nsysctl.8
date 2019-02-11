@@ -80,41 +80,43 @@ Show state description.
 .It Fl e Ar sep
 Separate properties with <sep>.
 .It Fl F
-[DOC]
+Displat flags.
 .It Fl f Ar filename
-[DOC]
+Load kernel state from <filename>.
 .It Fl h
-[DOC]
+Try to show values in a human-friendly format.
 .It Fl I
-[DOC]
+Show Internale nodes, defautl only leaves.
 .It Fl i
-[DOC]
+Ignore unknown state.
 .It Fl l
-[DOC]
+Displa label.
 .It Fl m
-[DOC]
+Show format string.
 .It Fl N
-[DOC]
+Print name.
 .It Fl o
-[DOC]
+Show value in octal format.
 .It Fl p
-[DOC]
+Display [property-name]: property-value.
 .It Fl q
-[DOC]
+Avoid to show some warning.
 .It Fl r Ar tagname
-[DOC]
+Show <tagname> output </tagname> with libxo.
 .It Fl S
-[DOC]
+Display magical kernel states.
 .It Fl T
-[DOC]
+Show only variables that are settable via loader.
 .It Fl t
-[DOC]
+Print type.
 .It Fl V
-[DOC]
+Show value, if value is not
+.Dq sshowable
+hidden the state.
 .It Fl v
-Display value
+Display value.
 .It Fl W
-[DOC]
+Display only writable variables that are not statistical.
 .It Fl X
 Equivalent to
 .Fl a Fl x .
@@ -170,6 +172,4 @@ The
 utility was written  by
 .An Alfonso S. Siciliano Aq Mt alf.siciliano@gmail.com
 .Sh BUGS
-%
-.Nm
-libxo=xml debug.witness.fullgraph -> segmentation fault
+% nsysctl --libxo=xml,pretty debug.witness.fullgraph -> segmentation fault

@@ -27,6 +27,7 @@ utility clone, it depends on [sysctlmibinfo](https://wiki.freebsd.org/AlfonsoSic
 TODO Version 0.1
 
  * [X] ~~options: nsysctl value=NUMBER~~
+ * [ ] improve output for name=value
  * [ ] options: nsysctl -f filename
  * [X] ~~options: nsysctl -b~~
  * [X] ~~options: nsysctl -B~~
@@ -35,8 +36,8 @@ TODO Version 0.1
  * [X] ~~failure: return 1~~
  * [ ] libxo: fix nsysctl libxo=xml debug.witness.fullgraph, segmentation fault, bug.c
  * [X] ~~libxo: fix nsysctl libxo=text debug.fail\_point  (utf8)~~
- * [ ] improve output for name=value
  * [ ] libxo: xo-ish opaque.c
  * [X] ~~testing: add regression comparetest.sh~~
- * [ ] manual page: nsysctl.8
+ * [X] ~~manual page: nsysctl.8~~
  * [X] ~~create FreeBSD port directory~~
+
