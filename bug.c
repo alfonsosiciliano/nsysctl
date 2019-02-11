@@ -1,3 +1,14 @@
+/*
+ * % cc bug.c -lxo -o bug
+ * % ./bug
+ * <OK>
+ * % ./bug --libxo=text
+ * <OK>
+ * % ./bug --libxo=xml,pretty
+ * <valuelen>34952</valuelen>
+ * Segmentation fault (core dumped)
+ */
+
 #include <sys/types.h>
 #include <sys/sysctl.h>
 
@@ -24,9 +35,9 @@ int main(int argc, char** argv)
     value=malloc(valuelen);
     sysctl(id,idlevel,value,&valuelen,NULL,0);
 
-    xo_emit("{:value/%lu}", valuelen);
+    xo_emit("{:valuelen/%lu}", valuelen);
     xo_emit("{:value/%s}", (char *)value);
-    xo_emit("{:value/%lu}", valuelen);
+    xo_emit("{:valuelen/%lu}", valuelen);
     xo_emit("{L:\n}");
     
     return 0;
