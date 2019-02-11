@@ -81,9 +81,10 @@ bool is_opaque_defined(struct sysctlmif_object *object)
     return false;
 }
 
-void display_opaque_value(struct sysctlmif_object *object, bool hflag, bool oflag, bool xflag)
+int  display_opaque_value(struct sysctlmif_object *object, bool hflag, bool oflag, bool xflag)
 {
 	unsigned char opaquevalue[BUFSIZ * 500];
+	int error = 0;
 
 	bzero(opaquevalue, BUFSIZ * 500);
 	size_t sizevalue = BUFSIZ *500;
@@ -91,22 +92,22 @@ void display_opaque_value(struct sysctlmif_object *object, bool hflag, bool ofla
 	xo_open_container("value");
 	
 	if (strcmp(object->fmt, "S,clockinfo") == 0) {
-	    S_clockinfo(object, hflag);
+		error += S_clockinfo(object, hflag);
 	} else if (strcmp(object->fmt, "S,timeval") == 0) {
-		S_timeval(object, hflag);
+		error += S_timeval(object, hflag);
 	} else if (strcmp(object->fmt, "S,loadavg") == 0) {
-		S_loadavg(object, hflag);
+		error += S_loadavg(object, hflag);
 	} else if (strcmp(object->fmt, "S,vmtotal") == 0) {
-		S_vmtotal(object, hflag);
+		error += S_vmtotal(object, hflag);
 	}
 #ifdef __amd64__
 	/*else if (strcmp(object->fmt, "S,efi_map_header") == 0) {
-		S_efi_map(object, hflag);
+		error += S_efi_map(object, hflag);
 		}*/
 #endif
 #if defined(__amd64__) || defined(__i386__)
 	/*else if (strcmp(object->fmt, "S,bios_smap_xattr") == 0) {
-		S_bios_smap_xattr(object, hflag);
+		error += S_bios_smap_xattr(object, hflag);
 		}*/
 #endif
 	else if (oflag || xflag) {

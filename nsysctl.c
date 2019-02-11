@@ -39,13 +39,13 @@
 
 void usage(void);
 int parse_line_or_argv(char *arg);
-void display_tree(struct sysctlmif_object *object);
-void display_basic_type(struct sysctlmif_object *object, void *value, size_t valuesize);
+int display_tree(struct sysctlmif_object *object);
+int display_basic_type(struct sysctlmif_object *object, void *value, size_t valuesize);
 int set_basic_value(struct sysctlmif_object *object, char *input);
 
-bool aflag, bflag, dflag, Fflag, fflag, hflag, Iflag;
-bool iflag, lflag, mflag, Nflag, nflag, oflag, pflag, qflag, rflag;
-bool Sflag, Tflag, tflag, Vflag, vflag, Wflag, xflag, yflag;
+bool aflag, bflag, dflag, Fflag, fflag, hflag, Iflag, iflag, lflag, mflag;
+bool Nflag, nflag, oflag, pflag, qflag, rflag, Sflag, Tflag, tflag, Vflag;
+bool vflag, Wflag, xflag, yflag;
 char *sep, *rflagstr;
 unsigned int Bflagsize;
 
@@ -87,10 +87,9 @@ int main(int argc, char *argv[argc])
     sep = ": ";
     error = 0;
     Bflagsize = 0;
-    aflag = bflag = dflag = Fflag = fflag = false;
-    hflag = Iflag = iflag = lflag = mflag = Nflag = nflag = false;
-    oflag = pflag = qflag = rflag = Sflag = Tflag = tflag = false;
-    Vflag = vflag = Wflag = xflag = yflag = false;
+    aflag = bflag = dflag = Fflag = fflag = hflag = Iflag = iflag = false;
+    lflag = mflag = Nflag = nflag = oflag = pflag = qflag = rflag = false;
+    Sflag = Tflag = tflag = Vflag = vflag = Wflag = xflag = yflag = false;
 
     atexit(xo_finish_atexit);
 
@@ -103,7 +102,8 @@ int main(int argc, char *argv[argc])
 	switch (ch) {
 	case 'A': aflag = true; oflag = true; break;
 	case 'a': aflag = true; break;
-	case 'B': Bflagsize = (unsigned int) strtoull(optarg, NULL, 10); break;
+	case 'B': Bflagsize = (unsigned int) strtoull(optarg, NULL, 10);
+	    	  break;
 	case 'b': bflag = true; break;
 	case 'd': dflag = true; break;
 	case 'D': dflag = Fflag = lflag = mflag = true;
@@ -148,7 +148,7 @@ int main(int argc, char *argv[argc])
 	aflag = 0; /* set to 0 for display_tree() */
 	argc = 0;
 	while (argv[argc]) {
-	    parse_line_or_argv(argv[argc]);
+	    error += parse_line_or_argv(argv[argc]);
 	    argc++;
 	}
     }
@@ -158,13 +158,15 @@ int main(int argc, char *argv[argc])
 			      SYSCTLMIF_MAXDEPTH);
 
 	SLIST_FOREACH(nodelevel1, root->children, object_link)
-	    display_tree(nodelevel1);
+	    error += display_tree(nodelevel1);
 
 	sysctlmif_freetree(root);
 	xo_close_list("tree");
     }
-    else /* no roots and no -a */
+    else { /* no roots and no -a */
 	usage();
+	error++;
+    }
 
     if (rflag)
 	xo_close_container(rflagstr);
@@ -196,7 +198,7 @@ int parse_line_or_argv(char *arg)
     else if (strlen(nodename) == strlen(arg)) { /* only nodename */
 	node = sysctlmif_tree(id, idlevel,
 			      SYSCTLMIF_FALL, SYSCTLMIF_MAXDEPTH);
-	display_tree(node);
+	error = display_tree(node);
 	sysctlmif_freetree(node);
     }
     else { /* nodename=value */
@@ -207,7 +209,7 @@ int parse_line_or_argv(char *arg)
 	    error++;
 	}
 	else
-	    set_basic_value(node, parsestring);
+	    error += set_basic_value(node, parsestring);
 		
 	sysctlmif_freeobject(node);
     }
@@ -218,7 +220,7 @@ int parse_line_or_argv(char *arg)
 }
 
 /* Preorder visit */
-void display_tree(struct sysctlmif_object *object)
+int display_tree(struct sysctlmif_object *object)
 {
     struct sysctlmif_object *child;
     bool showable = true, showsep = false, showvalue = true;
@@ -315,9 +317,9 @@ void display_tree(struct sysctlmif_object *object)
 		xo_emit("{L:[VALUE]: }");
 	    
 	    if (object->type == CTLTYPE_OPAQUE || object->type == CTLTYPE_NODE)
-		display_opaque_value(object, hflag, oflag, xflag);
+		error += display_opaque_value(object, hflag, oflag, xflag);
 	    else if ( object->id[0] != 0)
-		display_basic_type(object, value, value_size);
+		error += display_basic_type(object, value, value_size);
 
 	    //xo_emit("{L:appena}\n");
 
@@ -335,32 +337,34 @@ void display_tree(struct sysctlmif_object *object)
 	    xo_open_container("children");
 
 	SLIST_FOREACH(child, object->children, object_link)
-	    display_tree(child);
+	    error += display_tree(child);
 	
 	if (Iflag)
 	    xo_close_container("children");
     }
 
     xo_close_instance("object");
+
+    return error;
 }
 
 
 /*
  * this func will be merged with set_basic_value() in version 1.0 
  */
-void display_basic_type(struct sysctlmif_object *object, void *value, size_t value_size)
+int display_basic_type(struct sysctlmif_object *object, void *value, size_t value_size)
 {
-    int i;
+    int i, error = 0;
 
     // BUG --libxo=xml => segmentation fault
     if(strcmp(object->name,"debug.witness.fullgraph") ==0)
-	return;
+	return error++;
     
     if (bflag) {
 	for (i = 0; i < value_size; i++) {
 	    xo_emit("{:raw/%c}", ((unsigned char*)(value))[i]);
 	}
-	return;
+	return error;
     }
 
     if(xflag && object->type != CTLTYPE_STRING) {
@@ -368,7 +372,7 @@ void display_basic_type(struct sysctlmif_object *object, void *value, size_t val
 	for (i = value_size-1; i >= 0; i--) {
 	    xo_emit("{:dump/%02x}", ((unsigned char*)(value))[i]);
 	}
-	return;
+	return error;
     }
     
     switch (object->type) {
@@ -418,7 +422,10 @@ void display_basic_type(struct sysctlmif_object *object, void *value, size_t val
 	break;
     default:
 	printf("%s, Error bad type!\n", object->name);
+	error++;
     }
+
+    return error;
 }
 
 
@@ -443,24 +450,6 @@ int set_basic_value(struct sysctlmif_object *object, char *input)
     
     llsize=sizeof(long long);
     ullsize=sizeof(unsigned long long);
-
-    /* XXX DECOMMENT */
-    /*display_basic_type(object);*/
-
-#define STVL(typedvalue, type, longinput, formatstr)	\
-    do {						\
-	typedvalue = (type)longinput;			\
-	if(sysctl(object->id,object->idlevel,NULL,0,	\
-		  & typedvalue,sizeof(type)) !=0)	\
-	{						\
-	    xo_emit("{L: -> }");			\
-	    xo_emit_field("", "newvalue", formatstr,	\
-			  NULL, typedvalue);		\
-	    xo_emit("{L:\n}");				\
-	}						\
-	else						\
-	    xo_warnx("cannot set new value %s",input);	\
-    } while(0)
     
     switch (object->type) {
     case CTLTYPE_STRING:
@@ -469,12 +458,30 @@ int set_basic_value(struct sysctlmif_object *object, char *input)
 	break;
     case CTLTYPE_OPAQUE:
 	xo_warnx("Cannot set an opaque input");
-	error = 1;
+	error++;
 	break;
     case CTLTYPE_NODE:
 	xo_warnx("oid \'%s\' isn't a leaf node",object->name);
-	error = 1;
+	error++;
 	break;
+
+#define STVL(typedvalue, type, longinput, formatstr)	\
+    do {						\
+	typedvalue = (type)longinput;			\
+	if(sysctl(object->id,object->idlevel,NULL,0,	\
+		  & typedvalue,sizeof(type)) == 0)	\
+	{						\
+	    xo_emit("{L: -> }");			\
+	    xo_emit_field("", "newvalue", formatstr,	\
+			  NULL, typedvalue);		\
+	    xo_emit("{L:\n}");				\
+	}						\
+	else {						\
+	    xo_warnx("cannot set new value %s",input);	\
+	    error++;					\
+	}						\
+    } while(0)
+
     case CTLTYPE_INT:
 	STVL(intvalue, int, llivalue, "%d");
 	break;
@@ -513,7 +520,7 @@ int set_basic_value(struct sysctlmif_object *object, char *input)
 	break;
     default:
 	xo_warnx("Unknown type");
-	error = 1;
+	error++;
 	break;
     }
 

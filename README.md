@@ -24,7 +24,7 @@ utility clone, it depends on [sysctlmibinfo](https://wiki.freebsd.org/AlfonsoSic
  * new option -y show id.
 
 
-TODO Version 1.0
+TODO Version 0.1
 
  * [X] ~~options: nsysctl value=NUMBER~~
  * [ ] options: nsysctl -f filename
@@ -32,7 +32,7 @@ TODO Version 1.0
  * [X] ~~options: nsysctl -B~~
  * [X] ~~options: nsysctl -D~~
  * [ ] failure: add xo\_warn and xo\_err messages
- * [ ] failure: return 1
+ * [X] ~~failure: return 1~~
  * [ ] libxo: fix nsysctl libxo=xml debug.witness.fullgraph, segmentation fault, bug.c
  * [X] ~~libxo: fix nsysctl libxo=text debug.fail\_point  (utf8)~~
  * [ ] improve output for name=value
@@ -40,7 +40,3 @@ TODO Version 1.0
  * [X] ~~testing: add regression comparetest.sh~~
  * [ ] manual page: nsysctl.8
  * [X] ~~create FreeBSD port directory~~
- * [ ] merge set\_value() with display\_basic\_value()
-
-
-
