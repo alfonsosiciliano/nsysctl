@@ -1,10 +1,10 @@
 README
 ======
 
+Legal notice: [FreeBSD](http://www.freebsd.org)&copy; is a registered trademark of the [FreeBSD Foundation](https://www.freebsdfoundation.org).  
+
 **nsysctl** is a FreeBSD [sysctl](https://man.freebsd.org/sysctl/8) 
 utility clone,  with libxo, [sysctlmibinfo](https://wiki.freebsd.org/AlfonsoSiciliano/sysctlmibinfo) and extra options.  
-
-[FreeBSD](http://www.freebsd.org)&copy; is a registered trademark of the [FreeBSD Foundation](https://www.freebsdfoundation.org).  
 
 **This software is unstable and under heavy development**  
 ```
@@ -22,15 +22,15 @@ usage:
  * output via [libxo(3)](https://wiki.freebsd.org/LibXo) in human and machine readable formats,
  * output is explicitly indicated by the options,
  * new option -D show all properties,
- * update option -e specific <sep> as a separator,
+ * update option -e specific _sep_ as a separator,
  * new option -F show flags,
  * new option -I show internal nodes,
  * new option -l show label,
- * new option -r show <tag-root> with libxo,
+ * new option -r show _tag-root_ with libxo,
  * new option -m show format string,
  * delete option -n simply do not use -N,
  * updated option -N force to show name,
- * new option -p show [<property-name>]: <property-value>,
+ * new option -p show [_property-name_]: _property-value_,
  * new option -S show magic nodes with -a,
  * new option -V display value is "showable", otherwise hide the state,
  * new option -v force to show value,
