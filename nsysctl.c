@@ -43,10 +43,11 @@ void display_tree(struct sysctlmif_object *object);
 void display_basic_type(struct sysctlmif_object *object, void *value, size_t valuesize);
 int set_basic_value(struct sysctlmif_object *object, char *input);
 
-bool aflag, bflag, Bflag, dflag, Fflag, fflag, hflag, Iflag;
+bool aflag, bflag, dflag, Fflag, fflag, hflag, Iflag;
 bool iflag, lflag, mflag, Nflag, nflag, oflag, pflag, qflag, rflag;
 bool Sflag, Tflag, tflag, Vflag, vflag, Wflag, xflag, yflag;
 char *sep, *rflagstr;
+unsigned int Bflagsize;
 
 static const char *ctl_typename[CTLTYPE+1] =
 {
@@ -85,7 +86,8 @@ int main(int argc, char *argv[argc])
     
     sep = ": ";
     error = 0;
-    aflag = bflag = Bflag = dflag = Fflag = fflag = false;
+    Bflagsize = 0;
+    aflag = bflag = dflag = Fflag = fflag = false;
     hflag = Iflag = iflag = lflag = mflag = Nflag = nflag = false;
     oflag = pflag = qflag = rflag = Sflag = Tflag = tflag = false;
     Vflag = vflag = Wflag = xflag = yflag = false;
@@ -101,7 +103,7 @@ int main(int argc, char *argv[argc])
 	switch (ch) {
 	case 'A': aflag = true; oflag = true; break;
 	case 'a': aflag = true; break;
-	case 'B': Bflag = true; break;
+	case 'B': Bflagsize = (unsigned int) strtoull(optarg, NULL, 10); break;
 	case 'b': bflag = true; break;
 	case 'd': dflag = true; break;
 	case 'D': dflag = Fflag = lflag = mflag = true;
@@ -243,6 +245,7 @@ void display_tree(struct sysctlmif_object *object)
     if(vflag || Vflag)
     {
 	sysctl(object->id, object->idlevel, NULL, &value_size, NULL, 0);
+	value_size += Bflagsize;
 	if ((value = malloc(value_size)) == NULL) {
 	    printf("%s: Cannot get value MALLOC\n", object->name);
 	    showable = false;
