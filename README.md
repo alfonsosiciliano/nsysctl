@@ -49,7 +49,7 @@ TODO Version 0.1
  * [ ] libxo: fix nsysctl libxo=xml debug.witness.fullgraph, segmentation fault, bug.c
  * [X] ~~libxo: fix nsysctl libxo=text debug.fail\_point  (utf8)~~
  * [ ] libxo: xo-ish opaque.c
- * [ ] output type: NUMBER - fmt 'A'
+ * [X] ~~output type: NUMBER - fmt 'A'~~
  * [ ] output fmt 'K'
  * [X] ~~testing: add regression comparetest.sh~~
  * [X] ~~manual page: nsysctl.8~~
