@@ -2,7 +2,7 @@
  * SPDX-License-Identifier: BSD-3-Clause
  *
  * Copyright (c) 1993
- *	The Regents of the University of California.  All rights reserved.
+ *      The Regents of the University of California.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,6 +28,21 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
+/*
+ * #ifndef lint
+ * static const char copyright[] =
+ * "@(#) Copyright (c) 1993\n\
+ *       The Regents of the University of California.  All rights reserved.\n";
+ * #endif / * not lint * /
+ *
+ * #ifndef lint
+ * #if 0
+ * static char sccsid[] = "@(#)from: sysctl.c      8.1 (Berkeley) 6/6/93";
+ * #endif
+ * static const char rcsid[] =
+ * "$FreeBSD: head/sbin/sysctl/sysctl.c 338533 2018-09-08 18:57:05Z kib $";
+ * #endif / * not lint * /
+*/
 
 //#include <sys/types.h>
 #include <sys/param.h>
@@ -61,7 +76,7 @@ static int S_efi_map(struct sysctlmif_object *object, bool hflag);
 #if defined(__amd64__) || defined(__i386__)
 static int S_bios_smap_xattr(struct sysctlmif_object *object, bool hflag);
 #endif
-static int strIKtoi(const char *str, char **endptrp, const char *fmt);
+int strIKtoi(const char *str, char **endptrp, const char *fmt);
 
 bool is_opaque_defined(struct sysctlmif_object *object)
 {
@@ -81,7 +96,7 @@ bool is_opaque_defined(struct sysctlmif_object *object)
     return false;
 }
 
-int  display_opaque_value(struct sysctlmif_object *object, bool hflag, bool oflag, bool xflag)
+int display_opaque_value(struct sysctlmif_object *object, bool hflag, bool oflag, bool xflag)
 {
 	unsigned char opaquevalue[BUFSIZ * 500];
 	int error = 0;
@@ -133,6 +148,8 @@ int  display_opaque_value(struct sysctlmif_object *object, bool hflag, bool ofla
 	}
 
 	xo_close_container("value");
+
+	return error;
 }
 
 
@@ -433,11 +450,12 @@ S_bios_smap_xattr(struct sysctlmif_object *object, bool hflag)
 	return (0);
 }
 
-
 #endif
 
-static int
-strIKtoi(const char *str, char **endptrp, const char *fmt)
+
+/* strIK_to_int() and display_IK_value() could be in kelvin.c */
+int
+strIK_to_int(const char *str, char **endptrp, const char *fmt)
 {
 	int kelv;
 	float temp;
@@ -494,4 +512,23 @@ strIKtoi(const char *str, char **endptrp, const char *fmt)
 
 	errno = ERANGE;
 	return (0);
+}
+
+int display_IK_value(struct sysctlmif_object *obj, void *value, size_t value_size, bool hflag)
+{
+    int i, prec = 1, intvalue = *((int*)value);
+    float base;
+    
+    if (obj->fmt[2] != '\0')
+	prec = obj->fmt[2] - '0';
+    base = 1.0;
+    for (i = 0; i < prec; i++)
+	base *= 10.0;
+    //printf("%.*fC\n", prec,(float)intvalue / base - 273.15);
+    if(hflag)
+	xo_emit("{h:value/%f}{U:C}", (float)intvalue / base - 273.15);
+    else
+	xo_emit("{:value/%f}{U:C}", (float)intvalue / base - 273.15);
+    
+    return 0;
 }

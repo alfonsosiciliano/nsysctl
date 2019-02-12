@@ -50,7 +50,7 @@ TODO Version 0.1
  * [X] ~~libxo: fix nsysctl libxo=text debug.fail\_point  (utf8)~~
  * [ ] libxo: xo-ish opaque.c
  * [X] ~~output type: NUMBER - fmt 'A'~~
- * [ ] output fmt 'K'
+ * [X] ~~output fmt 'K'~~
  * [X] ~~testing: add regression comparetest.sh~~
  * [X] ~~manual page: nsysctl.8~~
  * [X] ~~create FreeBSD port directory~~

@@ -315,8 +315,10 @@ int display_tree(struct sysctlmif_object *object)
 		xo_emit("{L:/%s}",sep);
 	    if (pflag)
 		xo_emit("{L:[VALUE]: }");
-	    
-	    if (object->type == CTLTYPE_OPAQUE || object->type == CTLTYPE_NODE)
+
+	    if (strncmp(object->fmt, "IK", 2) == 0)
+		error += display_IK_value(object, value, value_size, hflag);
+	    else if (object->type == CTLTYPE_OPAQUE || object->type == CTLTYPE_NODE)
 		error += display_opaque_value(object, hflag, oflag, xflag);
 	    else if ( object->id[0] != 0)
 		error += display_basic_type(object, value, value_size);

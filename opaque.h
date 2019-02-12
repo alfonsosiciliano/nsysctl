@@ -32,5 +32,9 @@ int
 display_opaque_value(struct sysctlmif_object *object, bool hflag, bool oflag, bool xflag);
 bool
 is_opaque_defined(struct sysctlmif_object *object);
+int
+strIK_to_int(const char *str, char **endptrp, const char *fmt);
+int
+display_IK_value(struct sysctlmif_object *obj, void *value, size_t value_size, bool hflag);
 
 #endif /* _NSYSCTL_OPAQUE_H_ */
