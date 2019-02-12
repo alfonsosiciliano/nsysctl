@@ -374,43 +374,51 @@ int display_basic_type(struct sysctlmif_object *object, void *value, size_t valu
 	}
 	return error;
     }
+
+#define GTVL(fmtstr, typevar) do {				\
+	for (i=0; i< value_size / sizeof( typevar); i++) {	\
+	    if (i != 0)						\
+		xo_emit("{Pw:}");				\
+	    xo_emit(fmtstr, ((typevar *)value)[i] );		\
+	}							\
+    } while(0)
     
     switch (object->type) {
     case CTLTYPE_INT:
-	xo_emit("{:value/%d}", *((int *)value));
+	GTVL("{:value/%d}", int);
 	break;
     case CTLTYPE_LONG:
-	xo_emit("{:value/%ld}", *((long *)value));
+	GTVL("{:value/%ld}", long);
 	break;
     case CTLTYPE_S8:
-	xo_emit("{:value/%d}", *((int8_t *)value));
+	GTVL("{:value/%d}", int8_t);
 	break;
     case CTLTYPE_S16:
-	xo_emit("{:value/%d}", *((int16_t *)value));
+	GTVL("{:value/%d}", int16_t);
 	break;
     case CTLTYPE_S32:
-	xo_emit("{:value/%d}", *((int32_t *)value));
+	GTVL("{:value/%d}", int32_t);
 	break;
     case CTLTYPE_S64:
-	xo_emit("{:value/%ld}", *((int64_t *)value));
+	GTVL("{:value/%ld}", int64_t);
 	break;
     case CTLTYPE_UINT:
-	xo_emit("{:value/%u}", *((u_int *)value));
+	GTVL("{:value/%u}", u_int);
 	break;
     case CTLTYPE_ULONG:
-	xo_emit("{:value/%lu}", *((u_long *)value));
+	GTVL("{:value/%lu}", u_long);
 	break;
     case CTLTYPE_U8:
-	xo_emit("{:value/%u}", *((uint8_t *)value));
+	GTVL("{:value/%u}", uint8_t);
 	break;
     case CTLTYPE_U16:
-	xo_emit("{:value/%u}", *((uint16_t *)value));
+	GTVL("{:value/%u}", uint16_t);
 	break;
     case CTLTYPE_U32:
-	xo_emit("{:value/%u}", *((uint32_t *)value));
+	GTVL("{:value/%u}", uint32_t);
 	break;
     case CTLTYPE_U64:
-	xo_emit("{:value/%lu}", *((uint64_t *)value));
+	GTVL("{:value/%lu}", uint64_t);
 	break;
     case CTLTYPE_NODE:
 	xo_emit("{:value/%s}", "--- TYPE NODE ---");
