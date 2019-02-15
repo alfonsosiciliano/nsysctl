@@ -1,8 +1,8 @@
 # PUBLIC DOMAIN - NO WARRANTY
-# written by Alfonso S. Siciliano
+# written by wiki.freebsd.org/AlfonsoSiciliano
 
 PROG=	nsysctl
-SRCS=	nsysctl.c opaque.c
+SRCS=	nsysctl.c opaque.c special_value.c
 
 MAN=	nsysctl.8
 
