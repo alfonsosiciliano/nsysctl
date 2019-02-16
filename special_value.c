@@ -142,13 +142,13 @@ static int vm_phys_free(void* value, size_t value_size)
 	    free(line);
 
 	    /* Rows */
-	    /*getline(&line, &linecap, fp);
+	    getline(&line, &linecap, fp);
 	    xo_open_container("memorder");
 	    //if(find_int(line, end, &tmp))
 	    //	xo_emit("{:num_order/%d}{L:\n}", tmp);
-
-	    xo_close_container("memorder");*/
-
+	    line[strlen(line)-1] = '\0';
+	    xo_emit("{:num_order/%s}", line);
+	    xo_close_container("memorder");
 	}
 
 	free(line);
