@@ -57,3 +57,6 @@ TODO Version 0.1
  * [X] ~~manual page: nsysctl.8~~
  * [X] ~~create FreeBSD port directory~~
 
+TODO Version 0.2
+
+ * [ ] set array name=value,value,value...
