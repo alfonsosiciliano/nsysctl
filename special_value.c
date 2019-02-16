@@ -118,8 +118,8 @@ static int vm_phys_free(void* value, size_t value_size)
 
 	/* FREE LIST Y :*/
 	if( strstr(line, "FREE LIST") != NULL) {
-	    if(num_list > 0)
-		xo_close_container("list");
+	    //if(num_list > 0)
+	    //	xo_close_container("list");
 	    xo_open_container("list");
 	    xo_emit("{L:FREE LIST }{:num_list/%d}{Lc:}{L:\n}", num_list);
 	    num_list++;	    
@@ -146,18 +146,17 @@ static int vm_phys_free(void* value, size_t value_size)
 	    getline(&line, &linecap, fp);
 	    while(find_int(line, &end, &tmp)) {
 		xo_open_container("memorder");
-		xo_emit("{:num_order/%5d}", tmp);
+		xo_emit("{:num_order/%4d}{Lw:}", tmp);
 		line = end;
 		find_int(line, &end, &tmp);
-		xo_emit("{L:(}{:size/%5d}{U:K}{L:)}", tmp);
+		xo_emit("{L:(}{:size/%6d}{U:K}{L:)}", tmp);
 		line = end;
 		num_pool=0;
-		while(find_int(line, &end, &tmp)) {
+		while(find_int(line, &end, &tmp)) { // Pools cols
 		    //xo_emit("{L:|}{:pool/%5d}{L:|}", tmp);
-		    xo_emit("{L:|}");
+		    xo_emit("{Lw: }{L:|}");
 		    snprintf(poolstr, sizeof(poolstr), "pool%d", num_pool);
-		    xo_emit_field("V",poolstr,"%5d", NULL, tmp);
-		    xo_emit("{L:|}");
+		    xo_emit_field("V",poolstr,"%8d", NULL, tmp);
 		    line = end;
 		    num_pool++;
 		}
@@ -167,11 +166,11 @@ static int vm_phys_free(void* value, size_t value_size)
 		start = line;
 		xo_close_container("memorder");
 	    }
-	}
-
+	    xo_close_container("list");
+	}//if "LIST FREE"
+	
 	free(line);
-    }
-    xo_close_container("list");
+    }// while line
     xo_close_container("memorydomain");
     xo_close_container("value");
 
