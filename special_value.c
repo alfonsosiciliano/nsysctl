@@ -27,18 +27,19 @@
  * 'Special values' are values splitted for xo-output
  */
 
+#include <sys/types.h>
+
+#include <libxo/xo.h>
 #include <stdbool.h>
 #include <string.h>
-#include <libxo/xo.h>
-
-#include "special_value.h"
+#include <sysctlmibinfo.h>
 
 static int vm_phys_free(void* value, size_t value_size);
 
-static bool find_int(char *start, char *end, int *intvalue)
+static bool find_int(char *start, char **end, int *intvalue)
 {
     int j=0,i=0;
-    char *s,*e, *tmp;
+    char *s,*e;
     long long llvalue;
 
     s=start;
@@ -59,11 +60,9 @@ static bool find_int(char *start, char *end, int *intvalue)
 	j++;
     }
 
-    tmp = strndup(&s[i], j);
-    llvalue = strtoll(tmp, NULL, 10);
-    free(tmp);
+    llvalue = strtoll(&s[i], NULL, 10);
     *intvalue = (int)llvalue;
-    end = &end[j];
+    *end = &e[j];
     
     return true;
 }
@@ -96,6 +95,7 @@ static int vm_phys_free(void* value, size_t value_size)
     ssize_t linelen;
     FILE *fp = fmemopen(value, value_size, "r");
     bool parselist;
+    char poolstr[15]; /*"poolXXXXXXXXXX"*/
 
     num_domain = error = 0;
     parselist = false;
@@ -142,13 +142,31 @@ static int vm_phys_free(void* value, size_t value_size)
 	    free(line);
 
 	    /* Rows */
+	    start = line;
 	    getline(&line, &linecap, fp);
-	    xo_open_container("memorder");
-	    //if(find_int(line, end, &tmp))
-	    //	xo_emit("{:num_order/%d}{L:\n}", tmp);
-	    line[strlen(line)-1] = '\0';
-	    xo_emit("{:num_order/%s}", line);
-	    xo_close_container("memorder");
+	    while(find_int(line, &end, &tmp)) {
+		xo_open_container("memorder");
+		xo_emit("{:num_order/%5d}", tmp);
+		line = end;
+		find_int(line, &end, &tmp);
+		xo_emit("{L:(}{:size/%5d}{U:K}{L:)}", tmp);
+		line = end;
+		num_pool=0;
+		while(find_int(line, &end, &tmp)) {
+		    //xo_emit("{L:|}{:pool/%5d}{L:|}", tmp);
+		    xo_emit("{L:|}");
+		    snprintf(poolstr, sizeof(poolstr), "pool%d", num_pool);
+		    xo_emit_field("V",poolstr,"%5d", NULL, tmp);
+		    xo_emit("{L:|}");
+		    line = end;
+		    num_pool++;
+		}
+		xo_emit("{L:\n}");
+		free(start);
+		getline(&line, &linecap, fp);
+		start = line;
+		xo_close_container("memorder");
+	    }
 	}
 
 	free(line);
