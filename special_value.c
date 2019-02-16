@@ -71,7 +71,7 @@ bool is_special_value(struct sysctlmif_object *object)
 {
     bool special = false;
 
-    special = strcmp(object->name,"vm.phys_free") == 0;
+    //special = strcmp(object->name,"vm.phys_free") == 0;
 
     return special;
 }
