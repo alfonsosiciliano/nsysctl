@@ -35,39 +35,6 @@
 
 static int vm_phys_free(void* value, size_t value_size);
 
-static bool find_int(char *start, char *end, int *intvalue)
-{
-    int j=0,i=0;
-    char *s,*e, *tmp;
-    long long llvalue;
-
-    s=start;
-
-    while (true) {
-	if(s[i] == '\n' || s[i] == '\0' || s[i] == EOF)
-	    return false;
-	if(s[i] >= '0' && s[i] <= '9')
-	    break;
-	i++;
-    }
-
-    e = &s[i];
-
-    while (true) {
-	if(e[j] == '\n' || e[j] == '\0' || e[j] == EOF || e[j] < '0' || e[j] > '9')
-	    break;
-	j++;
-    }
-
-    tmp = strndup(&s[i], j);
-    llvalue = strtoll(tmp, NULL, 10);
-    free(tmp);
-    *intvalue = (int)llvalue;
-    end = &end[j];
-    
-    return true;
-}
-
 bool is_special_value(struct sysctlmif_object *object)
 {
     bool special = false;
@@ -109,8 +76,8 @@ static int vm_phys_free(void* value, size_t value_size)
 	/* DOMAIN X :*/
 	if( strstr(line, "DOMAIN") != NULL) {
 	    if(num_domain > 0)
-		xo_close_container("memorydomain");
-	    xo_open_container("memorydomain");
+		xo_close_container("111cont");
+	    xo_open_container("111cont");
 	    xo_emit("{L:DOMAIN }{:num_domain/%d}{Lc:}{L:\n\n}", num_domain);
 	    num_domain++;
 	    num_list = 0;
@@ -119,8 +86,8 @@ static int vm_phys_free(void* value, size_t value_size)
 	/* FREE LIST Y :*/
 	if( strstr(line, "FREE LIST") != NULL) {
 	    if(num_list > 0)
-		xo_close_container("list");
-	    xo_open_container("list");
+		xo_close_container("222cont");
+	    xo_open_container("222cont");
 	    xo_emit("{L:FREE LIST }{:num_list/%d}{Lc:}{L:\n}", num_list);
 	    num_list++;	    
 	    free(line);
@@ -142,19 +109,17 @@ static int vm_phys_free(void* value, size_t value_size)
 	    free(line);
 
 	    /* Rows */
-	    /*getline(&line, &linecap, fp);
-	    xo_open_container("memorder");
-	    //if(find_int(line, end, &tmp))
-	    //	xo_emit("{:num_order/%d}{L:\n}", tmp);
-
-	    xo_close_container("memorder");*/
-
+	    getline(&line, &linecap, fp);
+	    xo_open_container("333cont");
+	    xo_emit("{:num_ordermem/%d}{L:\n}", 5);
+	    //xo_emit_field("V", "line", "%s", NULL, line);
+	    xo_close_container("333cont");
 	}
 
 	free(line);
     }
-    xo_close_container("list");
-    xo_close_container("memorydomain");
+    xo_close_container("222cont");
+    xo_close_container("111cont");
     xo_close_container("value");
 
     return error;
