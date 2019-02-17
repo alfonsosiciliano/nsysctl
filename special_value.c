@@ -34,13 +34,14 @@
 #include <string.h>
 #include <sysctlmibinfo.h>
 
+/* Internal use */
+
 static int vm_phys_free(void *value, size_t value_size);
 
 /*
- * char value = "012\n3456\n789\0";
  * char *start, *end;
  * start = value;
- * while (find_line(start, &next, &value[strlen(value)+1])) {
+ * while (find_line(start, &next, value[value_size])) {
  *	printf("%s\n", start);
  *	...
  *	start = next;
@@ -48,16 +49,12 @@ static int vm_phys_free(void *value, size_t value_size);
  */
 static bool find_line(char *startline, char **endline, char *endbuffer)
 {
-    int i;
-    char *e;
+    int i = 0;
 
     if(startline == endbuffer)
 	return false;
 
-    e = startline;
-
-    i=0;
-    while( e[i] != '\n' && e[i] != '\0' ) {
+    while( startline[i] != '\n' && startline[i] != '\0' ) {
 	i++;
     }
 
@@ -70,37 +67,32 @@ static bool find_line(char *startline, char **endline, char *endbuffer)
     return true;
 }
 
-
 static bool find_int(char *start, char **end, int *intvalue)
 {
     int j=0,i=0;
-    char *s,*e;
-    long long llvalue;
-
-    s=start;
+    char *e;
 
     while (true) {
-	if(s[i] == '\n' || s[i] == '\0' || s[i] == EOF)
+	if(start[i] == '\n' || start[i] == '\0' || start[i] == EOF)
 	    return false;
-	if(s[i] >= '0' && s[i] <= '9')
+	if(start[i] >= '0' && start[i] <= '9')
 	    break;
 	i++;
     }
-
-    e = &s[i];
-
+    *intvalue = (int)strtoll(&start[i], NULL, 10);
+    
+    e = &start[i];
     while (true) {
 	if(e[j] == '\n' || e[j] == '\0' || e[j] == EOF || e[j] < '0' || e[j] > '9')
 	    break;
 	j++;
     }
-
-    llvalue = strtoll(&s[i], NULL, 10);
-    *intvalue = (int)llvalue;
     *end = &e[j];
     
     return true;
 }
+
+/* API implementation */
 
 bool is_special_value(struct sysctlmif_object *object)
 {
@@ -126,14 +118,14 @@ static int vm_phys_free(void* value, size_t value_size)
     int num_domain, num_list, num_pool, tmp, error;
     char *start, *end;
     char *line = NULL, *next;
-    char poolstr[15]; /*"poolXXXXXXXXXX"*/
+    char poolstr[15];
 
     num_domain = error = 0;
     xo_emit("{L:\n}");
     xo_open_container("value");
     line = value;
     while (find_line(line, &next, &(value[value_size]) )) {
-	/* DOMAIN X : */
+	// DOMAIN X :
 	if( strstr(line, "DOMAIN") != NULL) {
 	    if(num_domain > 0)
 		xo_close_container("domain");
@@ -147,9 +139,11 @@ static int vm_phys_free(void* value, size_t value_size)
 	    num_list = 0;
 	}
 
-	/* FREE LIST Y : */
+	// FREE LIST Y :
 	if( strstr(line, "FREE LIST") != NULL) {
 	    xo_open_container("free-list");
+	    if(num_list > 0) //not \n by domain
+		xo_emit("{L:\n}");
 	    xo_emit("{L:FREE LIST }{:num_list/%d}{Lc:}{L:\n}", num_list);
 	    num_list++;
 	    // '\n'
@@ -186,7 +180,6 @@ static int vm_phys_free(void* value, size_t value_size)
 		start = end;
 		num_pool=0;
 		while(find_int(start, &end, &tmp)) { // Pools cols
-		    //xo_emit("{L:|}{:pool/%5d}{L:|}", tmp);
 		    xo_emit("{Lw: }{L:|}");
 		    snprintf(poolstr, sizeof(poolstr), "pool%d", num_pool);
 		    xo_emit_field("V",poolstr,"%8d", NULL, tmp);
