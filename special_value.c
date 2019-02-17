@@ -217,6 +217,7 @@ static int debug_witness_fullgraph(void *value, size_t value_size)
 
     xo_open_container("value");
     line = value;
+    xo_emit("{L:\n}");
     while(find_line(line, &next, &value[value_size])) {
 	if(line[0] != '\0') {
 	    xo_open_container("property");
