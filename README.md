@@ -48,7 +48,7 @@ TODO Version 0.1
  * [X] ~~options: nsysctl -D~~
  * [ ] failure: add xo\_warn and xo\_err messages
  * [X] ~~failure: return 1~~
- * [ ] libxo: fix nsysctl libxo=xml debug.witness.fullgraph, segmentation fault, bug.c
+ * [X] ~~libxo: fix nsysctl libxo=xml debug.witness.fullgraph,~~ segmentation fault, bug.c
  * [X] ~~libxo: fix nsysctl libxo=text debug.fail\_point  (utf8)~~
  * [ ] libxo: xo-ish opaque.c
  * [X] ~~output type: NUMBER - fmt 'A'~~
