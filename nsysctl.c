@@ -197,14 +197,13 @@ int parse_line_or_argv(char *arg)
 	    xo_warnx("unknow \'%s\' oid", nodename);
     }
     else if (strlen(nodename) == strlen(arg)) { /* only nodename */
-	node = sysctlmif_tree(id, idlevel,
-			      SYSCTLMIF_FALL, SYSCTLMIF_MAXDEPTH);
+	node = sysctlmif_tree(id, idlevel, SYSCTLMIF_FALL, SYSCTLMIF_MAXDEPTH);
 	error = display_tree(node);
 	sysctlmif_freetree(node);
     }
     else { /* nodename=value */
-	node = sysctlmif_object(id, idlevel,
-				SYSCTLMIF_FNAME | SYSCTLMIF_FTYPE);
+	/* FALL for fmt 'A' */
+	node = sysctlmif_object(id, idlevel, SYSCTLMIF_FNAME | SYSCTLMIF_FTYPE);
 	if(!IS_LEAF(node)) {
 	    xo_warnx("oid \'%s\' isn't a leaf node",node->name);
 	    error++;
@@ -362,10 +361,6 @@ int display_tree(struct sysctlmif_object *object)
 int display_basic_type(struct sysctlmif_object *object, void *value, size_t value_size)
 {
     int i, error = 0;
-
-    // BUG --libxo=xml => segmentation fault
-    if(strcmp(object->name,"debug.witness.fullgraph") ==0)
-	return error++;
     
     if (bflag) {
 	for (i = 0; i < value_size; i++) {

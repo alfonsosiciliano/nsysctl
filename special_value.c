@@ -24,7 +24,7 @@
  */
 
 /*
- * 'Special values' are values splitted for xo-output
+ * 'Special values' are (basic type) values splitted for xo-output
  */
 
 #include <sys/types.h>
@@ -34,14 +34,15 @@
 #include <string.h>
 #include <sysctlmibinfo.h>
 
-/* Internal use */
-
 static int vm_phys_free(void *value, size_t value_size);
+static int debug_witness_fullgraph(void *value, size_t value_size);
+
+/* Internal use */
 
 /*
  * char *start, *end;
  * start = value;
- * while (find_line(start, &next, value[value_size])) {
+ * while (find_line(start, &next, &value[value_size])) {
  *	printf("%s\n", start);
  *	...
  *	start = next;
@@ -92,13 +93,15 @@ static bool find_int(char *start, char **end, int *intvalue)
     return true;
 }
 
+
 /* API implementation */
 
 bool is_special_value(struct sysctlmif_object *object)
 {
     bool special = false;
 
-    special = strcmp(object->name,"vm.phys_free") == 0;
+    special = ( strcmp(object->name,"vm.phys_free") == 0 ||
+		strcmp(object->name,"debug.witness.fullgraph") == 0);
 
     return special;
 }
@@ -109,6 +112,10 @@ int display_special_value(struct sysctlmif_object *object, void* value, size_t v
 
     if( strcmp(object->name,"vm.phys_free") == 0)
 	error += vm_phys_free(value, value_size);
+    else if(strcmp(object->name, "debug.witness.fullgraph") == 0)
+	error += debug_witness_fullgraph(value, value_size);
+    else
+	error++;
     
     return error;
 }
@@ -130,7 +137,7 @@ static int vm_phys_free(void* value, size_t value_size)
 	    if(num_domain > 0)
 		xo_close_container("domain");
 	    xo_open_container("domain");
-	    xo_emit("{L:DOMAIN }{:num_domain/%d}{Lc:}{L:\n}", num_domain);
+	    xo_emit("{L:DOMAIN }{:num-domain/%d}{Lc:}{L:\n}", num_domain);
 	    num_domain++;
 	    // '\n'
 	    line=next;
@@ -144,7 +151,7 @@ static int vm_phys_free(void* value, size_t value_size)
 	    xo_open_container("free-list");
 	    if(num_list > 0) //not \n by domain
 		xo_emit("{L:\n}");
-	    xo_emit("{L:FREE LIST }{:num_list/%d}{Lc:}{L:\n}", num_list);
+	    xo_emit("{L:FREE LIST }{:num-list/%d}{Lc:}{L:\n}", num_list);
 	    num_list++;
 	    // '\n'
 	    line=next;
@@ -173,7 +180,7 @@ static int vm_phys_free(void* value, size_t value_size)
 	    start = line;
 	    while(find_int(start, &end, &tmp)) {
 		xo_open_container("order");
-		xo_emit("{:num_order/%4d}{Lw:}", tmp);
+		xo_emit("{:num-order/%4d}{Lw:}", tmp);
 		start = end;
 		find_int(start, &end, &tmp);
 		xo_emit("{L:(}{:size/%6d}{U:K}{L:)}", tmp);
@@ -200,4 +207,30 @@ static int vm_phys_free(void* value, size_t value_size)
     xo_close_container("value");
     
     return error;
+}
+
+static int debug_witness_fullgraph(void *value, size_t value_size)
+{
+    char *line, *next;
+    char *tofree, *prop_name, *parsestring;
+    int i;
+
+    xo_open_container("value");
+    line = value;
+    while(find_line(line, &next, &value[value_size])) {
+	if(line[0] != '\0') {
+	    xo_open_container("property");
+	    parsestring = strdup(line);
+	    tofree = prop_name = strsep(&parsestring, ",");
+	    xo_emit("{:name/%s}{L:,}", prop_name);
+	    xo_emit("{:value/%s}{L:\n}", parsestring);
+	    free(tofree);
+	    xo_close_container("property");
+	}
+	
+	line = next;
+    }
+    xo_close_container("value");
+
+    return 0;
 }
