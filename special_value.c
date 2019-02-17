@@ -34,7 +34,42 @@
 #include <string.h>
 #include <sysctlmibinfo.h>
 
-static int vm_phys_free(void* value, size_t value_size);
+static int vm_phys_free(void *value, size_t value_size);
+
+/*
+ * char value = "012\n3456\n789\0";
+ * char *start, *end;
+ * start = value;
+ * while (find_line(start, &next, &value[strlen(value)+1])) {
+ *	printf("%s\n", start);
+ *	...
+ *	start = next;
+ * }
+ */
+static bool find_line(char *startline, char **endline, char *endbuffer)
+{
+    int i;
+    char *e;
+
+    if(startline == endbuffer)
+	return false;
+
+    e = startline;
+
+    i=0;
+    while( e[i] != '\n' && e[i] != '\0' ) {
+	i++;
+    }
+
+    startline[i]='\0';    
+    *endline = &(startline[i]);
+    
+    if(*endline != endbuffer)
+	*endline = &(startline[i+1]);
+
+    return true;
+}
+
 
 static bool find_int(char *start, char **end, int *intvalue)
 {
@@ -71,7 +106,7 @@ bool is_special_value(struct sysctlmif_object *object)
 {
     bool special = false;
 
-    //special = strcmp(object->name,"vm.phys_free") == 0;
+    special = strcmp(object->name,"vm.phys_free") == 0;
 
     return special;
 }
@@ -90,89 +125,86 @@ static int vm_phys_free(void* value, size_t value_size)
 {
     int num_domain, num_list, num_pool, tmp, error;
     char *start, *end;
-    char *line = NULL;
-    size_t linecap = 0;
-    ssize_t linelen;
-    FILE *fp = fmemopen(value, value_size, "r");
-    bool parselist;
+    char *line = NULL, *next;
     char poolstr[15]; /*"poolXXXXXXXXXX"*/
 
     num_domain = error = 0;
-    parselist = false;
     xo_emit("{L:\n}");
     xo_open_container("value");
-    /*
-     * XXX "domain" or "freelist" =>c xo_close_containes = <ZZZZZZZZZZZ>
-     */
-    while ((linelen = getline(&line, &linecap, fp)) > 0)
-    {
-	/* DOMAIN X :*/
+    line = value;
+    while (find_line(line, &next, &(value[value_size]) )) {
+	/* DOMAIN X : */
 	if( strstr(line, "DOMAIN") != NULL) {
 	    if(num_domain > 0)
-		xo_close_container("memorydomain");
-	    xo_open_container("memorydomain");
-	    xo_emit("{L:DOMAIN }{:num_domain/%d}{Lc:}{L:\n\n}", num_domain);
+		xo_close_container("domain");
+	    xo_open_container("domain");
+	    xo_emit("{L:DOMAIN }{:num_domain/%d}{Lc:}{L:\n}", num_domain);
 	    num_domain++;
+	    // '\n'
+	    line=next;
+	    find_line(line, &next, &(value[value_size]));
+	    xo_emit("{L:\n}");
 	    num_list = 0;
 	}
 
-	/* FREE LIST Y :*/
+	/* FREE LIST Y : */
 	if( strstr(line, "FREE LIST") != NULL) {
-	    //if(num_list > 0)
-	    //	xo_close_container("list");
-	    xo_open_container("list");
+	    xo_open_container("free-list");
 	    xo_emit("{L:FREE LIST }{:num_list/%d}{Lc:}{L:\n}", num_list);
-	    num_list++;	    
-	    free(line);
-	    getline(&line, &linecap, fp);
+	    num_list++;
+	    // '\n'
+	    line=next;
+	    find_line(line, &next, &(value[value_size]));
 	    xo_emit("{L:\n}");
-	    free(line);
 	    
-	    /*  ORDER (SIZE)  |  NUMBER */
-	    getline(&line, &linecap, fp);
+	    //  ORDER (SIZE)  |  NUMBER
+	    line=next;
+	    find_line(line, &next, &(value[value_size]));
 	    xo_emit_field("L", line, NULL, NULL);
-	    free(line);
-	    /*                |  POOL 0  |  POOL 1 .... */
-	    getline(&line, &linecap, fp);
+	    xo_emit("{L:\n}");
+	    //                |  POOL 0  |  POOL 1 ....
+	    line=next;
+	    find_line(line, &next, &(value[value_size]));
 	    xo_emit_field("L", line, NULL, NULL);
-	    free(line);
-	    /*--            -- --      -- --      -- ...*/
-	    getline(&line, &linecap, fp);
+	    xo_emit("{L:\n}");
+	    // --            -- --      -- --      -- ...
+	    line=next;  
+	    find_line(line, &next, &(value[value_size]));
 	    xo_emit_field("L", line, NULL, NULL);
-	    free(line);
+	    xo_emit("{L:\n}");
 
-	    /* Rows */
+	    // Rows
+	    line=next;
+	    find_line(line, &next, &(value[value_size]));
 	    start = line;
-	    getline(&line, &linecap, fp);
-	    while(find_int(line, &end, &tmp)) {
-		xo_open_container("memorder");
+	    while(find_int(start, &end, &tmp)) {
+		xo_open_container("order");
 		xo_emit("{:num_order/%4d}{Lw:}", tmp);
-		line = end;
-		find_int(line, &end, &tmp);
+		start = end;
+		find_int(start, &end, &tmp);
 		xo_emit("{L:(}{:size/%6d}{U:K}{L:)}", tmp);
-		line = end;
+		start = end;
 		num_pool=0;
-		while(find_int(line, &end, &tmp)) { // Pools cols
+		while(find_int(start, &end, &tmp)) { // Pools cols
 		    //xo_emit("{L:|}{:pool/%5d}{L:|}", tmp);
 		    xo_emit("{Lw: }{L:|}");
 		    snprintf(poolstr, sizeof(poolstr), "pool%d", num_pool);
 		    xo_emit_field("V",poolstr,"%8d", NULL, tmp);
-		    line = end;
+		    start = end;
 		    num_pool++;
 		}
 		xo_emit("{L:\n}");
-		free(start);
-		getline(&line, &linecap, fp);
-		start = line;
-		xo_close_container("memorder");
-	    }
-	    xo_close_container("list");
-	}//if "LIST FREE"
-	
-	free(line);
+		xo_close_container("order");
+		line = next;
+		find_line(line, &next, &(value[value_size]));
+		start=line;
+		}
+	    xo_close_container("free-list");
+	}//if "LIST FREE"	
+	line=next;
     }// while line
-    xo_close_container("memorydomain");
+    xo_close_container("domain");
     xo_close_container("value");
-
+    
     return error;
 }
