@@ -36,6 +36,7 @@
 #include "opaque.h"
 #include "special_value.h"
 
+#define MAXSIZELINE 255
 #define IS_LEAF(node)	(node->children == NULL || SLIST_EMPTY(node->children))
 
 void usage(void);
@@ -84,6 +85,8 @@ int main(int argc, char *argv[argc])
     struct sysctlmif_object *root, *nodelevel1;
     int idroot[1] = {0};
     size_t idrootlevel = 0;
+    char *filename, line[MAXSIZELINE];
+    FILE *fp;
     
     sep = ": ";
     error = 0;
@@ -99,7 +102,7 @@ int main(int argc, char *argv[argc])
     if (argc < 0)
 	exit(EXIT_FAILURE);
 
-    while ((ch = getopt(argc, argv, "AabDde:FhiIlmNnopqr:STtVvWXxy")) != -1) {
+    while ((ch = getopt(argc, argv, "AabDde:Ff:hiIlmNnopqr:STtVvWXxy")) != -1) {
 	switch (ch) {
 	case 'A': aflag = true; oflag = true; break;
 	case 'a': aflag = true; break;
@@ -112,7 +115,7 @@ int main(int argc, char *argv[argc])
 		  break;
 	case 'e': sep = optarg; break;
 	case 'F': Fflag = true; break;
-	case 'f': fflag = true; break;
+	case 'f': fflag = true; filename = optarg; break;
 	case 'h': hflag = true; break;
 	case 'I': Iflag = true; break;
 	case 'i': iflag = true; break;
@@ -145,6 +148,20 @@ int main(int argc, char *argv[argc])
     if (rflag)
 	xo_open_container(rflagstr);
 
+    if(fflag)
+    {
+	fp = fopen(filename, "r");
+	if(fp == NULL)
+	    xo_err(1, "cannot open: %s", filename);
+	while(fgets(line,MAXSIZELINE,fp) != NULL) {
+	    if(line[0] == '#' || line[0] == '\n')
+		continue;
+	    if(strchr(line, '\n') != NULL)
+		strchr(line, '\n')[0] = '\0';
+	    parse_line_or_argv(line);
+	}
+    }
+
     if (argc > 0) { /* the roots are given in input */
 	aflag = 0; /* set to 0 for display_tree() */
 	argc = 0;
@@ -164,7 +181,7 @@ int main(int argc, char *argv[argc])
 	sysctlmif_freetree(root);
 	xo_close_list("tree");
     }
-    else { /* no roots and no -a */
+    else if (!fflag){ /* no roots, no -a and no -f*/
 	usage();
 	error++;
     }

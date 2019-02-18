@@ -42,7 +42,7 @@ TODO Version 0.1
 
  * [X] ~~options: nsysctl value=NUMBER~~
  * [ ] improve output for name=value
- * [ ] options: nsysctl -f filename
+ * [X] ~~options: nsysctl -f filename~~
  * [X] ~~options: nsysctl -b~~
  * [X] ~~options: nsysctl -B~~
  * [X] ~~options: nsysctl -D~~
@@ -61,3 +61,5 @@ TODO Version 0.2
  * [ ] set array name=value,value,value...
  * [ ] failure: add xo\_warn and xo\_err messages
  * [ ] test/fix: machdep.efi\_map - S,efi\_map\_header
+ * [ ] improve -f filename with whitespaces
+
