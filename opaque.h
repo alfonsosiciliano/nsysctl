@@ -29,7 +29,7 @@
 #include <stdbool.h>
 
 int
-display_opaque_value(struct sysctlmif_object *object, bool hflag, bool oflag, bool xflag);
+display_opaque_value(struct sysctlmif_object *object, void *value, size_t value_size, bool hflag, bool oflag, bool xflag);
 bool
 is_opaque_defined(struct sysctlmif_object *object);
 int

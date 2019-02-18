@@ -321,7 +321,7 @@ int display_tree(struct sysctlmif_object *object)
 	    else if (is_special_value(object))
 		error += display_special_value(object,value,value_size);
 	    else if (object->type == CTLTYPE_OPAQUE || object->type == CTLTYPE_NODE)
-		error += display_opaque_value(object, hflag, oflag, xflag);
+		error += display_opaque_value(object, value, value_size, hflag, oflag, xflag);
 	    else if ( object->id[0] != 0)
 		error += display_basic_type(object, value, value_size);
 

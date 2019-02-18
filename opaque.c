@@ -66,81 +66,75 @@
 #include <sysctlmibinfo.h>
 
 /* Func declarations */
-static int S_clockinfo(struct sysctlmif_object *object, bool hflag);
-static int S_loadavg(struct sysctlmif_object *object, bool hflag);
-static int S_timeval(struct sysctlmif_object *object, bool hflag);
-static int S_vmtotal(struct sysctlmif_object *object, bool hflag);
+static int S_clockinfo(void *value, size_t value_size, bool hflag);
+static int S_loadavg(void *value, size_t value_size, bool hflag);
+static int S_timeval(void *value, size_t value_size, bool hflag);
+static int S_vmtotal(void *value, size_t value_size, bool hflag);
 #ifdef __amd64__
-static int S_efi_map(struct sysctlmif_object *object, bool hflag);
+static int S_efi_map(void *value, size_t value_size, bool hflag);
 #endif
 #if defined(__amd64__) || defined(__i386__)
-static int S_bios_smap_xattr(struct sysctlmif_object *object, bool hflag);
+static int S_bios_smap_xattr(void *value, size_t value_size, bool hflag);
 #endif
 int strIKtoi(const char *str, char **endptrp, const char *fmt);
 
 bool is_opaque_defined(struct sysctlmif_object *object)
 {
     if ( strcmp(object->fmt, "S,clockinfo") == 0 ||
-	 strcmp(object->fmt, "S,timeval") == 0 ||
-	 strcmp(object->fmt, "S,loadavg") == 0 ||
-	 strcmp(object->fmt, "S,vmtotal") == 0 ||
+#if defined(__amd64__) || defined(__i386__)
+	strcmp(object->fmt, "S,bios_smap_xattr") == 0 ||
+#endif
 #ifdef __amd64__
 	strcmp(object->fmt, "S,efi_map_header") == 0 ||
 #endif
-#if defined(__amd64__) || defined(__i386__)
-	strcmp(object->fmt, "S,bios_smap_xattr") == 0
-#endif
-	)
+	 strcmp(object->fmt, "S,loadavg") == 0 ||
+	 strcmp(object->fmt, "S,timeval") == 0 ||
+	 strcmp(object->fmt, "S,vmtotal") == 0)
 	return true;
 
     return false;
 }
 
-int display_opaque_value(struct sysctlmif_object *object, bool hflag, bool oflag, bool xflag)
+int display_opaque_value(struct sysctlmif_object *object, void *value, size_t value_size, bool hflag, bool oflag, bool xflag)
 {
-	unsigned char opaquevalue[BUFSIZ * 500];
 	int error = 0;
-
-	bzero(opaquevalue, BUFSIZ * 500);
-	size_t sizevalue = BUFSIZ *500;
-
+	int i;
+	int to = value_size;
+	
 	xo_open_container("value");
 	
 	if (strcmp(object->fmt, "S,clockinfo") == 0) {
-		error += S_clockinfo(object, hflag);
+		error += S_clockinfo(value, value_size, hflag);
 	} else if (strcmp(object->fmt, "S,timeval") == 0) {
-		error += S_timeval(object, hflag);
+		error += S_timeval(value, value_size, hflag);
 	} else if (strcmp(object->fmt, "S,loadavg") == 0) {
-		error += S_loadavg(object, hflag);
+		error += S_loadavg(value, value_size, hflag);
 	} else if (strcmp(object->fmt, "S,vmtotal") == 0) {
-		error += S_vmtotal(object, hflag);
+		error += S_vmtotal(value, value_size, hflag);
 	}
 #ifdef __amd64__
-	/*else if (strcmp(object->fmt, "S,efi_map_header") == 0) {
-		error += S_efi_map(object, hflag);
-		}*/
+	else if (strcmp(object->fmt, "S,efi_map_header") == 0) {
+		error += S_efi_map(value, value_size, hflag);
+	}
 #endif
 #if defined(__amd64__) || defined(__i386__)
-	/*else if (strcmp(object->fmt, "S,bios_smap_xattr") == 0) {
-		error += S_bios_smap_xattr(object, hflag);
-		}*/
+	else if (strcmp(object->fmt, "S,bios_smap_xattr") == 0) {
+		error += S_bios_smap_xattr(value, value_size, hflag);
+	}
 #endif
 	else if (oflag || xflag) {
 	    	xo_open_container(object->fmt + 2);
 		xo_emit("{Lc:Format}{:format/%s}", object->fmt);
-		sysctl(object->id, object->idlevel, opaquevalue, &sizevalue, NULL, 0);
-		xo_emit("{P: }{Lc:Length}{:lenght/%lu}", sizevalue);
-		xo_emit("{P: }{Lc:Dump}0x" /*{:dump/%16x}...",opaquevalue*/);
+		xo_emit("{P: }{Lc:Length}{:lenght/%lu}", value_size);
+		xo_emit("{P: }{Lc:Dump}0x" /*{:dump/%16x}...", value*/);
 
-		int i;
-		int to = sizevalue;
 		if(oflag)
-		    to = 16 < sizevalue ? 16 : sizevalue;
+		    to = 16 < value_size ? 16 : value_size;
 		
 		for (i = 0; i < to; i++) {
-			xo_emit("{:dump/%02x}", opaquevalue[i]);
+			xo_emit("{:dump/%02x}", ((unsigned char*)value)[i]);
 		}
-		if (oflag && (sizevalue >= 8)) {
+		if (oflag && (value_size >= 8)) {
 			xo_emit("{L:...}");
 		}
 
@@ -154,29 +148,31 @@ int display_opaque_value(struct sysctlmif_object *object, bool hflag, bool oflag
 
 
 static int
-S_clockinfo(struct sysctlmif_object *object, bool hflag)
+S_clockinfo(void *value, size_t value_size, bool hflag)
 {
-	size_t ci_size = sizeof(struct clockinfo);
-	struct clockinfo ci;
+	struct clockinfo *ci = (struct clockinfo*)value;
 	char *hfield = hflag ? "h" : NULL;
 
-	if (sysctl(object->id, object->idlevel, (void *)&ci, &ci_size, NULL,
-	    0) < 0) {
-		xo_warnx("Impossible get clockinfo");
+	if (value_size != sizeof(*ci)) {
+		xo_warnx("S_clockinfo %zu != %zu", value_size, sizeof(*ci));
 		return (1);
 	}
-
+       
 	xo_open_container("clockinfo");
+
+	/*printf(hflag ? "{ hz = %'d, tick = %'d, profhz = %'d, stathz = %'d }" :
+	    "{ hz = %d, tick = %d, profhz = %d, stathz = %d }",
+	    ci->hz, ci->tick, ci->profhz, ci->stathz);*/
 
 	xo_emit("{L:{ }");
 	xo_emit("{Lw:hz =}");
-	xo_emit_field(hfield, "hz", "%d", NULL, ci.hz);
+	xo_emit_field(hfield, "hz", "%d", NULL, ci->hz);
 	xo_emit(", {Lw:tick =}");
-	xo_emit_field(hfield, "tick", "%d", NULL, ci.tick);
+	xo_emit_field(hfield, "tick", "%d", NULL, ci->tick);
 	xo_emit(", {Lw:profhz =}");
-	xo_emit_field(hfield, "profhz", "%d", NULL, ci.profhz);
+	xo_emit_field(hfield, "profhz", "%d", NULL, ci->profhz);
 	xo_emit(", {Lw:stathz =}");
-	xo_emit_field(hfield, "stathz", "%d", NULL, ci.stathz);
+	xo_emit_field(hfield, "stathz", "%d", NULL, ci->stathz);
 	xo_emit("{N: }}");
 
 	xo_close_container("clockinfo");
@@ -186,21 +182,23 @@ S_clockinfo(struct sysctlmif_object *object, bool hflag)
 
 
 static int
-S_loadavg(struct sysctlmif_object *object, bool hflag)
+S_loadavg(void *value, size_t value_size, bool hflag)
 {
-	struct loadavg tv;
-	size_t tv_size = sizeof(struct loadavg);
+	struct loadavg *tv = (struct loadavg*)value;
 	char *hfield = /*hflag ? "h" :*/ NULL;
-
 	/*libxo 'h' modifier does not affect the size and treatment of %f */
 
-	if (sysctl(object->id, object->idlevel, (void *)&tv, &tv_size, NULL,
-	    0) < 0) {
-		xo_warnx("Impossible get loadavg");
+	if (value_size != sizeof(*tv)) {
+		xo_warnx("S_loadavg %zu != %zu", value_size, sizeof(*tv));
 		return (1);
 	}
 
-#define TV_FSCALE(idx)    ((double)tv.ldavg[idx]/(double)tv.fscale)
+	/*printf(hflag ? "{ %'.2f %'.2f %'.2f }" : "{ %.2f %.2f %.2f }",
+		(double)tv->ldavg[0]/(double)tv->fscale,
+		(double)tv->ldavg[1]/(double)tv->fscale,
+		(double)tv->ldavg[2]/(double)tv->fscale);*/
+
+#define TV_FSCALE(idx)    ((double)tv->ldavg[idx]/(double)tv->fscale)
 
 	xo_open_container("loadavg");
 	xo_emit("{L:{ }");
@@ -215,31 +213,31 @@ S_loadavg(struct sysctlmif_object *object, bool hflag)
 	return (0);
 }
 
-
 static int
-S_timeval(struct sysctlmif_object *object, bool hflag)
+S_timeval(void *value, size_t value_size, bool hflag)
 {
-	struct timeval tv;
-	size_t tv_size = sizeof(struct timeval);
+	struct timeval *tv = (struct timeval*)value;
 	time_t tv_sec;
 	char *p1;
 	char *hfield = hflag ? "h,hn-decimal" : NULL;
 
-	if (sysctl(object->id, object->idlevel, (void *)&tv, &tv_size, NULL,
-	    0) < 0) {
-		xo_warnx("Impossible get timeval");
+	if (value_size != sizeof(*tv)) {
+		xo_warnx("S_timeval %zu != %zu", value_size, sizeof(*tv));
 		return (1);
 	}
+	/*printf(hflag ? "{ sec = %'jd, usec = %'ld } " :
+		"{ sec = %jd, usec = %ld } ",
+		(intmax_t)tv->tv_sec, tv->tv_usec);*/
 
 	xo_open_container("timeval");
 
 	xo_emit("{Lw:{ sec =}");
-	xo_emit_field(hfield, "sec", "%jd", NULL, (intmax_t)tv.tv_sec);
+	xo_emit_field(hfield, "sec", "%jd", NULL, (intmax_t)tv->tv_sec);
 	xo_emit(", {Lw:usec =}");
-	xo_emit_field(hfield, "usec", "%ld", NULL, tv.tv_usec);
+	xo_emit_field(hfield, "usec", "%ld", NULL, tv->tv_usec);
 	xo_emit("{Nw:}}");
 
-	tv_sec = tv.tv_sec;
+	tv_sec = tv->tv_sec;
 	p1 = strdup(ctime(&tv_sec));
 	p1[strlen(p1) -1] = '\0';
 	xo_emit("{P: }{:date/%s}", p1);
@@ -252,16 +250,14 @@ S_timeval(struct sysctlmif_object *object, bool hflag)
 
 
 static int
-S_vmtotal(struct sysctlmif_object *object, bool hflag)
+S_vmtotal(void *value, size_t value_size, bool hflag)
 {
-	struct vmtotal v;
-	size_t v_size = sizeof(struct vmtotal);
-	char *hfield = hflag ? "h,hn-decimal" : NULL;
+	struct vmtotal *v = (struct vmtotal*)value;
 	int pageKilo;
+	char *hfield = hflag ? "h,hn-decimal" : NULL;
 
-	if (sysctl(object->id, object->idlevel, (void *)&v, &v_size, NULL,
-	    0) < 0) {
-		xo_warnx("Impossible get vmtotal");
+	if (value_size != sizeof(struct vmtotal)) {
+		warnx("S_vmtotal %zu != %zu", value_size, sizeof(*v));
 		return (1);
 	}
 
@@ -278,13 +274,13 @@ S_vmtotal(struct sysctlmif_object *object, bool hflag)
 	xo_open_container("processes");
 	xo_emit("{Lc:Processes}{P:		}");
 	xo_emit("{Lwc:(RUNQ}");
-	xo_emit_field(hfield, "runq", "%d", NULL, v.t_rq);
+	xo_emit_field(hfield, "runq", "%d", NULL, v->t_rq);
 	xo_emit(" {Lwc:Disk Wait}");
-	xo_emit_field(hfield, "disk-wait", "%d", NULL, v.t_dw);
+	xo_emit_field(hfield, "disk-wait", "%d", NULL, v->t_dw);
 	xo_emit(" {Lw:Page Wait =}");
-	xo_emit_field(hfield, "page-wait", "%d", NULL, v.t_pw);
+	xo_emit_field(hfield, "page-wait", "%d", NULL, v->t_pw);
 	xo_emit(" {Lwc:Sleep}");
-	xo_emit_field(hfield, "sleep", "%d", NULL, v.t_sl);
+	xo_emit_field(hfield, "sleep", "%d", NULL, v->t_sl);
 	xo_emit("{N:)}");
 	xo_close_container("process");
 	xo_emit("{L:\n}");
@@ -303,16 +299,16 @@ S_vmtotal(struct sysctlmif_object *object, bool hflag)
 	} while (0)
 
 	XOVM("virtual-memory", "Virtual Memory", "\t\t",
-	    pg2k(v.t_vm), pg2k(v.t_avm));
+	    pg2k(v->t_vm), pg2k(v->t_avm));
 	XOVM("real-memory", "Real Memory", "\t\t",
-	    pg2k(v.t_rm), pg2k(v.t_arm));
+	    pg2k(v->t_rm), pg2k(v->t_arm));
 	XOVM("shared-virtual-memory", "Shared Virtual Memory", "\t",
-	    pg2k(v.t_vmshr), pg2k(v.t_avmshr));
+	    pg2k(v->t_vmshr), pg2k(v->t_avmshr));
 	XOVM("shared-real-memory", "Shared Real Memory", "\t",
-	    pg2k(v.t_rmshr), pg2k(v.t_armshr));
+	    pg2k(v->t_rmshr), pg2k(v->t_armshr));
 
 	xo_emit("{Lwc:Free Memory}{P:	}");
-	xo_emit_field(hfield, "free-memory", "%ju", NULL, pg2k(v.t_free));
+	xo_emit_field(hfield, "free-memory", "%ju", NULL, pg2k(v->t_free));
 	xo_emit("{U:K}");
 
 	xo_close_container("vmtotal");
@@ -323,34 +319,29 @@ S_vmtotal(struct sysctlmif_object *object, bool hflag)
 
 #ifdef __amd64__
 static int
-S_efi_map(struct sysctlmif_object *object, bool hflag)
+S_efi_map(void *value, size_t value_size, bool hflag)
 {
-	//value get from SYSCTLMIF_GETVALUE() remove p, l2 is useless
-	void *p = NULL;
-	size_t l2 = 0;
-	//----------------
 	struct efi_map_header *efihdr;
 	struct efi_md *map;
 	const char *type;
 	size_t efisz;
 	int ndesc, i;
 
-	static const char *const types[] =
-	{
-		[EFI_MD_TYPE_NULL] = "Reserved",
-		[EFI_MD_TYPE_CODE] = "LoaderCode",
-		[EFI_MD_TYPE_DATA] = "LoaderData",
-		[EFI_MD_TYPE_BS_CODE] = "BootServicesCode",
-		[EFI_MD_TYPE_BS_DATA] = "BootServicesData",
-		[EFI_MD_TYPE_RT_CODE] = "RuntimeServicesCode",
-		[EFI_MD_TYPE_RT_DATA] = "RuntimeServicesData",
-		[EFI_MD_TYPE_FREE] = "ConventionalMemory",
-		[EFI_MD_TYPE_BAD] = "UnusableMemory",
-		[EFI_MD_TYPE_RECLAIM] = "ACPIReclaimMemory",
+	static const char * const types[] = {
+		[EFI_MD_TYPE_NULL] =	"Reserved",
+		[EFI_MD_TYPE_CODE] =	"LoaderCode",
+		[EFI_MD_TYPE_DATA] =	"LoaderData",
+		[EFI_MD_TYPE_BS_CODE] =	"BootServicesCode",
+		[EFI_MD_TYPE_BS_DATA] =	"BootServicesData",
+		[EFI_MD_TYPE_RT_CODE] =	"RuntimeServicesCode",
+		[EFI_MD_TYPE_RT_DATA] =	"RuntimeServicesData",
+		[EFI_MD_TYPE_FREE] =	"ConventionalMemory",
+		[EFI_MD_TYPE_BAD] =	"UnusableMemory",
+		[EFI_MD_TYPE_RECLAIM] =	"ACPIReclaimMemory",
 		[EFI_MD_TYPE_FIRMWARE] = "ACPIMemoryNVS",
-		[EFI_MD_TYPE_IOMEM] = "MemoryMappedIO",
-		[EFI_MD_TYPE_IOPORT] = "MemoryMappedIOPortSpace",
-		[EFI_MD_TYPE_PALCODE] = "PalCode",
+		[EFI_MD_TYPE_IOMEM] =	"MemoryMappedIO",
+		[EFI_MD_TYPE_IOPORT] =	"MemoryMappedIOPortSpace",
+		[EFI_MD_TYPE_PALCODE] =	"PalCode",
 		[EFI_MD_TYPE_PERSISTENT] = "PersistentMemory",
 	};
 
@@ -358,66 +349,55 @@ S_efi_map(struct sysctlmif_object *object, bool hflag)
 	 * Memory map data provided by UEFI via the GetMemoryMap
 	 * Boot Services API.
 	 */
-	if (l2 < sizeof(*efihdr)) {
-		warnx("S_efi_map length less than header");
+	if (value_size < sizeof(*efihdr)) {
+		xo_warnx("S_efi_map length less than header");
 		return (1);
 	}
-	efihdr = p;
+	efihdr = value;
 	efisz = (sizeof(struct efi_map_header) + 0xf) & ~0xf;
 	map = (struct efi_md *)((uint8_t *)efihdr + efisz);
 
-	if (efihdr->descriptor_size == 0) {
+	if (efihdr->descriptor_size == 0)
 		return (0);
-	}
-	if (l2 != efisz + efihdr->memory_size) {
-		warnx("S_efi_map length mismatch %zu vs %zu", l2, efisz +
+	if (value_size != efisz + efihdr->memory_size) {
+		xo_warnx("S_efi_map length mismatch %zu vs %zu", value_size, efisz +
 		    efihdr->memory_size);
 		return (1);
 	}
 	ndesc = efihdr->memory_size / efihdr->descriptor_size;
 
-	printf("\n%23s %12s %12s %8s %4s",
+	xo_emit("{L:\n}{L:/%23s}{L:/%12s}{L:/%12s}{L:/%8s}{L:/%4s}",
 	    "Type", "Physical", "Virtual", "#Pages", "Attr");
 
 	for (i = 0; i < ndesc; i++,
 	    map = efi_next_descriptor(map, efihdr->descriptor_size)) {
 		type = NULL;
-		if (map->md_type < nitems(types)) {
+		if (map->md_type < nitems(types))
 			type = types[map->md_type];
-		}
-		if (type == NULL) {
+		if (type == NULL)
 			type = "<INVALID>";
-		}
-		printf("\n%23s %012jx %12p %08jx ", type,
+		xo_emit("{L:\n}{:types/%23s}{L: }{:md_phys/%012jx}{L: }{:md_virt/%12p}{L: }{:md_pages/%08jx}{L: }",
+		    type,
 		    (uintmax_t)map->md_phys, map->md_virt,
 		    (uintmax_t)map->md_pages);
-		if (map->md_attr & EFI_MD_ATTR_UC) {
-			printf("UC ");
-		}
-		if (map->md_attr & EFI_MD_ATTR_WC) {
-			printf("WC ");
-		}
-		if (map->md_attr & EFI_MD_ATTR_WT) {
-			printf("WT ");
-		}
-		if (map->md_attr & EFI_MD_ATTR_WB) {
-			printf("WB ");
-		}
-		if (map->md_attr & EFI_MD_ATTR_UCE) {
-			printf("UCE ");
-		}
-		if (map->md_attr & EFI_MD_ATTR_WP) {
-			printf("WP ");
-		}
-		if (map->md_attr & EFI_MD_ATTR_RP) {
-			printf("RP ");
-		}
-		if (map->md_attr & EFI_MD_ATTR_XP) {
-			printf("XP ");
-		}
-		if (map->md_attr & EFI_MD_ATTR_RT) {
-			printf("RUNTIME");
-		}
+		if (map->md_attr & EFI_MD_ATTR_UC)
+			xo_emit("{L:UC }");
+		if (map->md_attr & EFI_MD_ATTR_WC)
+			xo_emit("{L:WC }");
+		if (map->md_attr & EFI_MD_ATTR_WT)
+			xo_emit("{L:WT }");
+		if (map->md_attr & EFI_MD_ATTR_WB)
+			xo_emit("{L:WB }");
+		if (map->md_attr & EFI_MD_ATTR_UCE)
+			xo_emit("{L:UCE }");
+		if (map->md_attr & EFI_MD_ATTR_WP)
+			xo_emit("{L:WP }");
+		if (map->md_attr & EFI_MD_ATTR_RP)
+			xo_emit("{L:RP }");
+		if (map->md_attr & EFI_MD_ATTR_XP)
+			xo_emit("{L:XP }");
+		if (map->md_attr & EFI_MD_ATTR_RT)
+			xo_emit("{L:RUNTIME}");
 	}
 	return (0);
 }
@@ -427,29 +407,29 @@ S_efi_map(struct sysctlmif_object *object, bool hflag)
 
 #if defined(__amd64__) || defined(__i386__)
 static int
-S_bios_smap_xattr(struct sysctlmif_object *object, bool hflag)
+S_bios_smap_xattr(void* value, size_t value_size, bool hflag)
 {
-	//value get from SYSCTLMIF_GETVALUE() remove p, l2 is useless
-	void *p = NULL;
-	size_t l2 = 0;
-	//----------------
 	struct bios_smap_xattr *smap, *end;
 
-	if (l2 % sizeof(*smap) != 0) {
-		warnx("S_bios_smap_xattr %zu is not a multiple of %zu", l2,
-		    sizeof(*smap));
+	if (value_size % sizeof(*smap) != 0) {
+		xo_warnx("S_bios_smap_xattr %zu is not a multiple of %zu", value_size, sizeof(*smap));
 		return (1);
 	}
 
-	end = (struct bios_smap_xattr *)((char *)p + l2);
-	for (smap = p; smap < end; smap++) {
-		printf("\nSMAP type=%02x, xattr=%02x, base=%016jx, len=%016jx",
-		    smap->type, smap->xattr, (uintmax_t)smap->base,
-		    (uintmax_t)smap->length);
+	end = (struct bios_smap_xattr *)((char *)value + value_size);
+	for (smap = value; smap < end; smap++) {
+		xo_open_container("SMAP");
+		xo_emit("{L:\n}");
+		xo_emit("{L:SMAP }");
+		xo_emit("{L:type=}{V:type/%02x}{L:, }", smap->type);
+		xo_emit("{L:xattr=}{V:xattr/%02x}{L:, }", smap->xattr);
+		xo_emit("{L:base=}{V:base/%016jx}{L:, }",(uintmax_t)smap->base);
+		xo_emit("{L:len=}{V:len/%016jx}", (uintmax_t)smap->length);
+		xo_close_container("SMAP");
 	}
+
 	return (0);
 }
-
 #endif
 
 

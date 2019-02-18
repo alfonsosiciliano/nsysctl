@@ -46,11 +46,10 @@ TODO Version 0.1
  * [X] ~~options: nsysctl -b~~
  * [X] ~~options: nsysctl -B~~
  * [X] ~~options: nsysctl -D~~
- * [ ] failure: add xo\_warn and xo\_err messages
  * [X] ~~failure: return 1~~
  * [X] ~~libxo: fix nsysctl libxo=xml debug.witness.fullgraph,~~ segmentation fault, bug.c
  * [X] ~~libxo: fix nsysctl libxo=text debug.fail\_point  (utf8)~~
- * [ ] libxo: xo-ish opaque.c
+ * [X] ~~libxo: xo-ish opaque.c~~
  * [X] ~~output type: NUMBER - fmt 'A'~~
  * [X] ~~output fmt 'K'~~
  * [X] ~~testing: add regression comparetest.sh~~
@@ -60,3 +59,5 @@ TODO Version 0.1
 TODO Version 0.2
 
  * [ ] set array name=value,value,value...
+ * [ ] failure: add xo\_warn and xo\_err messages
+ * [ ] test/fix: machdep.efi\_map - S,efi\_map\_header
