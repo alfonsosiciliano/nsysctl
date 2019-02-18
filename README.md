@@ -40,8 +40,9 @@ usage:
 
 TODO Version 0.1
 
+ * [ ] "sysctl -a" == "nsysctl -Nva"
  * [X] ~~options: nsysctl value=NUMBER~~
- * [ ] improve output for name=value
+ * [X] ~~improve output for name=value~~
  * [X] ~~options: nsysctl -f filename~~
  * [X] ~~options: nsysctl -b~~
  * [X] ~~options: nsysctl -B~~

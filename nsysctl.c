@@ -41,7 +41,7 @@
 
 void usage(void);
 int parse_line_or_argv(char *arg);
-int display_tree(struct sysctlmif_object *object);
+int display_tree(struct sysctlmif_object *object, char *newvalue);
 int display_basic_type(struct sysctlmif_object *object, void *value, size_t valuesize);
 int set_basic_value(struct sysctlmif_object *object, char *input);
 
@@ -176,7 +176,7 @@ int main(int argc, char *argv[argc])
 			      SYSCTLMIF_MAXDEPTH);
 
 	SLIST_FOREACH(nodelevel1, root->children, object_link)
-	    error += display_tree(nodelevel1);
+	    error += display_tree(nodelevel1, NULL);
 
 	sysctlmif_freetree(root);
 	xo_close_list("tree");
@@ -215,19 +215,20 @@ int parse_line_or_argv(char *arg)
     }
     else if (strlen(nodename) == strlen(arg)) { /* only nodename */
 	node = sysctlmif_tree(id, idlevel, SYSCTLMIF_FALL, SYSCTLMIF_MAXDEPTH);
-	error = display_tree(node);
+	error = display_tree(node, NULL);
 	sysctlmif_freetree(node);
     }
     else { /* nodename=value */
-	/* FALL for fmt 'A' */
-	node = sysctlmif_object(id, idlevel, SYSCTLMIF_FNAME | SYSCTLMIF_FTYPE);
+	/* FALL for fmt 'A' and for display_tree */
+	node = sysctlmif_object(id, idlevel,
+				SYSCTLMIF_FALL/*SYSCTLMIF_FNAME | SYSCTLMIF_FTYPE*/ );
 	if(!IS_LEAF(node)) {
 	    xo_warnx("oid \'%s\' isn't a leaf node",node->name);
 	    error++;
 	}
-	else
-	    error += set_basic_value(node, parsestring);
-		
+	else /* here node is a leaf */
+	    error += display_tree(node, parsestring);
+	
 	sysctlmif_freeobject(node);
     }
 
@@ -237,7 +238,7 @@ int parse_line_or_argv(char *arg)
 }
 
 /* Preorder visit */
-int display_tree(struct sysctlmif_object *object)
+int display_tree(struct sysctlmif_object *object, char *newvalue)
 {
     struct sysctlmif_object *child;
     bool showable = true, showsep = false, showvalue = true;
@@ -342,11 +343,12 @@ int display_tree(struct sysctlmif_object *object)
 	    else if ( object->id[0] != 0)
 		error += display_basic_type(object, value, value_size);
 
-	    //xo_emit("{L:appena}\n");
-
 	    free(value);
 	    showsep = true;
 	}
+
+	if(newvalue != NULL)
+	    set_basic_value(object, newvalue);
 
 	if(showsep)
 		xo_emit("{L:\n}");
@@ -359,7 +361,7 @@ int display_tree(struct sysctlmif_object *object)
 	    xo_open_container("children");
 
 	SLIST_FOREACH(child, object->children, object_link)
-	    error += display_tree(child);
+	    error += display_tree(child, NULL);
 	
 	if (Iflag)
 	    xo_close_container("children");
@@ -492,22 +494,23 @@ int set_basic_value(struct sysctlmif_object *object, char *input)
 	error++;
 	break;
 
-#define STVL(typedvalue, type, longinput, formatstr)	\
-    do {						\
-	typedvalue = (type)longinput;			\
-	if(sysctl(object->id,object->idlevel,NULL,0,	\
-		  & typedvalue,sizeof(type)) == 0)	\
-	{						\
-	    xo_emit("{L: -> }");			\
-	    xo_emit_field("", "newvalue", formatstr,	\
-			  NULL, typedvalue);		\
-	    xo_emit("{L:\n}");				\
-	}						\
-	else {						\
-	    xo_warnx("cannot set new value %s",input);	\
-	    error++;					\
-	}						\
-    } while(0)
+#define STVL(typedvalue, type, longinput, formatstr) do {	\
+	    typedvalue = (type)longinput;			\
+	    if(sysctl(object->id,object->idlevel,NULL,0,	\
+		      & typedvalue,sizeof(type)) == 0)		\
+	    {							\
+		if(vflag || Vflag) {				\
+								\
+		    xo_emit("{L: -> }");			\
+		    xo_emit_field("", "newvalue", formatstr,	\
+				  NULL, typedvalue);		\
+		}						\
+	    }							\
+	    else {						\
+		xo_warnx("cannot set new value %s",input);	\
+		error++;					\
+	    }							\
+	} while(0)
 
     case CTLTYPE_INT:
 	STVL(intvalue, int, llivalue, "%d");
