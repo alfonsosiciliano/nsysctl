@@ -213,7 +213,6 @@ static int debug_witness_fullgraph(void *value, size_t value_size)
 {
     char *line, *next;
     char *tofree, *prop_name, *parsestring;
-    int i;
 
     xo_open_container("value");
     line = value;
