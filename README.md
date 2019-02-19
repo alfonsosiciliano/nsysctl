@@ -6,7 +6,7 @@ Legal notice: [FreeBSD](http://www.freebsd.org)&copy; is a registered trademark 
 **nsysctl** is a FreeBSD [/sbin/sysctl](https://man.freebsd.org/sysctl/8) 
 clone: to get or set kernel state with [libxo](https://wiki.freebsd.org/LibXo), 
 [sysctlmibinfo](https://wiki.freebsd.org/AlfonsoSiciliano/sysctlmibinfo) 
-and extra options.  
+and extra options; Current Versione: "0.0".  
 **This software is unstable and under heavy development**  
 ```
 usage:
@@ -38,9 +38,24 @@ usage:
  * new option **-y** show id.
 
 
-TODO Version 0.1
+**TODO Version 0.2**
 
- * [ ] "sysctl -a" == "nsysctl -Nva"
+ * [ ] set array name=value,value,value...
+ * [ ] failure: add xo\_warn and xo\_err messages
+ * [ ] test/fix: machdep.efi\_map - S,efi\_map\_header
+ * [ ] improve -f filename with whitespaces
+ * [ ] "sysctl -a" == "nsysctl -aNv"
+     [ ] debug.fail\_point.test\_trigger\_fail\_point 
+	 [ ] hw.dri.0.vblank
+	 [ ] hw.dri.0.info.i915\_drpc\_info sometimes doesn't print
+ * [ ] "sysctl -ao" == "nsysctl -aNvo"
+     [ ] kern.file
+	 [ ] debug.fail\_point.test\_trigger\_fail_point
+	 [ ] hw.dri.0.vblank
+
+
+~~**TODO Version 0.1**~~
+
  * [X] ~~options: nsysctl value=NUMBER~~
  * [X] ~~improve output for name=value~~
  * [X] ~~options: nsysctl -f filename~~
@@ -56,11 +71,4 @@ TODO Version 0.1
  * [X] ~~testing: add regression comparetest.sh~~
  * [X] ~~manual page: nsysctl.8~~
  * [X] ~~create FreeBSD port directory~~
-
-TODO Version 0.2
-
- * [ ] set array name=value,value,value...
- * [ ] failure: add xo\_warn and xo\_err messages
- * [ ] test/fix: machdep.efi\_map - S,efi\_map\_header
- * [ ] improve -f filename with whitespaces
 
