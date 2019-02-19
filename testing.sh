@@ -43,7 +43,7 @@ done
 # TO FIX
 echo "sysctl -ao"
 sysctl -ao >> sysctl.txt
-./nsysctl -aoNV >> nsysctl.txt
+./nsysctl -aNVo >> nsysctl.txt
 #diff sysctl.txt nsysctl.txt | diffstat -m
 #diff -y -W 120 sysctl.txt nsysctl.txt 
 meld sysctl.txt nsysctl.txt
