@@ -45,13 +45,13 @@ usage:
  * [ ] test/fix: machdep.efi\_map - S,efi\_map\_header
  * [ ] improve -f filename with whitespaces
  * [ ] "sysctl -a" == "nsysctl -aNv"
-     [ ] debug.fail\_point.test\_trigger\_fail\_point 
-	 [ ] hw.dri.0.vblank
-	 [ ] hw.dri.0.info.i915\_drpc\_info sometimes doesn't print
+ 	* [ ] debug.fail\_point.test\_trigger\_fail\_point 
+	*  [ ] hw.dri.0.vblank
+	* [ ] hw.dri.0.info.i915\_drpc\_info sometimes doesn't print
  * [ ] "sysctl -ao" == "nsysctl -aNvo"
-     [ ] kern.file
-	 [ ] debug.fail\_point.test\_trigger\_fail_point
-	 [ ] hw.dri.0.vblank
+	* [ ] kern.file
+	* [ ] debug.fail\_point.test\_trigger\_fail\_point
+	* [ ] hw.dri.0.vblank
 
 
 ~~**TODO Version 0.1**~~
