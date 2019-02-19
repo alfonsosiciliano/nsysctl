@@ -277,7 +277,7 @@ S_vmtotal(void *value, size_t value_size, bool hflag)
 	xo_emit_field(hfield, "runq", "%d", NULL, v->t_rq);
 	xo_emit(" {Lwc:Disk Wait}");
 	xo_emit_field(hfield, "disk-wait", "%d", NULL, v->t_dw);
-	xo_emit(" {Lw:Page Wait =}");
+	xo_emit(" {Lwc:Page Wait}");
 	xo_emit_field(hfield, "page-wait", "%d", NULL, v->t_pw);
 	xo_emit(" {Lwc:Sleep}");
 	xo_emit_field(hfield, "sleep", "%d", NULL, v->t_sl);
