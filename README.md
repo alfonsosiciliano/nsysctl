@@ -3,10 +3,10 @@ README
 
 Legal notice: [FreeBSD](http://www.freebsd.org)&copy; is a registered trademark of the [FreeBSD Foundation](https://www.freebsdfoundation.org).  
 
-**nsysctl** is a FreeBSD [/sbin/sysctl](https://man.freebsd.org/sysctl/8) 
+**nsysctl 0.0** is a FreeBSD [/sbin/sysctl](https://man.freebsd.org/sysctl/8) 
 clone: to get or set kernel state with [libxo](https://wiki.freebsd.org/LibXo), 
 [sysctlmibinfo](https://wiki.freebsd.org/AlfonsoSiciliano/sysctlmibinfo) 
-and extra options; Current Versione: "0.0".  
+and extra options.  
 **This software is unstable and under heavy development**  
 ```
 usage:
