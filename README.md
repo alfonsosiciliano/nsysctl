@@ -44,14 +44,12 @@ usage:
  * [ ] failure: add xo\_warn and xo\_err messages
  * [ ] test/fix: machdep.efi\_map - S,efi\_map\_header
  * [ ] improve -f filename with whitespaces
- * [ ] "sysctl -a" == "nsysctl -aNv"
- 	* [ ] debug.fail\_point.test\_trigger\_fail\_point 
-	*  [ ] hw.dri.0.vblank
-	* [ ] hw.dri.0.info.i915\_drpc\_info sometimes doesn't print
- * [ ] "sysctl -ao" == "nsysctl -aNvo"
-	* [ ] kern.file
-	* [ ] debug.fail\_point.test\_trigger\_fail\_point
-	* [ ] hw.dri.0.vblank
+ * [ ] "sysctl -a" == "nsysctl -aNv" debug.fail\_point.test\_trigger\_fail\_point 
+ * [ ] "sysctl -a" == "nsysctl -aNv" hw.dri.0.vblank
+ * [ ] "sysctl -a" == "nsysctl -aNv" hw.dri.0.info.i915\_drpc\_info sometimes doesn't print
+ * [ ] "sysctl -ao" == "nsysctl -aNvo" kern.file
+ * [ ] "sysctl -ao" == "nsysctl -aNvo" debug.fail\_point.test\_trigger\_fail\_point
+ * [ ] "sysctl -ao" == "nsysctl -aNvo" hw.dri.0.vblank
 
 
 ~~**TODO Version 0.1**~~
