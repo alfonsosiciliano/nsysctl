@@ -8,7 +8,8 @@ clone: to get or set kernel state with [libxo](https://wiki.freebsd.org/LibXo),
 [sysctlmibinfo](https://wiki.freebsd.org/AlfonsoSiciliano/sysctlmibinfo) 
 and extra options,[TUTORIAL](http://alfix.gitlab.io/bsd/2019/02/19/nsysctl-tutorial.html).  
 **This software is unstable and under heavy development**  
-```
+
+```terminal
 usage:
 	nsysctl [--libxo=opts [-r tagname]] [-DdFIilmNpqTt[-V|v[h[b|o|x]]]Wy]
 		[-e sep] [-B <bufsize>] [-f filename] name[=value] ...
