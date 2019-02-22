@@ -6,7 +6,7 @@ Legal notice: [FreeBSD](http://www.freebsd.org)&copy; is a registered trademark 
 **nsysctl 0.1** is a FreeBSD [/sbin/sysctl](https://man.freebsd.org/sysctl/8) 
 clone: to get or set kernel state with [libxo](https://wiki.freebsd.org/LibXo), 
 [sysctlmibinfo](https://wiki.freebsd.org/AlfonsoSiciliano/sysctlmibinfo) 
-and extra options,[TUTORIAL](http://alfix.gitlab.io/bsd/2019/02/19/nsysctl-tutorial.html).  
+and extra options, [TUTORIAL](http://alfix.gitlab.io/bsd/2019/02/19/nsysctl-tutorial.html).  
 **This software is unstable and under heavy development**  
 ```
 usage:
@@ -43,6 +43,8 @@ usage:
  * [ ] set array name=value,value,value...
  * [ ] failure: add xo\_warn and xo\_err messages
  * [ ] test/fix: machdep.efi\_map - S,efi\_map\_header
+ * [ ] nsysctl -aNtVo | grep opaque: vm.vmtotal and machdep.smap
+ * [ ] libxo=xml segmentation fault with huge string, example: _bug.c_
  * [ ] improve -f filename with whitespaces
  * [ ] "sysctl -a" == "nsysctl -aNv" debug.fail\_point.test\_trigger\_fail\_point 
  * [ ] "sysctl -a" == "nsysctl -aNv" hw.dri.0.vblank
