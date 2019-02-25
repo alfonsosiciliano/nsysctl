@@ -43,6 +43,7 @@ usage:
  * [ ] set array name=value,value,value...
  * [ ] failure: add xo\_warn and xo\_err messages
  * [ ] test/fix: machdep.efi\_map - S,efi\_map\_header
+ * [ ] libxo=xml -aD segmentation fault, to fix xo\_set\_flags(NULL, XOF\_UNITS -> XOF\_FLUSH) but _opaque format_ won' t show
  * [ ] nsysctl -aNtVo | grep opaque: vm.vmtotal and machdep.smap
  * [ ] libxo=xml segmentation fault with huge string, example: _bug.c_
  * [ ] improve -f filename with whitespaces
