@@ -22,7 +22,7 @@
 .\" OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 .\" SUCH DAMAGE.
 .\"
-.Dd February 18, 2019
+.Dd February 23, 2019
 .Dt NSYSCTL 8
 .Os
 .Sh NAME
@@ -38,7 +38,7 @@
 .Ar name Ns Op = Ns Ar value
 .Ar ...
 .Nm
-.Op Fl -libxo Ar opts Op Fl r Ar tagname
+.Op Fl -libxo Ar opts Op Fl r Ar tagroot
 .Op Fl DdFIlmNpqSTtWy Op V|v Op h Op b|o|x
 .Op Fl e Ar sep
 .Op Fl B Ar bufsize
@@ -78,11 +78,11 @@ Equivalent to
 .It Fl d
 Show state description.
 .It Fl e Ar sep
-Separate properties with <sep>.
+Use <sep> as separator.
 .It Fl F
-Displat flags.
+Display flags.
 .It Fl f Ar filename
-Load kernel state from <filename>.
+Load kernel state and/or new values from <filename>.
 .It Fl h
 Try to show values in a human-friendly format.
 .It Fl I
@@ -101,8 +101,8 @@ Show value in hex format until 16 bytes.
 Display [property-name]: property-value.
 .It Fl q
 Avoid to show some warning.
-.It Fl r Ar tagname
-Show <tagname> output </tagname> with libxo.
+.It Fl r Ar tagroot
+Specify a <tagroot> with libxo.
 .It Fl S
 Display magical kernel states.
 .It Fl T
@@ -121,7 +121,7 @@ Display only writable variables that are not statistical.
 Equivalent to
 .Fl a Fl x .
 .It Fl x
-Print value in exadecimal.
+Print value in hex format.
 .It Fl y
 Show id.
 .El
@@ -159,7 +159,8 @@ Dump all info about a state in xml format:
 .Ed
 .Sh SEE ALSO
 .Xr sysctl 3 ,
-.Xr sysctlmibinfo 3
+.Xr sysctlmibinfo 3 ,
+.Xr sysctl 8
 .Sh HISTORY
 The
 .Nm
