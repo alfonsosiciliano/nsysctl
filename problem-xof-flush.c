@@ -15,7 +15,6 @@
  */
 
 #include <libxo/xo.h>
-//#include <stdio.h>
 
 int main(int argc, char** argv)
 {
