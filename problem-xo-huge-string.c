@@ -1,10 +1,10 @@
 /*
- * % cc -g bug.c -lxo -o bug
- * % ./bug
+ * % cc -g problem-xo-huge-string.c -lxo -o problem-xo-huge-string
+ * % ./problem-xo-huge-string
  * <OK>
- * % ./bug --libxo=text
+ * % ./problem-xo-huge-string.c --libxo=text
  * <OK>
- * % ./bug --libxo=xml,pretty
+ * % ./problem-xo-huge-string.c --libxo=xml,pretty
  * <valuelen>34952</valuelen>
  * Segmentation fault (core dumped)
  */
@@ -31,8 +31,9 @@ int main(int argc, char** argv)
     
     sysctlnametomib("debug.witness.fullgraph", id, &idlevel);
 
+    valuelen = 0;
     if((sysctl(id,idlevel,NULL,&valuelen,NULL,0)) != 0) {
-	    printf("sysctl-1- error\n");
+	    printf("sysctl '1' error\n");
 	    return 1;
     }
     if((value=malloc(valuelen)) == NULL) {
@@ -40,7 +41,7 @@ int main(int argc, char** argv)
 	    return 1;
     }
     if((sysctl(id,idlevel,value,&valuelen,NULL,0)) != 0) {
-	    printf("sysctl-1- error\n");
+	    printf("sysctl '2' error\n");
 	    return 1;
     }
 
