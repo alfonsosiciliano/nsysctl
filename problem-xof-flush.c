@@ -1,7 +1,7 @@
 /*
  *Problem: with xo_set_flags(NULL, XOF_FLUSH) and libxo=text
  *         the first value after a label
- *         xo_emit("{L:Label}{:value}");
+ *         xo_emit("{L:Value1}{:value1}");
  *         is not printed.
  *
  * % cc -g problem-xof-flush.c -lxo -o problem-xof-flush
