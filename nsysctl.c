@@ -291,10 +291,10 @@ int display_tree(struct sysctlmif_object *object, char *newvalue)
 		xo_emit("{L:[ID]: }");
 	    for (i = 0; i < object->idlevel; i++)
 	    {
-		snprintf(idlevelstr, sizeof(idlevelstr), "level%d", i+1);
-		xo_emit_field(NULL, idlevelstr, "%x", NULL, object->id[i]);
-		if (i+1 < object->idlevel)
+		if (i > 0)
 		    xo_emit("{L:.}");
+		snprintf(idlevelstr, sizeof(idlevelstr), "level%d", i+1);
+		xo_emit_field(NULL, idlevelstr, (oflag || xflag) ? "%x" : "%d", NULL, object->id[i]);
 	    }
 	    xo_close_container("id");
 	    showsep=true;
