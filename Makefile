@@ -2,11 +2,11 @@
 # written by wiki.freebsd.org/AlfonsoSiciliano
 
 PROG=	nsysctl
-SRCS=	nsysctl.c opaque.c special_value.c sysctlmibinfo.c
+SRCS=	nsysctl.c opaque.c special_value.c
 MAN=	${PROG}.8
 
-CFLAGS=		-I./ -Wall -g
-LDFLAGS=	-lxo
+CFLAGS=		-I/usr/local/include -Wall -g
+LDFLAGS=	-L/usr/local/lib -lsysctlmibinfo -lxo
 MK_DEBUG_FILES= no
 
 PREFIX?=        /usr/local
