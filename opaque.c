@@ -46,21 +46,28 @@
 
 //#include <sys/types.h>
 #include <sys/param.h>
-#include <sys/efi.h>
 #include <sys/resource.h>
 #include <sys/time.h>
 #include <sys/vmmeter.h>
 
+#ifdef __amd64__
+#include <sys/efi.h>
+#include <x86/metadata.h>
+#endif
+
+#if defined(__amd64__) || defined(__i386__)
+#include <machine/pc/bios.h>
+#endif
+
 #include <assert.h>     //assert
 #include <err.h>        //warnx
 #include <errno.h>      //errno
-#include <machine/pc/bios.h>
 #include <stdbool.h>
 #include <stdio.h>      //printf
 #include <stdlib.h>     //free
 #include <string.h>     //strdup
 #include <unistd.h>     //getpagesize
-#include <x86/metadata.h>
+
 
 #include <libxo/xo.h>
 #include <sysctlmibinfo.h>
@@ -401,8 +408,6 @@ S_efi_map(void *value, size_t value_size, bool hflag)
 	}
 	return (0);
 }
-
-
 #endif
 
 #if defined(__amd64__) || defined(__i386__)

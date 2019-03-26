@@ -48,6 +48,11 @@ and extra options, [TUTORIAL](http://alfix.gitlab.io/bsd/2019/02/19/nsysctl-tuto
  * [ ] "sysctl -ao" == "nsysctl -aNvo" hw.dri.0.vblank
 
 
+~~**TODO Version 0.1.1**~~
+
+* [X] ~~fix includes in opaque.c for no i386/amd64~~
+
+
 ~~**TODO Version 0.1**~~
 
  * [X] ~~options: nsysctl value=NUMBER~~
