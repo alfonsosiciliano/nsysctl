@@ -51,6 +51,7 @@ and extra options, [TUTORIAL](http://alfix.gitlab.io/bsd/2019/02/19/nsysctl-tuto
 ~~**TODO Version 0.1.1**~~
 
 * [X] ~~fix includes in opaque.c for no i386/amd64~~
+* [X] ~~delete sysctlmibinfo.h/c (dynamic linking) ~~
 
 
 ~~**TODO Version 0.1**~~
