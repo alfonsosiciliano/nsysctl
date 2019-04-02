@@ -15,20 +15,21 @@ and extra options, <u>**[TUTORIAL](http://alfix.gitlab.io/bsd/2019/02/19/nsysctl
  * all code about "opaque values" is in **opaque.c**, 
  * output via **libxo** in human and machine readable formats,
  * **output is explicitly indicated** by the options,
- * new option **-D** show all properties,
- * update option **-e** specific _sep_ as a separator,
- * new option **-F** show flags,
- * new option **-I** show internal nodes,
- * new option **-l** show label,
- * new option **-r** show _tag-root_ with libxo,
- * new option **-m** show format string,
- * delete option **-n** simply do not use -N,
- * updated option **-N** force to show name,
- * new option **-p** show [_property-name_]: _property-value_,
- * new option **-S** show magic nodes with -a,
- * new option **-V** display value is "showable", otherwise hide the state,
- * new option **-v** force to show value,
- * new option **-y** show id.
+Options:
+ * new **-D** show all properties,
+ * update **-e** specific _sep_ as a separator,
+ * new **-F** show flags,
+ * new **-I** show internal nodes,
+ * new **-l** show label,
+ * new **-r** show _tag-root_ with libxo,
+ * new **-m** show format string,
+ * delete **-n** simply do not use -N,
+ * updated **-N** force to show name,
+ * new **-p** show [_property-name_]: _property-value_,
+ * new **-S** show magic nodes with -a,
+ * new **-V** display value is "showable", otherwise hide the state,
+ * new **-v** force to show value,
+ * new **-y** show id.
 
 
 **TODO Version 0.2**
