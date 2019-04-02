@@ -44,7 +44,7 @@ and extra options, [TUTORIAL](http://alfix.gitlab.io/bsd/2019/02/19/nsysctl-tuto
  * [ ] "sysctl -ao" == "nsysctl -aNvo" debug.fail\_point.test\_trigger\_fail\_point
  * [ ] "sysctl -ao" == "nsysctl -aNvo" hw.dri.0.vblank
  * [ ] libxo problems:
- * [ ] libxo=xml -aD segmentation fault, to fix: xo\_set\_flags(NULL, XOF\_FLUSH) [llsd below], but new problem: 
+ * [ ] libxo=xml -aD segmentation fault [lldb below], to fix: xo\_set\_flags(NULL, XOF\_FLUSH) but new problem: 
  * [ ] problem-xof-flush.c
  * [ ] libxo=xml segmentation fault with huge string, problem-xo-huge-string.c
 
