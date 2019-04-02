@@ -1,7 +1,7 @@
 /*
- *Problem: with xo_set_flags(NULL, XOF_FLUSH) and libxo=text
+ * Problem: with xo_set_flags(NULL, XOF_FLUSH) and libxo=text
  *         the first value after a label
- *         xo_emit("{L:Value1}{:value1}");
+ *         xo_emit("{Lc:Value1}{:value1/%d}", value1);
  *         is not printed.
  *
  * % cc -g problem-xof-flush.c -lxo -o problem-xof-flush
@@ -29,26 +29,20 @@ int main(int argc, char** argv)
 
 
     xo_emit("{L:TEST 1\n}");
-    /* Problem: value1 is not printed */
+    /* Problem: value1 is not printed (label - name) */
     xo_emit("{Lc:Value1}{:value1/%d}", value1);
 
-    /* No problem (first the value)*/
-    /*
-     * xo_emit("{:value1/%d}{Lc:Value1}", value1);
-     */
+    /* No problem (the value - label)*/
+    //xo_emit("{:value1/%d}{Lc:Value1}", value1);
 
     /* No problem (split) */
-    /*
-     * xo_emit("{Lc:Value1}");
-     * xo_emit("{:value1/%d}", value1);
-    */
+    //xo_emit("{Lc:Value1}");
+    //xo_emit("{:value1/%d}", value1);
     
     xo_emit("{L:\n}");
 
-    
-    /* 
-     * after the first 'xo_emit "{Lc:Value1}{:value1/%d}" ' is all right
-     */
+     
+    /* it is all OK after the first 'xo_emit "{Lc:Value1}{:value1/%d}" '*/
     xo_emit("{L:TEST 2\n}");
     xo_emit("{Lc:Value2}{:value2/%d}", value2);
     xo_emit("{L:\n}");
