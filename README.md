@@ -15,6 +15,7 @@ and extra options, <u>**[TUTORIAL](http://alfix.gitlab.io/bsd/2019/02/19/nsysctl
  * all code about "opaque values" is in **opaque.c**, 
  * output via **libxo** in human and machine readable formats,
  * **output is explicitly indicated** by the options,
+
 Options:
  * new **-D** show all properties,
  * update **-e** specific _sep_ as a separator,
