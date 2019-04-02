@@ -36,9 +36,6 @@ and extra options, [TUTORIAL](http://alfix.gitlab.io/bsd/2019/02/19/nsysctl-tuto
  * [ ] set array name=value,value,value...
  * [ ] failure: add xo\_warn and xo\_err messages
  * [ ] test/fix: machdep.efi\_map - S,efi\_map\_header
- * [ ] libxo=xml -aD segmentation fault, to fix: xo\_set\_flags(NULL, XOF\_FLUSH) and split xo\_emit() [below]
- * [ ] nsysctl -aNtVo | grep opaque: vm.vmtotal and machdep.smap [libxo doesn't print after the first newline]
- * [ ] libxo=xml segmentation fault with huge string, example: _bug.c_
  * [ ] improve -f filename with whitespaces
  * [ ] "sysctl -a" == "nsysctl -aNv" debug.fail\_point.test\_trigger\_fail\_point 
  * [ ] "sysctl -a" == "nsysctl -aNv" hw.dri.0.vblank
@@ -46,6 +43,10 @@ and extra options, [TUTORIAL](http://alfix.gitlab.io/bsd/2019/02/19/nsysctl-tuto
  * [ ] "sysctl -ao" == "nsysctl -aNvo" kern.file
  * [ ] "sysctl -ao" == "nsysctl -aNvo" debug.fail\_point.test\_trigger\_fail\_point
  * [ ] "sysctl -ao" == "nsysctl -aNvo" hw.dri.0.vblank
+ * [ ] libxo problems:
+ * [ ] libxo=xml -aD segmentation fault, to fix: xo\_set\_flags(NULL, XOF\_FLUSH) [llsd below], but new problem: 
+ * [ ] problem-xof-flush.c
+ * [ ] libxo=xml segmentation fault with huge string, problem-xo-huge-string.c
 
 
 ~~**TODO Version 0.1.1**~~
