@@ -6,7 +6,7 @@ Legal notice: [FreeBSD](http://www.freebsd.org)&copy; is a registered trademark 
 **nsysctl** is a FreeBSD [/sbin/sysctl](https://man.freebsd.org/sysctl/8) 
 clone: to get or set kernel state with [libxo](https://wiki.freebsd.org/LibXo), 
 [sysctlmibinfo](https://gitlab.com/alfix/sysctlmibinfo) 
-and extra options, [TUTORIAL](http://alfix.gitlab.io/bsd/2019/02/19/nsysctl-tutorial.html).  
+and extra options, <u>**[TUTORIAL](http://alfix.gitlab.io/bsd/2019/02/19/nsysctl-tutorial.html)**</u>.  
 
 
 **nsysctl** improvements: 
