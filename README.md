@@ -46,7 +46,8 @@ and extra options, [TUTORIAL](http://alfix.gitlab.io/bsd/2019/02/19/nsysctl-tuto
  * [X] ~~libxo=xml -aD segmentation fault, to fix: xo\_set\_flags(NULL, XOF\_FLUSH) but new problem:~~
  * [X] ~~problem-xof-flush.c [PR236935](https://bugs.freebsd.org/bugzilla/show_bug.cgi?id=236935)~~
  * [X] ~~libxo=xml segmentation fault with huge string, problem-xo-huge-string.c 
-         [PR236937](https://bugs.freebsd.org/bugzilla/show_bug.cgi?id=236937)~~
+       [PR236937](https://bugs.freebsd.org/bugzilla/show_bug.cgi?id=236937)~~
+ * [ ] delete oid-only-value.txt, problem-xo-huge-string.c and problem-xof-flush.c after PR commit
 
 
 ~~**TODO Version 0.1.1**~~
