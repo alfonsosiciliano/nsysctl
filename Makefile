@@ -1,5 +1,5 @@
 # PUBLIC DOMAIN - NO WARRANTY
-# written by wiki.freebsd.org/AlfonsoSiciliano
+# written by Alfonso S. Siciliano https://alfix.gitlab.io
 
 PROG=	nsysctl
 SRCS=	nsysctl.c opaque.c special_value.c
