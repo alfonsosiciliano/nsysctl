@@ -1,9 +1,9 @@
-README
-======
+nsysctl 0.1.1
+=============
 
 Legal notice: [FreeBSD](http://www.freebsd.org)&copy; is a registered trademark of the [FreeBSD Foundation](https://www.freebsdfoundation.org).  
 
-**nsysctl 0.1** is a FreeBSD [/sbin/sysctl](https://man.freebsd.org/sysctl/8) 
+**nsysctl** is a FreeBSD [/sbin/sysctl](https://man.freebsd.org/sysctl/8) 
 clone: to get or set kernel state with [libxo](https://wiki.freebsd.org/LibXo), 
 [sysctlmibinfo](https://gitlab.com/alfix/sysctlmibinfo) 
 and extra options, [TUTORIAL](http://alfix.gitlab.io/bsd/2019/02/19/nsysctl-tutorial.html).  
