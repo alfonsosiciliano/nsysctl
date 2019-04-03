@@ -262,10 +262,15 @@ int display_tree(struct sysctlmif_object *object, char *newvalue)
     if(Vflag && (object->type == CTLTYPE_OPAQUE || object->type == CTLTYPE_NODE) && aflag && !xflag && !oflag && !is_opaque_defined(object))
  	showable = false;
 
-    if(vflag || Vflag)
+    if(vflag || Vflag) // XXX && showable == true
     {
-	sysctl(object->id, object->idlevel, NULL, &value_size, NULL, 0);
-	value_size += Bflagsize;
+	if(Bflagsize > 0) {
+	    value_size = Bflagsize;
+	} 
+	else {
+	    sysctl(object->id, object->idlevel, NULL, &value_size, NULL, 0);
+	}
+	
 	if ((value = malloc(value_size)) == NULL) {
 	    printf("%s: Cannot get value MALLOC\n", object->name);
 	    showable = false;
@@ -277,6 +282,7 @@ int display_tree(struct sysctlmif_object *object, char *newvalue)
 	    if(Vflag)
 		showable = false;
 	    showvalue = false;
+	    /* XXX free(value) */
 	}
     }
     
