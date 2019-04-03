@@ -493,6 +493,8 @@ int set_basic_value(struct sysctlmif_object *object, char *input)
     uint32_t uint32value;
     uint64_t uint64value;
     int error = 0;
+
+    /* XXX add Bflag support for setting, too */
     
     llsize=sizeof(long long);
     ullsize=sizeof(unsigned long long);
