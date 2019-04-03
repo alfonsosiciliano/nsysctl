@@ -39,12 +39,10 @@ and extra options, <u>**[TUTORIAL](http://alfix.gitlab.io/bsd/2019/02/19/nsysctl
  * [ ] failure: add xo\_warn and xo\_err messages
  * [ ] test/fix: machdep.efi\_map - S,efi\_map\_header
  * [ ] improve -f filename with whitespaces
- * [ ] "sysctl -a" == "nsysctl -aNv" debug.fail\_point.test\_trigger\_fail\_point 
- * [ ] "sysctl -a" == "nsysctl -aNv" hw.dri.0.vblank
+ * [X] ~~"sysctl -a[o]" != "nsysctl -aNv[o]" debug.fail\_point.test\_trigger\_fail\_point it is a sysctl problem~~
+ * [ ] "sysctl -a[o]" == "nsysctl -aNv[o]" hw.dri.0.vblank
  * [ ] "sysctl -a" == "nsysctl -aNv" hw.dri.0.info.i915\_drpc\_info sometimes doesn't print
  * [ ] "sysctl -ao" == "nsysctl -aNvo" kern.file
- * [ ] "sysctl -ao" == "nsysctl -aNvo" debug.fail\_point.test\_trigger\_fail\_point
- * [ ] "sysctl -ao" == "nsysctl -aNvo" hw.dri.0.vblank
  * [X] ~~libxo=xml -aD segmentation fault, to fix: xo\_set\_flags(NULL, XOF\_FLUSH) but new problem:~~
  * [X] ~~problem-xof-flush.c [PR236935](https://bugs.freebsd.org/bugzilla/show_bug.cgi?id=236935)~~
  * [X] ~~libxo=xml segmentation fault with huge string, problem-xo-huge-string.c 
