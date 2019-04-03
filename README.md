@@ -5,7 +5,7 @@ Legal notice: [FreeBSD](http://www.freebsd.org)&copy; is a registered trademark
 of the [FreeBSD Foundation](https://www.freebsdfoundation.org).  
 
 **nsysctl** is a FreeBSD [/sbin/sysctl](https://man.freebsd.org/sysctl/8) 
-clone: to get or set kernel state with [libxo](https://wiki.freebsd.org/LibXo), 
+clone: to get or set the kernel state with [libxo](https://wiki.freebsd.org/LibXo), 
 [sysctlmibinfo](https://gitlab.com/alfix/sysctlmibinfo) 
 and extra options, 
 port: [sysutils/nsysctl](https://www.freshports.org/sysutils/nsysctl) and 
@@ -45,7 +45,7 @@ port: [sysutils/nsysctl](https://www.freshports.org/sysutils/nsysctl) and
  * [X] ~~"sysctl -a[o]" != "nsysctl -aNv[o]" debug.fail\_point.test\_trigger\_fail\_point it is a sysctl problem~~
  * [ ] "sysctl -a[o]" == "nsysctl -aNv[o]" hw.dri.0.vblank
  * [ ] "sysctl -a" == "nsysctl -aNv" hw.dri.0.info.i915\_drpc\_info sometimes doesn't print
- * [ ] "sysctl -ao" == "nsysctl -aNvo" kern.file
+ * [ ] nsysctl -aNvo kern.file
  * [X] ~~libxo=xml -aD segmentation fault, to fix: xo\_set\_flags(NULL, XOF\_FLUSH) but new problem:~~
  * [X] ~~problem-xof-flush.c [PR236935](https://bugs.freebsd.org/bugzilla/show_bug.cgi?id=236935)~~
  * [X] ~~libxo=xml segmentation fault with huge string, problem-xo-huge-string.c 
