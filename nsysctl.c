@@ -268,7 +268,17 @@ int display_tree(struct sysctlmif_object *object, char *newvalue)
 	    value_size = Bflagsize;
 	} 
 	else {
+	    /* XXX add an error check for this sysctl() */
 	    sysctl(object->id, object->idlevel, NULL, &value_size, NULL, 0);
+	    /*
+	     * change value_size between 2 sysctl calls (e.g., kern.file)
+	     * and bad oid (e.g., hw.dri.0.vblank), 
+	     * /sbin/sysctl.c solution:
+	     * j = 0;
+	     * i = sysctl(oid, nlen, 0, &j, 0, 0);
+	     * j += j; / * we want to be sure :-) * /
+	     */
+	    value_size += value_size;
 	}
 	
 	if ((value = malloc(value_size)) == NULL) {
@@ -451,6 +461,7 @@ int display_basic_type(struct sysctlmif_object *object, void *value, size_t valu
 	xo_emit("{:value/%s}", "--- TYPE NODE ---");
 	break;
     case CTLTYPE_STRING:
+	/* XXX 'if' can be deleted after the 'change value_size' fix*/
 	if( ((char*)value)[value_size]!='\0')
 	    ((char*)value)[value_size]='\0';
 	xo_emit("{:value/%s}", (char *)value);
