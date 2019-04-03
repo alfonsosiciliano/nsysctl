@@ -41,9 +41,9 @@ do
 done
 
 # TO FIX
-echo "sysctl -a"
-sysctl -a >> sysctl.txt
-./nsysctl -aNV >> nsysctl.txt
+echo "sysctl -ao"
+sysctl -ao >> sysctl.txt
+./nsysctl -aNVo >> nsysctl.txt
 #diff sysctl.txt nsysctl.txt | diffstat -m
 #diff -y -W 120 sysctl.txt nsysctl.txt 
 meld sysctl.txt nsysctl.txt
