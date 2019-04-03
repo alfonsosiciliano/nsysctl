@@ -271,8 +271,8 @@ int display_tree(struct sysctlmif_object *object, char *newvalue)
 	    /* XXX add an error check for this sysctl() */
 	    sysctl(object->id, object->idlevel, NULL, &value_size, NULL, 0);
 	    /*
-	     * change value_size between 2 sysctl calls (e.g., kern.file)
-	     * and bad oid (e.g., hw.dri.0.vblank), 
+	     * change value_size between 2 sysctl calls (e.g., kern.file,
+	     * hw.dri.0.vblank and hw.dri.0.info.i915_drpc_info)
 	     * /sbin/sysctl.c solution:
 	     * j = 0;
 	     * i = sysctl(oid, nlen, 0, &j, 0, 0);

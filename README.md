@@ -44,8 +44,8 @@ port: [sysutils/nsysctl](https://www.freshports.org/sysutils/nsysctl) and
  * [ ] improve -f filename with whitespaces
  * [X] ~~"sysctl -a[o]" != "nsysctl -aNv[o]" debug.fail\_point.test\_trigger\_fail\_point it is a sysctl problem~~
  * [X] ~~"sysctl -a[o]" != "nsysctl -aNv[o]" hw.dri.0.bufs it is a sysctl problem~~
- * [ ] nsysctl -aNv hw.dri.0.info.i915\_drpc\_info sometimes doesn't print
  * [X] ~~kern.file and hw.dri.0.vblank "change value\_size FIX" see nsysctl.c display\_tree()~~
+ * [X] ~~nsysctl -aNv hw.dri.0.info.i915\_drpc\_info sometimes doesn't print "change\_value fix" (on/RC1)~~
  * [X] ~~libxo=xml -aD segmentation fault, to fix: xo\_set\_flags(NULL, XOF\_FLUSH) but new problem:~~
  * [X] ~~problem-xof-flush.c [PR236935](https://bugs.freebsd.org/bugzilla/show_bug.cgi?id=236935)~~
  * [X] ~~libxo=xml segmentation fault with huge string, problem-xo-huge-string.c 
