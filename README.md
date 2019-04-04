@@ -50,7 +50,7 @@ port: [sysutils/nsysctl](https://www.freshports.org/sysutils/nsysctl) and
  * [X] ~~problem-xof-flush.c [PR236935](https://bugs.freebsd.org/bugzilla/show_bug.cgi?id=236935)~~
  * [X] ~~libxo=xml segmentation fault with huge string, problem-xo-huge-string.c 
        [PR236937](https://bugs.freebsd.org/bugzilla/show_bug.cgi?id=236937)~~
- * [ ] delete oid-only-value.txt, problem-xo-huge-string.c and problem-xof-flush.c after PR commit
+ * [X] ~~delete oid-only-value.txt, problem-xo-huge-string.c and problem-xof-flush.c after PR commit~~
 
 
 ~~**TODO Version 0.1.1**~~
