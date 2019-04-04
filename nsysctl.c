@@ -97,7 +97,7 @@ int main(int argc, char *argv[argc])
 
     atexit(xo_finish_atexit);
 
-    xo_set_flags(NULL, XOF_UNITS/*XOF_FLUSH*/);
+    xo_set_flags(NULL, XOF_UNITS | XOF_FLUSH);
     argc = xo_parse_args(argc, argv);
     if (argc < 0)
 	exit(EXIT_FAILURE);
