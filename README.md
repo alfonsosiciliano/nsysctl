@@ -12,8 +12,7 @@ port: [sysutils/nsysctl](https://www.freshports.org/sysutils/nsysctl) and
 **[TUTORIAL](http://alfix.gitlab.io/bsd/2019/02/19/nsysctl-tutorial.html)**.  
 
 
-<u>Features</u>
-
+<u>Features:</u>
  * **sysctlmibinfo** provides a simple API to the sysctl MIB
  * all code about "opaque values" is in **opaque.c**
  * output via **libxo** in human and machine readable formats
