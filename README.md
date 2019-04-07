@@ -36,42 +36,53 @@ port: [sysutils/nsysctl](https://www.freshports.org/sysutils/nsysctl) and
 
 **TODO Version 0.2**
 
- * [ ] set array name=value,value,value...
- * [ ] failure: add xo\_warn and xo\_err messages
- * [ ] test/fix: machdep.efi\_map - S,efi\_map\_header
- * [ ] improve -f filename with whitespaces
- * [X] ~~"sysctl -a[o]" != "nsysctl -aNv[o]" debug.fail\_point.test\_trigger\_fail\_point it is a sysctl problem~~
- * [X] ~~"sysctl -a[o]" != "nsysctl -aNv[o]" hw.dri.0.bufs it is a sysctl problem~~
- * [X] ~~kern.file and hw.dri.0.vblank "change value\_size FIX" see nsysctl.c display\_tree()~~
- * [X] ~~nsysctl -aNv hw.dri.0.info.i915\_drpc\_info sometimes doesn't print "change\_value fix" (on/RC1)~~
- * [X] ~~libxo=xml -aD segmentation fault, to fix: xo\_set\_flags(NULL, XOF\_FLUSH) but new problem:~~
- * [X] ~~problem-xof-flush.c [PR236935](https://bugs.freebsd.org/bugzilla/show_bug.cgi?id=236935)~~
- * [X] ~~libxo=xml segmentation fault with huge string, problem-xo-huge-string.c 
-       [PR236937](https://bugs.freebsd.org/bugzilla/show_bug.cgi?id=236937)~~
- * [X] ~~delete oid-only-value.txt, problem-xo-huge-string.c and problem-xof-flush.c after PR commit~~
+ * [ ] add: array 'set': name=value,value,value...
+ * [ ] add: on failure: xo\_warn and xo\_err messages
+ * [ ] add: whitespace support '-f filename'
+ * [X] ~~add: xo\_set\_flags(NULL, XOF\_FLUSH)~~
+ * [ ] fix: machdep.efi\_map - S,efi\_map\_header
+ * [X] ~~fix: "sysctl -a[o]" != "nsysctl -aNv[o]" debug.fail\_point.test\_trigger\_fail\_point (sysctl problem)~~
+ * [X] ~~fix: "sysctl -a[o]" != "nsysctl -aNv[o]" hw.dri.0.bufs (sysctl problem)~~
+ * [X] ~~fix: kern.file and hw.dri.0.vblank (see "change value\_size FIX" nsysctl.c display\_tree())~~
+ * [X] ~~fix: hw.dri.0.info.i915\_drpc\_info sometimes doesn't print ("change\_value fix" (on/RC1))~~
+ * [X] ~~fix: libxo=xml -aD segmentation fault, to fix: xo\_set\_flags(NULL, XOF\_FLUSH) but new problem:~~
+ * [X] ~~fix: problem-xof-flush.c [PR236935](https://bugs.freebsd.org/bugzilla/show_bug.cgi?id=236935)~~
+ * [X] ~~fix: libxo=xml segmentation: problem-xo-huge-string.c, [PR236937](https://bugs.freebsd.org/bugzilla/show_bug.cgi?id=236937)~~
+ * [X] ~~delete oid-only-value.txt, problem-xo-huge-string.c and problem-xof-flush.c (after PRs commit)~~
 
 
 ~~**TODO Version 0.1.1**~~
 
-* [X] ~~fix includes in opaque.c for no i386/amd64~~
+* [X] ~~fix headerss in opaque.c for no i386/amd64~~
 * [X] ~~delete sysctlmibinfo.h/c (dynamic linking)~~
 
 
 ~~**TODO Version 0.1**~~
 
- * [X] ~~options: nsysctl value=NUMBER~~
- * [X] ~~improve output for name=value~~
- * [X] ~~options: nsysctl -f filename~~
- * [X] ~~options: nsysctl -b~~
- * [X] ~~options: nsysctl -B~~
- * [X] ~~options: nsysctl -D~~
- * [X] ~~failure: return 1~~
- * [X] ~~libxo: fix nsysctl libxo=xml debug.witness.fullgraph,~~ segmentation fault, bug.c
- * [X] ~~libxo: fix nsysctl libxo=text debug.fail\_point  (utf8)~~
- * [X] ~~libxo: xo-ish opaque.c~~
- * [X] ~~output type: NUMBER - fmt 'A'~~
- * [X] ~~output fmt 'K'~~
- * [X] ~~testing: add regression comparetest.sh~~
- * [X] ~~manual page: nsysctl.8~~
- * [X] ~~create FreeBSD port directory~~
-
+ * [X] ~~add: 'set' for NUMERIC value: value=NUMBER~~
+ * [X] ~~add: libxo support to opaque.c~~
+ * [X] ~~add: output type NUMERIC - "format" 'A' (array)~~
+ * [X] ~~add: output "format" 'K'~~
+ * [X] ~~add: testing file comparetest.sh~~
+ * [X] ~~add: manual page nsysctl.8~~
+ * [X] ~~add: FreeBSD port~~
+ * [X] ~~add: option: -f filename~~
+ * [X] ~~add: option: -b~~
+ * [X] ~~add: option: -B bufsize~~
+ * [X] ~~add: option: -D~~
+ * [X] ~~add: option: -e sep~~
+ * [X] ~~add: option: -F~~
+ * [X] ~~add: option: -I~~
+ * [X] ~~add: option: -l~~
+ * [X] ~~add: option: -r rootname~~
+ * [X] ~~add: option: -m~~
+ * [X] ~~add: option: -N~~
+ * [X] ~~add: option: -p~~
+ * [X] ~~add: option: -S~~
+ * [X] ~~add: option: -V~~
+ * [X] ~~add: option: -v~~
+ * [X] ~~add: option: -y~~
+ * [X] ~~fix: 'set' output: name=value~~
+ * [X] ~~fix: on failure return '1'~~
+ * [X] ~~fix: libxo=xml debug.witness.fullgraph, segmentation fault (special_value.c)~~
+ * [X] ~~fix: libxo=text debug.fail\_point  (utf8)~~
