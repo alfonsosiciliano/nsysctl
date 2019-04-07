@@ -39,7 +39,6 @@ port: [sysutils/nsysctl](https://www.freshports.org/sysutils/nsysctl) and
  * [ ] add: array 'set': name=value,value,value...
  * [ ] add: on failure: xo\_warn and xo\_err messages
  * [ ] add: whitespace support '-f filename'
- * [X] ~~add: xo\_set\_flags(NULL, XOF\_FLUSH)~~
  * [ ] fix: machdep.efi\_map - S,efi\_map\_header
  * [X] ~~fix: "sysctl -a[o]" != "nsysctl -aNv[o]" debug.fail\_point.test\_trigger\_fail\_point (sysctl problem)~~
  * [X] ~~fix: "sysctl -a[o]" != "nsysctl -aNv[o]" hw.dri.0.bufs (sysctl problem)~~
@@ -69,20 +68,7 @@ port: [sysutils/nsysctl](https://www.freshports.org/sysutils/nsysctl) and
  * [X] ~~add: option: -f filename~~
  * [X] ~~add: option: -b~~
  * [X] ~~add: option: -B bufsize~~
- * [X] ~~add: option: -D~~
- * [X] ~~add: option: -e sep~~
- * [X] ~~add: option: -F~~
- * [X] ~~add: option: -I~~
- * [X] ~~add: option: -l~~
- * [X] ~~add: option: -r rootname~~
- * [X] ~~add: option: -m~~
- * [X] ~~add: option: -N~~
- * [X] ~~add: option: -p~~
- * [X] ~~add: option: -S~~
- * [X] ~~add: option: -V~~
- * [X] ~~add: option: -v~~
- * [X] ~~add: option: -y~~
  * [X] ~~fix: 'set' output: name=value~~
  * [X] ~~fix: on failure return '1'~~
- * [X] ~~fix: libxo=xml debug.witness.fullgraph, segmentation fault (special_value.c)~~
+ * [X] ~~fix: libxo=xml debug.witness.fullgraph, segmentation fault (special\_value.c)~~
  * [X] ~~fix: libxo=text debug.fail\_point  (utf8)~~
