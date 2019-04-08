@@ -34,12 +34,16 @@ port: [sysutils/nsysctl](https://www.freshports.org/sysutils/nsysctl) and
    * new **-y** show id
 
 
-**TODO Version 0.2**
+**TODO Version 0.3**
 
  * [ ] add: array 'set': name=value,value,value...
  * [ ] add: on failure: xo\_warn and xo\_err messages
  * [ ] add: whitespace support '-f filename'
  * [ ] fix: machdep.efi\_map - S,efi\_map\_header
+
+
+~~**TODO Version 0.2**~~
+
  * [X] ~~fix: "sysctl -a[o]" != "nsysctl -aNv[o]" debug.fail\_point.test\_trigger\_fail\_point (sysctl problem)~~
  * [X] ~~fix: "sysctl -a[o]" != "nsysctl -aNv[o]" hw.dri.0.bufs (sysctl problem)~~
  * [X] ~~fix: kern.file and hw.dri.0.vblank (see "change value\_size FIX" nsysctl.c display\_tree())~~
@@ -72,3 +76,4 @@ port: [sysutils/nsysctl](https://www.freshports.org/sysutils/nsysctl) and
  * [X] ~~fix: on failure return '1'~~
  * [X] ~~fix: libxo=xml debug.witness.fullgraph, segmentation fault (special\_value.c)~~
  * [X] ~~fix: libxo=text debug.fail\_point  (utf8)~~
+
