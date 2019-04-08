@@ -1,4 +1,4 @@
-nsysctl 0.1.1
+nsysctl 0.2
 =============
 
 Legal notice: [FreeBSD](http://www.freebsd.org)&copy; is a registered trademark 
