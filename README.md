@@ -50,8 +50,8 @@ port: [sysutils/nsysctl](https://www.freshports.org/sysutils/nsysctl) and
  * [X] ~~fix: kern.file and hw.dri.0.vblank (see "change value\_size FIX" nsysctl.c display\_tree())~~
  * [X] ~~fix: hw.dri.0.info.i915\_drpc\_info sometimes doesn't print ("change\_value fix" (on/RC1))~~
  * [X] ~~fix: libxo=xml -aD segmentation fault, to fix: xo\_set\_flags(NULL, XOF\_FLUSH) but new problem:~~
- * [X] ~~fix: problem-xof-flush.c [PR236935](https://bugs.freebsd.org/bugzilla/show_bug.cgi?id=236935)~~
- * [X] ~~fix: libxo=xml segmentation: problem-xo-huge-string.c, [PR236937](https://bugs.freebsd.org/bugzilla/show_bug.cgi?id=236937)~~
+ * [X] ~~fix: problem-xof-flush.c [PR236935](https://bugs.freebsd.org/236935)~~
+ * [X] ~~fix: libxo=xml segmentation: problem-xo-huge-string.c, [PR236937](https://bugs.freebsd.org/236937)~~
  * [X] ~~delete oid-only-value.txt, problem-xo-huge-string.c and problem-xof-flush.c (after PRs commit)~~
 
 
