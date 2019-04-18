@@ -42,9 +42,10 @@ port: [sysutils/nsysctl](https://www.freshports.org/sysutils/nsysctl) and
  * [X] ~~add: option -G~~
  * [ ] add: array 'set': name=value,value,value...
  * [ ] add: on failure: xo\_warn and xo\_err messages
- * [ ] add: whitespace support '-f filename'
- * [ ] add: opaque S,input\_id (e.g, kern.evdev.input.0.id)
- * [ ] test: machdep.efi\_map - S,efi\_map\_header
+ * [ ] add: opaque S,input\_id (e.g. kern.evdev.input.0.id)
+ * [ ] test: opaque S,efi\_map\_header (e.g. machdep.efi\_map)
+ * [ ] fix: clean code special\_value.c
+
 
 
 ~~**TODO Version 0.2**~~
