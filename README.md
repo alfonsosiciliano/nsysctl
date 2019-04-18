@@ -36,6 +36,9 @@ port: [sysutils/nsysctl](https://www.freshports.org/sysutils/nsysctl) and
 
 **TODO**
 
+ * [ ] change: option -m -> -F
+ * [ ] change: option -F -> -g
+ * [ ] add: option -G
  * [ ] add: array 'set': name=value,value,value...
  * [ ] add: on failure: xo\_warn and xo\_err messages
  * [ ] add: whitespace support '-f filename'
