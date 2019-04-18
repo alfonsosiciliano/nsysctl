@@ -45,11 +45,42 @@ int display_tree(struct sysctlmif_object *object, char *newvalue);
 int display_basic_type(struct sysctlmif_object *object, void *value, size_t valuesize);
 int set_basic_value(struct sysctlmif_object *object, char *input);
 
-bool aflag, bflag, dflag, Fflag, fflag, hflag, Iflag, iflag, lflag, mflag;
-bool Nflag, nflag, oflag, pflag, qflag, rflag, Sflag, Tflag, tflag, Vflag;
-bool vflag, Wflag, xflag, yflag;
+bool aflag, bflag, dflag, Fflag, fflag, hflag, Gflag, gflag, Iflag;
+bool iflag, lflag, Nflag, nflag, oflag, pflag, qflag, rflag, Sflag;
+bool Tflag, tflag, Vflag, vflag, Wflag, xflag, yflag;
 char *sep, *rflagstr;
 unsigned int Bflagsize;
+
+struct ctl_flag {
+    unsigned int flag_bit;
+    const char *flag_name;
+};
+
+#define NUM_CTLFLAGS 21
+
+static const struct ctl_flag ctl_flags[NUM_CTLFLAGS] = {
+    { CTLFLAG_RD, "RD" },
+    { CTLFLAG_WR, "WR" },
+    { CTLFLAG_RW, "RW" },
+    { CTLFLAG_DORMANT, "DORMANT" },
+    { CTLFLAG_ANYBODY, "ANYBODY" },
+    { CTLFLAG_SECURE, "SECURE" },
+    { CTLFLAG_PRISON, "PRISON" },
+    { CTLFLAG_DYN, "DYN" },
+    { CTLFLAG_SKIP, "SKIP" },
+    { CTLMASK_SECURE, "SECURE" },
+    { CTLFLAG_TUN, "TUN" },
+    { CTLFLAG_RDTUN, "RDTUN" },
+    { CTLFLAG_RWTUN, "RWTUN" },
+    { CTLFLAG_MPSAFE, "MPSAFE" },
+    { CTLFLAG_VNET, "VNET" },
+    { CTLFLAG_DYING, "DYING" },
+    { CTLFLAG_CAPRD, "CAPRD" },
+    { CTLFLAG_CAPWR, "CAPWR" },
+    { CTLFLAG_STATS, "STATS" },
+    { CTLFLAG_NOFETCH, "NOFETCH" },
+    { CTLFLAG_CAPRW, "CAPRW" }
+};
 
 static const char *ctl_typename[CTLTYPE+1] =
 {
@@ -73,9 +104,9 @@ static const char *ctl_typename[CTLTYPE+1] =
 void usage()
 {
     printf("usage:\n");
-    printf("\tnsysctl [--libxo=opts [-r tagname]] [-DdFIilmNpqTt[-V|v[h[b|o|x]]]Wy]\n");
+    printf("\tnsysctl [--libxo=opts [-r tagname]] [-DdFGgIilNpqTt[-V|v[h[b|o|x]]]Wy]\n");
     printf("\t\t[-e sep] [-B <bufsize>] [-f filename] name[=value] ...\n");
-    printf("\tnsysctl [--libxo=opts [-r tagname]] [-DdFIlmNpqSTt[-V|v[h[b|o|x]]]Wy]\n");
+    printf("\tnsysctl [--libxo=opts [-r tagname]] [-DdFGgIlNpqSTt[-V|v[h[b|o|x]]]Wy]\n");
     printf("\t\t[-e sep] [-B <bufsize>] -A|a|X\n");
 }
 
@@ -91,8 +122,8 @@ int main(int argc, char *argv[argc])
     sep = ": ";
     error = 0;
     Bflagsize = 0;
-    aflag = bflag = dflag = Fflag = fflag = hflag = Iflag = iflag = false;
-    lflag = mflag = Nflag = nflag = oflag = pflag = qflag = rflag = false;
+    aflag = bflag = dflag = Fflag = fflag = Gflag = gflag = hflag = Iflag = false;
+    iflag = lflag = Nflag = nflag = oflag = pflag = qflag = rflag = false;
     Sflag = Tflag = tflag = Vflag = vflag = Wflag = xflag = yflag = false;
 
     atexit(xo_finish_atexit);
@@ -102,7 +133,7 @@ int main(int argc, char *argv[argc])
     if (argc < 0)
 	exit(EXIT_FAILURE);
 
-    while ((ch = getopt(argc, argv, "AabDde:Ff:hiIlmNnopqr:STtVvWXxy")) != -1) {
+    while ((ch = getopt(argc, argv, "AabDde:Ff:GghiIlNnopqr:STtVvWXxy")) != -1) {
 	switch (ch) {
 	case 'A': aflag = true; oflag = true; break;
 	case 'a': aflag = true; break;
@@ -110,17 +141,18 @@ int main(int argc, char *argv[argc])
 	    	  break;
 	case 'b': bflag = true; break;
 	case 'd': dflag = true; break;
-	case 'D': dflag = Fflag = lflag = mflag = true;
+	case 'D': dflag = Fflag = lflag = Gflag = gflag = true;
 	    	  Nflag = tflag = vflag = yflag = true;
 		  break;
 	case 'e': sep = optarg; break;
 	case 'F': Fflag = true; break;
 	case 'f': fflag = true; filename = optarg; break;
+	case 'G': Gflag = true; break;
+	case 'g': gflag = true; break;
 	case 'h': hflag = true; break;
 	case 'I': Iflag = true; break;
 	case 'i': iflag = true; break;
 	case 'l': lflag = true; break;
-	case 'm': mflag = true; break;
 	case 'N': Nflag = true; break;
 	case 'n': nflag = true; break;
 	case 'o': oflag = true; break;
@@ -337,11 +369,25 @@ int display_tree(struct sysctlmif_object *object, char *newvalue)
 	if (tflag)
 	    XOEMITPROP("TYPE","{:type/%s}", ctl_typename[object->type]);
 	
-	if (mflag)
+	if (Fflag)
 	    XOEMITPROP("FORMAT STRING","{:format/%s}", object->fmt);
 
-	if (Fflag)
+	if (gflag)
 	    XOEMITPROP("FLAGS","{:flags/%x}", object->flags);
+	
+	if (Gflag) {
+	    if(showsep)
+		xo_emit("{L:/%s}",sep);
+	    if (pflag)
+		xo_emit("{L:[TRUE-FLAGS]:}");
+	    xo_open_container("true-flags");
+	    for(i=0; i < NUM_CTLFLAGS; i++) {
+		if(object->flags & ctl_flags[i].flag_bit)
+		    xo_emit("{Lw:}{:flag/%s}",ctl_flags[i].flag_name);
+	    }
+	    xo_close_container("true-flags");
+	    showsep = true;
+	}
 
 	if(showvalue && (vflag || Vflag))
 	{
