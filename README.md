@@ -40,44 +40,6 @@ port: [sysutils/nsysctl](https://www.freshports.org/sysutils/nsysctl) and
  * [ ] add: on failure: xo\_warn and xo\_err messages
  * [ ] add: whitespace support '-f filename'
  * [ ] add: opaque S,input\_id (e.g, kern.evdev.input.0.id)
- * [ ] add: opaque (e.g., kern.clockrate) S,clockinfo
- * [ ] add: opaque (e.g., kern.proc.all) S,proc
- * [ ] add: opaque (e.g., kern.file) S,xfile
- * [ ] add: opaque (e.g., kern.boottime) S,timeval
- * [ ] add: opaque (e.g., kern.crypto\_stats) S,cryptostats
- * [ ] add: opaque (e.g., kern.ttys) S,xtty
- * [ ] add: opaque (e.g., kern.devstat.all) S,devstat
- * [ ] add: opaque (e.g., kern.ntp\_pll.gettime) S,ntptimeval
- * [ ] add: opaque (e.g., kern.malloc\_stats) s,malloc\_type\_ustats
- * [ ] add: opaque (e.g., kern.evdev.input.0.id) S,input\_id
- * [ ] add: opaque (e.g., vm.zone\_stats) s,struct) uma\_type\_header
- * [ ] add: opaque (e.g., vfs.nfs.diskless\_rootaddr) %Ssockaddr\_in
- * [ ] add: opaque (e.g., vfs.ffs.adjrefcnt) S,fsck
- * [ ] add: opaque (e.g., vfs.conflist) S,xvfsconf
- * [ ] add: opaque (e.g., net.local.stream.pcblist) S,xunpcb
- * [ ] add: opaque (e.g., net.local.dgram.pcblist) S,xunpcb
- * [ ] add: opaque (e.g., net.local.seqpacket.pcblist) S,xunpcb
- * [ ] add: opaque (e.g., net.inet.igmp.stats) S,igmpstat
- * [ ] add: opaque (e.g., net.inet.tcp.pcblist) S,xtcpcb
- * [ ] add: opaque (e.g., net.inet.tcp.getcred) S,xucred
- * [ ] add: opaque (e.g., net.inet.udp.pcblist) S,xinpcb
- * [ ] add: opaque (e.g., net.inet.udp.getcred) S,xucred
- * [ ] add: opaque (e.g., net.inet.sctp.getcred) S,ucred
- * [ ] add: opaque (e.g., net.inet.sctp.assoclist) S,xassoc
- * [ ] add: opaque (e.g., net.inet.sctp.stats) S,sctpstat
- * [ ] add: opaque (e.g., net.inet.raw.pcblist) S,xinpcb
- * [ ] add: opaque (e.g., net.inet6.tcp6.getcred) S,xucred
- * [ ] add: opaque (e.g., net.inet6.udp6.getcred) S,xucred
- * [ ] add: opaque (e.g., net.inet6.icmp6.nd6\_drlist) S,in6\_defrouter
- * [ ] add: opaque (e.g., net.inet6.icmp6.nd6\_prlist) S,in6\_prefix
- * [ ] add: opaque (e.g., net.inet6.sctp6.getcred) S,ucred
- * [ ] add: opaque (e.g., net.isr.work) S,sysctl\_netisr\_work
- * [ ] add: opaque (e.g., net.isr.workstream) S,sysctl\_netisr\_workstream
- * [ ] add: opaque (e.g., net.isr.proto) S,sysctl\_netisr\_proto
- * [ ] add: opaque (e.g., machdep.efi\_map) S,efi\_map\_header
- * [ ] add: opaque (e.g., machdep.smap) S,bios\_smap\_xattr
- * [ ] add: opaque (e.g., security.jail.param.ip6.addr) S,in6\_addr,a
- * [ ] add: opaque (e.g., security.jail.param.ip4.addr) S,in\_addr,a
  * [ ] test: machdep.efi\_map - S,efi\_map\_header
 
 
@@ -108,10 +70,7 @@ port: [sysutils/nsysctl](https://www.freshports.org/sysutils/nsysctl) and
  * [X] ~~add: testing file comparetest.sh~~
  * [X] ~~add: manual page nsysctl.8~~
  * [X] ~~add: FreeBSD port~~
- * [X] ~~add: option: -f filename~~
- * [X] ~~add: option: -b~~
- * [X] ~~add: option: -B bufsize~~
- * [X] ~~fix: 'set' output: name=value~~
+ * [X] ~~fix: output: name=value~~
  * [X] ~~fix: on failure return '1'~~
  * [X] ~~fix: libxo=xml debug.witness.fullgraph, segmentation fault (special\_value.c)~~
  * [X] ~~fix: libxo=text debug.fail\_point  (utf8)~~
