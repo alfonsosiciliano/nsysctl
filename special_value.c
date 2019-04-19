@@ -24,7 +24,7 @@
  */
 
 /*
- * 'Special values' are (basic type) values splitted for xo-output
+ * 'Special values' are strings splitted for xo-output
  */
 
 #include <sys/types.h>
@@ -40,30 +40,30 @@ static int debug_witness_fullgraph(void *value, size_t value_size);
 /* Internal use */
 
 /*
- * char *start, *end;
+ * char *start, *next, sep;
  * start = value;
- * while (find_line(start, &next, &value[value_size])) {
+ * while (parse_string(start, &next, &value[value_size], sep)) {
  *	printf("%s\n", start);
  *	...
  *	start = next;
  * }
  */
-static bool find_line(char *startline, char **endline, char *endbuffer)
+static bool parse_string(char *start, char **next, char *endbuffer, char sep)
 {
     int i = 0;
 
-    if(startline == endbuffer)
+    if(start == endbuffer)
 	return false;
 
-    while( startline[i] != '\n' && startline[i] != '\0' ) {
+    while( start[i] != sep && start[i] != '\0' ) {
 	i++;
     }
 
-    startline[i]='\0';    
-    *endline = &(startline[i]);
+    start[i]='\0';    
+    *next = &(start[i]);
     
-    if(*endline != endbuffer)
-	*endline = &(startline[i+1]);
+    if(*next != endbuffer)
+	*next = &(start[i+1]);
 
     return true;
 }
@@ -131,7 +131,7 @@ static int vm_phys_free(void* value, size_t value_size)
     xo_emit("{L:\n}");
     xo_open_container("value");
     line = value;
-    while (find_line(line, &next, &(value[value_size]) )) {
+    while (parse_string(line, &next, &(value[value_size]), '\n')) {
 	// DOMAIN X :
 	if( strstr(line, "DOMAIN") != NULL) {
 	    if(num_domain > 0)
@@ -141,7 +141,7 @@ static int vm_phys_free(void* value, size_t value_size)
 	    num_domain++;
 	    // '\n'
 	    line=next;
-	    find_line(line, &next, &(value[value_size]));
+	    parse_string(line, &next, &(value[value_size]), '\n');
 	    xo_emit("{L:\n}");
 	    num_list = 0;
 	}
@@ -155,28 +155,28 @@ static int vm_phys_free(void* value, size_t value_size)
 	    num_list++;
 	    // '\n'
 	    line=next;
-	    find_line(line, &next, &(value[value_size]));
+	    parse_string(line, &next, &(value[value_size]),'\n');
 	    xo_emit("{L:\n}");
 	    
 	    //  ORDER (SIZE)  |  NUMBER
 	    line=next;
-	    find_line(line, &next, &(value[value_size]));
+	    parse_string(line, &next, &(value[value_size]), '\n');
 	    xo_emit_field("L", line, NULL, NULL);
 	    xo_emit("{L:\n}");
 	    //                |  POOL 0  |  POOL 1 ....
 	    line=next;
-	    find_line(line, &next, &(value[value_size]));
+	    parse_string(line, &next, &(value[value_size]), '\n');
 	    xo_emit_field("L", line, NULL, NULL);
 	    xo_emit("{L:\n}");
 	    // --            -- --      -- --      -- ...
 	    line=next;  
-	    find_line(line, &next, &(value[value_size]));
+	    parse_string(line, &next, &(value[value_size]), '\n');
 	    xo_emit_field("L", line, NULL, NULL);
 	    xo_emit("{L:\n}");
 
 	    // Rows
 	    line=next;
-	    find_line(line, &next, &(value[value_size]));
+	    parse_string(line, &next, &(value[value_size]), '\n');
 	    start = line;
 	    while(find_int(start, &end, &tmp)) {
 		xo_open_container("order");
@@ -196,7 +196,7 @@ static int vm_phys_free(void* value, size_t value_size)
 		xo_emit("{L:\n}");
 		xo_close_container("order");
 		line = next;
-		find_line(line, &next, &(value[value_size]));
+		parse_string(line, &next, &(value[value_size]), '\n');
 		start=line;
 		}
 	    xo_close_container("free-list");
@@ -217,7 +217,7 @@ static int debug_witness_fullgraph(void *value, size_t value_size)
     xo_open_container("value");
     line = value;
     xo_emit("{L:\n}");
-    while(find_line(line, &next, &value[value_size])) {
+    while(parse_string(line, &next, &value[value_size], '\n')) {
 	if(line[0] != '\0') {
 	    xo_open_container("property");
 	    parsestring = strdup(line);
@@ -234,3 +234,4 @@ static int debug_witness_fullgraph(void *value, size_t value_size)
 
     return 0;
 }
+
