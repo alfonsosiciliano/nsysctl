@@ -34,14 +34,6 @@
  * "@(#) Copyright (c) 1993\n\
  *       The Regents of the University of California.  All rights reserved.\n";
  * #endif / * not lint * /
- *
- * #ifndef lint
- * #if 0
- * static char sccsid[] = "@(#)from: sysctl.c      8.1 (Berkeley) 6/6/93";
- * #endif
- * static const char rcsid[] =
- * "$FreeBSD: head/sbin/sysctl/sysctl.c 338533 2018-09-08 18:57:05Z kib $";
- * #endif / * not lint * /
 */
 
 //#include <sys/types.h>
@@ -49,6 +41,7 @@
 #include <sys/resource.h>
 #include <sys/time.h>
 #include <sys/vmmeter.h>
+#include <dev/evdev/input.h>
 
 #ifdef __amd64__
 #include <sys/efi.h>
@@ -74,6 +67,7 @@
 
 /* Func declarations */
 static int S_clockinfo(void *value, size_t value_size, bool hflag);
+static int S_input_id(void *value, size_t value_size, bool hflag);
 static int S_loadavg(void *value, size_t value_size, bool hflag);
 static int S_timeval(void *value, size_t value_size, bool hflag);
 static int S_vmtotal(void *value, size_t value_size, bool hflag);
@@ -94,8 +88,9 @@ bool is_opaque_defined(struct sysctlmif_object *object)
 #ifdef __amd64__
 	strcmp(object->fmt, "S,efi_map_header") == 0 ||
 #endif
-	 strcmp(object->fmt, "S,loadavg") == 0 ||
-	 strcmp(object->fmt, "S,timeval") == 0 ||
+	 strcmp(object->fmt, "S,loadavg") == 0  ||
+	 strcmp(object->fmt, "S,timeval") == 0  ||
+	 strcmp(object->fmt, "S,input_id") == 0 ||
 	 strcmp(object->fmt, "S,vmtotal") == 0)
 	return true;
 
@@ -118,6 +113,8 @@ int display_opaque_value(struct sysctlmif_object *object, void *value, size_t va
 		error += S_loadavg(value, value_size, hflag);
 	} else if (strcmp(object->fmt, "S,vmtotal") == 0) {
 		error += S_vmtotal(value, value_size, hflag);
+	} else if (strcmp(object->fmt, "S,input_id") == 0) {
+		error += S_input_id(value, value_size, hflag);
 	}
 #ifdef __amd64__
 	else if (strcmp(object->fmt, "S,efi_map_header") == 0) {
@@ -218,6 +215,33 @@ S_loadavg(void *value, size_t value_size, bool hflag)
 	xo_close_container("loadavg");
 
 	return (0);
+}
+
+static int
+S_input_id(void *value, size_t value_size, bool hflag)
+{
+    struct input_id *id = (struct input_id *)value;
+    /*libxo 'h' modifier does not affect the size and treatment of %f */
+    char *hfield = /*hflag ? "h" :*/ NULL;
+	 	 
+    if (value_size != sizeof(*id)) {
+	xo_warnx("S_input_id %zu != %zu", value_size, sizeof(struct input_id));
+	return (1);
+    }
+
+    xo_open_container("input_id");
+    xo_emit("{L:{ bustype = 0x}");
+    xo_emit_field(hfield, "bustype", "%.4x", NULL, id->bustype);
+    xo_emit("{L:, vendor = 0x}");
+    xo_emit_field(hfield, "vendor", "%.4x", NULL, id->vendor);
+    xo_emit("{L:, product = 0x}");
+    xo_emit_field(hfield, "product", "%.4x", NULL, id->product);
+    xo_emit("{L:, version = 0x}");
+    xo_emit_field(hfield, "version", "%.4x", NULL, id->version);
+    xo_emit("{N: }}");
+    xo_close_container("input_id");
+    
+    return (0);
 }
 
 static int
