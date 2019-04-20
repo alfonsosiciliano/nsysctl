@@ -44,7 +44,7 @@ port: [sysutils/nsysctl](https://www.freshports.org/sysutils/nsysctl) and
  * [ ] add: on failure: xo\_warn and xo\_err messages
  * [ ] add: opaque S,input\_id (e.g. kern.evdev.input.0.id)
  * [ ] test: opaque S,efi\_map\_header (e.g. machdep.efi\_map)
- * [ ] fix: clean code special\_value.c
+ * [ ] fix: clean code xo_emit
 
 
 
