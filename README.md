@@ -45,6 +45,7 @@ port: [sysutils/nsysctl](https://www.freshports.org/sysutils/nsysctl) and
  * [X] ~~add: opaque S,input\_id (e.g. kern.evdev.input.0.id)~~
  * [ ] test: opaque S,efi\_map\_header (e.g. machdep.efi\_map)
  * [ ] fix: clean code xo\_emit
+ * [ ] fix: -x with numeric array
 
 
 
