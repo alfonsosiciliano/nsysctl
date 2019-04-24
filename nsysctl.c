@@ -451,7 +451,7 @@ int display_basic_type(struct sysctlmif_object *object, void *value, size_t valu
     }
 
     if(xflag && object->type != CTLTYPE_STRING) {
-	    xo_emit("{L:0x}");
+	xo_emit("{L:0x}");
 	for (i = value_size-1; i >= 0; i--) {
 	    xo_emit("{:dump/%02x}", ((unsigned char*)(value))[i]);
 	}
