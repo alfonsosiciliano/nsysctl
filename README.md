@@ -40,8 +40,8 @@ port: [sysutils/nsysctl](https://www.freshports.org/sysutils/nsysctl) and
  * [X] ~~change: option -m -> -F~~
  * [X] ~~change: option -F -> -g~~
  * [X] ~~add: option -G~~
- * [ ] add: array 'set': name=value,value,value...
- * [ ] add: on failure: xo\_warn and xo\_err messages
+ * [ ] add: array set: name=value,value,value...
+ * [ ] add: xo\_warn and xo\_err messages
  * [X] ~~add: opaque S,input\_id (e.g. kern.evdev.input.0.id)~~
  * [ ] test: opaque S,efi\_map\_header (e.g. machdep.efi\_map)
  * [ ] fix: -x with numeric array
