@@ -82,24 +82,30 @@ static const struct ctl_flag ctl_flags[NUM_CTLFLAGS] = {
     { CTLFLAG_CAPRW, "CAPRW" }
 };
 
-static const char *ctl_typename[CTLTYPE+1] =
-{
-    "ZEROUNUSED", 
-    "node", 
-    "integer", 
-    "string", 
-    "int64_t", 
-    "opaque", 
-    "unsigned integer", 
-    "long integer", 
-    "unsigned long", 
-    "uint64_t", 
-    "uint8_t", 
-    "uint16_t", 
-    "int8_t",
-    "int16_t", 
-    "int32_t", 
-    "uint32_t" 
+struct ctl_type {
+    char *name;
+    size_t size;
+    bool sign;
+    char *fmt;
+};
+
+static const struct ctl_type ctl_types[CTLTYPE+1] = {
+    { "ZEROUNUSED", 0, false , "error"},
+    { "node", 0, false, "error"},
+    { "integer", sizeof(int), true, "%d" },
+    { "string", 0, false, "%s" },
+    { "int64_t", sizeof(int64_t), true, "%ld" },
+    { "opaque", 0, false, "error" },
+    { "unsigned integer", sizeof(unsigned int), false, "%u" },
+    { "long integer", sizeof(long int), true, "%ld" },
+    { "unsigned long", sizeof(unsigned long), false, "%lu" },
+    { "uint64_t", sizeof(uint64_t), false, "%lu" },
+    { "uint8_t", sizeof(uint8_t), false, "%u" },
+    { "uint16_t", sizeof(uint16_t), false, "%u" },
+    { "int8_t", sizeof(int8_t), true, "%d" },
+    { "int16_t", sizeof(int16_t), true, "%d" },
+    { "int32_t", sizeof(int32_t), true, "%d" },
+    { "uint32_t", sizeof(uint32_t), false, "%u" }
 };
 
 void usage()
@@ -368,7 +374,7 @@ int display_tree(struct sysctlmif_object *object, char *newvalue)
 	    XOEMITPROP("DESCRIPTION","{:description/%s}", object->desc == NULL ? "" : object->desc);
 	
 	if (tflag)
-	    XOEMITPROP("TYPE","{:type/%s}", ctl_typename[object->type]);
+	    XOEMITPROP("TYPE","{:type/%s}", ctl_types[object->type].name);
 	
 	if (Fflag)
 	    XOEMITPROP("FORMAT STRING","{:format/%s}", object->fmt);
@@ -524,42 +530,16 @@ int display_basic_type(struct sysctlmif_object *object, void *value, size_t valu
 
 int set_basic_value(struct sysctlmif_object *object, char *input)
 {
-    long long llivalue = strtoll(input, NULL, 10);
-    unsigned long long ullvalue =strtoull(input, NULL, 10);
-    size_t llsize, ullsize;
-    int intvalue;
-    long longvalue;
-    int8_t  sint8value;
-    int16_t sint16value;
-    int32_t sint32value;
-    int64_t sint64value;
-    u_int uintvalue;
-    u_long ulongvalue;
-    uint8_t uint8value;
-    uint16_t uint16value;
-    uint32_t uint32value;
-    uint64_t uint64value;
     int error = 0;
+    void *newval = NULL;
+    size_t newval_size = 0;
 
     /* XXX add Bflag support for setting, too */
     
-    llsize=sizeof(long long);
-    ullsize=sizeof(unsigned long long);
-    
     switch (object->type) {
     case CTLTYPE_STRING:
-	if(sysctl(object->id, object->idlevel, NULL, 0,
-		  input, sizeof(input)) ==0) 
-	{
-	    if(vflag || Vflag)
-		xo_emit("{L: -> }{:newvalue/%s}",input);
-	}
-	else 
-	{
-	    /* XXX add \n */
-	    xo_warnx("cannot set new value %s",input);
-	    error++;
-	}
+	newval = input;
+	newval_size = strlen(input) + 1;
 	break;
     case CTLTYPE_OPAQUE:
 	xo_warnx("Cannot set an opaque input");
@@ -570,65 +550,46 @@ int set_basic_value(struct sysctlmif_object *object, char *input)
 	error++;
 	break;
 
-#define STVL(typedvalue, type, longinput, formatstr) do {	\
-	    typedvalue = (type)longinput;			\
-	    if(sysctl(object->id,object->idlevel,NULL,0,	\
-		      & typedvalue,sizeof(type)) == 0)		\
-	    {							\
-		if(vflag || Vflag) {				\
-								\
-		    xo_emit("{L: -> }");			\
-		    xo_emit_field("", "newvalue", formatstr,	\
-				  NULL, typedvalue);		\
-		}						\
-	    }							\
-	    else {						\
-		/* XXX add \n */				\
-		xo_warnx("cannot set new value %s",input);	\
-		error++;					\
-	    }							\
-	} while(0)
+#define STVL(typevar) do {						\
+	    newval = malloc(ctl_types[object->type].size);		\
+	    *((typevar *)newval) =  ctl_types[object->type].sign ?	\
+		(typevar)strtoll(input, NULL, 10) :			\
+		(typevar)strtoull(input, NULL, 10);			\
+	    newval_size = ctl_types[object->type].size;			\
+    } while(0)
 
-    case CTLTYPE_INT:
-	STVL(intvalue, int, llivalue, "%d");
-	break;
-    case CTLTYPE_LONG:
-	STVL(longvalue, long, llivalue, "%ld");
-	break;
-    case CTLTYPE_S8:
-	STVL(sint8value, int8_t, llivalue,"%d");
-	break;
-    case CTLTYPE_S16:
-	STVL(sint16value, int16_t, llivalue,"%d");
-	break;
-    case CTLTYPE_S32:
-	STVL(sint32value, int32_t, llivalue,"%d");
-	break;
-    case CTLTYPE_S64:
-	STVL(sint64value, int64_t, llivalue,"%ld");
-	break;
-    case CTLTYPE_UINT:
-	STVL(uintvalue, u_int, ullvalue,"%u");
-	break;
-    case CTLTYPE_ULONG:
-	STVL(ulongvalue, u_long, ullvalue,"%lu");
-	break;
-    case CTLTYPE_U8:
-	STVL(uint8value, uint8_t, ullvalue,"%u");
-	break;
-    case CTLTYPE_U16:
-	STVL(uint16value, uint16_t, ullvalue,"%u");
-	break;
-    case CTLTYPE_U32:
-	STVL(uint32value, uint32_t, ullvalue,"%u");
-	break;
-    case CTLTYPE_U64:
-	STVL(uint64value, uint64_t, ullvalue,"%lu");
-	break;
+    case CTLTYPE_INT:   STVL(int);      break;
+    case CTLTYPE_LONG:  STVL(long);     break;
+    case CTLTYPE_S8:    STVL(int8_t);   break;
+    case CTLTYPE_S16:   STVL(int16_t);  break;
+    case CTLTYPE_S32:   STVL(int32_t);  break;
+    case CTLTYPE_S64:   STVL(int64_t);  break;
+    case CTLTYPE_UINT:  STVL(u_int);    break;
+    case CTLTYPE_ULONG:	STVL(u_long);   break;
+    case CTLTYPE_U8:    STVL(uint8_t);  break;
+    case CTLTYPE_U16:   STVL(uint16_t); break;
+    case CTLTYPE_U32:   STVL(uint32_t); break;
+    case CTLTYPE_U64:   STVL(uint64_t); break;
     default:
 	xo_warnx("Unknown type");
 	error++;
 	break;
+    }
+    
+    if(error == 0) {
+	if(sysctl(object->id, object->idlevel, NULL, 0, newval, newval_size)==0)
+	{
+	    if(vflag || Vflag)
+		xo_emit("{L: -> }{:newvalue/%s}",input);
+	    //xo_emit("{L: -> }");
+	    //xo_emit_field("", "newvalue", formatstr, NULL, typedvalue);
+	}
+	else 
+	{
+	    /* XXX add \n */
+	    xo_warnx("cannot set new value %s",input);
+	    error++;
+	}
     }
 
     return (error);
