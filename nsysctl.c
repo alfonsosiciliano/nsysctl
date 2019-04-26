@@ -548,8 +548,17 @@ int set_basic_value(struct sysctlmif_object *object, char *input)
     
     switch (object->type) {
     case CTLTYPE_STRING:
-	sysctl(object->id, object->idlevel, NULL, 0,
-	       input, sizeof(input));
+	if(sysctl(object->id, object->idlevel, NULL, 0,
+		  input, sizeof(input)) ==0) 
+	{
+	    if(vflag || Vflag)
+		xo_emit("{L: -> }{:newvalue/%s}",input);
+	}
+	else 
+	{
+	    xo_warnx("cannot set new value %s",input);
+	    error++;
+	}
 	break;
     case CTLTYPE_OPAQUE:
 	xo_warnx("Cannot set an opaque input");
