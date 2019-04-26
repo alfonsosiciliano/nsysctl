@@ -556,6 +556,7 @@ int set_basic_value(struct sysctlmif_object *object, char *input)
 	}
 	else 
 	{
+	    /* XXX add \n */
 	    xo_warnx("cannot set new value %s",input);
 	    error++;
 	}
@@ -582,6 +583,7 @@ int set_basic_value(struct sysctlmif_object *object, char *input)
 		}						\
 	    }							\
 	    else {						\
+		/* XXX add \n */				\
 		xo_warnx("cannot set new value %s",input);	\
 		error++;					\
 	    }							\
