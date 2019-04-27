@@ -449,7 +449,8 @@ int display_tree(struct sysctlmif_object *object, char *newvalue)
  */
 int display_basic_type(struct sysctlmif_object *object, void *value, size_t value_size)
 {
-    int i, error = 0;
+    int i, error = 0, j;
+    unsigned char *hexvalue;
     
     if (bflag) {
 	for (i = 0; i < value_size; i++) {
@@ -457,7 +458,7 @@ int display_basic_type(struct sysctlmif_object *object, void *value, size_t valu
 	}
 	return error;
     }
-
+/*
     if(xflag && object->type != CTLTYPE_STRING) {
 	xo_emit("{L:0x}");
 	for (i = value_size-1; i >= 0; i--) {
@@ -465,14 +466,24 @@ int display_basic_type(struct sysctlmif_object *object, void *value, size_t valu
 	}
 	return error;
     }
-    
+*/  
     
 #define GTVL(typevar) do {						\
 	for (i=0; i< value_size / sizeof( typevar); i++) {		\
 	    if (i > 0)							\
 		xo_emit("{Pw:}");					\
-	    xo_emit_field("", "value", ctl_types[object->type].fmt,	\
-			  NULL, ((typevar *)value)[i] );		\
+	    if(xflag) {							\
+		hexvalue = (unsigned char *)  &((typevar *)value)[i];	\
+		if(((typevar *)value)[i] !=0)				\
+		    xo_emit("{L:0x}");					\
+		else							\
+		    xo_emit("{L:00}");					\
+		for(j = ctl_types[object->type].size -1;j>=0; j--)	\
+		    xo_emit("{:dump/%02x}", hexvalue[j]);		\
+	    }								\
+	    else							\
+		xo_emit_field("", "value", ctl_types[object->type].fmt,	\
+			      NULL, ((typevar *)value)[i] );		\
 	}								\
     } while(0)
     
