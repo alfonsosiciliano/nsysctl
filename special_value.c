@@ -37,8 +37,6 @@
 static int vm_phys_free(void *value, size_t value_size);
 static int debug_witness_fullgraph(void *value, size_t value_size);
 
-/* Internal use */
-
 /*
  * char *start, *next, sep;
  * start = value;
@@ -48,7 +46,7 @@ static int debug_witness_fullgraph(void *value, size_t value_size);
  *	start = next;
  * }
  */
-static bool parse_string(char *start, char **next, char *endbuffer, char sep)
+bool parse_string(char *start, char **next, char *endbuffer, char sep)
 {
     int i = 0;
 

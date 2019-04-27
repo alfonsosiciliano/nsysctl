@@ -112,7 +112,7 @@ void usage()
 {
     printf("usage:\n");
     printf("\tnsysctl [--libxo=opts [-r tagname]] [-DdFGgIilNpqTt[-V|v[h[b|o|x]]]Wy]\n");
-    printf("\t\t[-e sep] [-B <bufsize>] [-f filename] name[=value] ...\n");
+    printf("\t\t[-e sep] [-B <bufsize>] [-f filename] name[=value[,value]] ...\n");
     printf("\tnsysctl [--libxo=opts [-r tagname]] [-DdFGgIlNpqSTt[-V|v[h[b|o|x]]]Wy]\n");
     printf("\t\t[-e sep] [-B <bufsize>] -A|a|X\n");
 }
@@ -511,6 +511,7 @@ int set_basic_value(struct sysctlmif_object *object, char *input)
     int error = 0;
     void *newval = NULL;
     size_t newval_size = 0;
+    char *start, *next, *input_m, *end;
 
     /* XXX add Bflag support for setting, too */
     
@@ -529,12 +530,22 @@ int set_basic_value(struct sysctlmif_object *object, char *input)
 	break;
 
 #define STVL(typevar) do {						\
-	    newval = malloc(ctl_types[object->type].size);		\
-	    *((typevar *)newval) =  ctl_types[object->type].sign ?	\
-		(typevar)strtoll(input, NULL, 10) :			\
-		(typevar)strtoull(input, NULL, 10);			\
-	    newval_size = ctl_types[object->type].size;			\
-    } while(0)
+	    input_m = strdup(input);					\
+	    start = input_m;						\
+	    end	= &input_m[strlen(input_m)+1];				\
+	    int i = 0;							\
+	    while(parse_string(start, &next, end, ',')) {		\
+		/* XXX warn fmt != 'A' */				\
+		newval_size += ctl_types[object->type].size;		\
+		newval = realloc(newval, ctl_types[object->type].size);	\
+		((typevar *)newval)[i] = ctl_types[object->type].sign ? \
+		    (typevar)strtoll(start, NULL, 10) :			\
+		    (typevar)strtoull(start, NULL, 10);			\
+		i++;							\
+		start = next;						\
+	    }								\
+	    free(input_m);						\
+	} while(0)
 
     case CTLTYPE_INT:   STVL(int);      break;
     case CTLTYPE_LONG:  STVL(long);     break;
