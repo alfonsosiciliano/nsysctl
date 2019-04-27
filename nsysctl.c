@@ -111,9 +111,9 @@ static const struct ctl_type ctl_types[CTLTYPE+1] = {
 void usage()
 {
     printf("usage:\n");
-    printf("\tnsysctl [--libxo=opts [-r tagname]] [-DdFGgIilNpqTt[-V|v[h[b|o|x]]]Wy]\n");
+    printf("\tnsysctl [--libxo=opts [-r tagname]] [-DdFGgIilNpqTt[V|v[h[b|o|x]]]Wy]\n");
     printf("\t\t[-e sep] [-B <bufsize>] [-f filename] name[=value[,value]] ...\n");
-    printf("\tnsysctl [--libxo=opts [-r tagname]] [-DdFGgIlNpqSTt[-V|v[h[b|o|x]]]Wy]\n");
+    printf("\tnsysctl [--libxo=opts [-r tagname]] [-DdFGgIlNpqSTt[V|v[h[b|o|x]]]Wy]\n");
     printf("\t\t[-e sep] [-B <bufsize>] -A|a|X\n");
 }
 
