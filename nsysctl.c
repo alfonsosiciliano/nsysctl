@@ -464,52 +464,8 @@ int display_basic_type(struct sysctlmif_object *object, void *value, size_t valu
 	}
 	return error;
     }
-
-#define GTVL(fmtstr, typevar) do {				\
-	for (i=0; i< value_size / sizeof( typevar); i++) {	\
-	    if (i != 0)						\
-		xo_emit("{Pw:}");				\
-	    xo_emit(fmtstr, ((typevar *)value)[i] );		\
-	}							\
-    } while(0)
     
     switch (object->type) {
-    case CTLTYPE_INT:
-	GTVL("{:value/%d}", int);
-	break;
-    case CTLTYPE_LONG:
-	GTVL("{:value/%ld}", long);
-	break;
-    case CTLTYPE_S8:
-	GTVL("{:value/%d}", int8_t);
-	break;
-    case CTLTYPE_S16:
-	GTVL("{:value/%d}", int16_t);
-	break;
-    case CTLTYPE_S32:
-	GTVL("{:value/%d}", int32_t);
-	break;
-    case CTLTYPE_S64:
-	GTVL("{:value/%ld}", int64_t);
-	break;
-    case CTLTYPE_UINT:
-	GTVL("{:value/%u}", u_int);
-	break;
-    case CTLTYPE_ULONG:
-	GTVL("{:value/%lu}", u_long);
-	break;
-    case CTLTYPE_U8:
-	GTVL("{:value/%u}", uint8_t);
-	break;
-    case CTLTYPE_U16:
-	GTVL("{:value/%u}", uint16_t);
-	break;
-    case CTLTYPE_U32:
-	GTVL("{:value/%u}", uint32_t);
-	break;
-    case CTLTYPE_U64:
-	GTVL("{:value/%lu}", uint64_t);
-	break;
     case CTLTYPE_NODE:
 	xo_emit("{:value/%s}", "--- TYPE NODE ---");
 	break;
@@ -519,6 +475,28 @@ int display_basic_type(struct sysctlmif_object *object, void *value, size_t valu
 	    ((char*)value)[value_size]='\0';
 	xo_emit("{:value/%s}", (char *)value);
 	break;
+	
+#define GTVL(typevar) do {						\
+	    for (i=0; i< value_size / sizeof( typevar); i++) {		\
+		if (i > 0)						\
+		    xo_emit("{Pw:}");					\
+		xo_emit_field("", "value", ctl_types[object->type].fmt, \
+			      NULL, ((typevar *)value)[i] );		\
+	    }								\
+	} while(0)
+    
+    case CTLTYPE_INT:   GTVL(int);      break;
+    case CTLTYPE_LONG: 	GTVL(long);     break;
+    case CTLTYPE_S8:	GTVL(int8_t);	break;
+    case CTLTYPE_S16:	GTVL(int16_t);	break;
+    case CTLTYPE_S32:	GTVL(int32_t);	break;
+    case CTLTYPE_S64:	GTVL(int64_t);	break;
+    case CTLTYPE_UINT:	GTVL(u_int);	break;
+    case CTLTYPE_ULONG:	GTVL(u_long);	break;
+    case CTLTYPE_U8:	GTVL(uint8_t);	break;
+    case CTLTYPE_U16:	GTVL(uint16_t);	break;
+    case CTLTYPE_U32:	GTVL(uint32_t);	break;
+    case CTLTYPE_U64:	GTVL(uint64_t);	break;
     default:
 	printf("%s, Error bad type!\n", object->name);
 	error++;
