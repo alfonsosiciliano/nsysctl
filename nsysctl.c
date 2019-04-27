@@ -39,18 +39,6 @@
 #define MAXSIZELINE 255
 #define IS_LEAF(node)	(node->children == NULL || SLIST_EMPTY(node->children))
 
-void usage(void);
-int parse_line_or_argv(char *arg);
-int display_tree(struct sysctlmif_object *object, char *newvalue);
-int display_basic_type(struct sysctlmif_object *object, void *value, size_t valuesize);
-int set_basic_value(struct sysctlmif_object *object, char *input);
-
-bool aflag, bflag, dflag, Fflag, fflag, hflag, Gflag, gflag, Iflag;
-bool iflag, lflag, Nflag, nflag, oflag, pflag, qflag, rflag, Sflag;
-bool Tflag, tflag, Vflag, vflag, Wflag, xflag, yflag;
-char *sep, *rflagstr;
-unsigned int Bflagsize;
-
 struct ctl_flag {
     unsigned int flag_bit;
     const char *flag_name;
@@ -108,6 +96,19 @@ static const struct ctl_type ctl_types[CTLTYPE+1] = {
     { "uint32_t", sizeof(uint32_t), false, "%u" }
 };
 
+
+void usage(void);
+int parse_line_or_argv(char *arg);
+int display_tree(struct sysctlmif_object *object, char *newvalue);
+int display_basic_type(struct sysctlmif_object *object, void *value, size_t valuesize);
+int set_basic_value(struct sysctlmif_object *object, char *input);
+
+bool aflag, bflag, dflag, Fflag, fflag, hflag, Gflag, gflag, Iflag;
+bool iflag, lflag, Nflag, nflag, oflag, pflag, qflag, rflag, Sflag;
+bool Tflag, tflag, Vflag, vflag, Wflag, xflag, yflag;
+char *sep, *rflagstr;
+unsigned int Bflagsize;
+
 void usage()
 {
     printf("usage:\n");
@@ -145,12 +146,12 @@ int main(int argc, char *argv[argc])
 	case 'A': aflag = true; oflag = true; break;
 	case 'a': aflag = true; break;
 	case 'B': Bflagsize = (unsigned int) strtoull(optarg, NULL, 10);
-	    	  break;
+	    break;
 	case 'b': bflag = true; break;
 	case 'd': dflag = true; break;
 	case 'D': dflag = Fflag = lflag = Gflag = gflag = true;
-	    	  Nflag = tflag = vflag = yflag = true;
-		  break;
+	    Nflag = tflag = vflag = yflag = true;
+	    break;
 	case 'e': sep = optarg; break;
 	case 'F': Fflag = true; break;
 	case 'f': fflag = true; filename = optarg; break;
@@ -355,13 +356,13 @@ int display_tree(struct sysctlmif_object *object, char *newvalue)
 	    showsep=true;
 	}
 
-#define XOEMITPROP(propname,content,value) do {			\
-	    if(showsep)						\
-		xo_emit("{L:/%s}",sep);				\
-	    if (pflag)						\
-		xo_emit("{L:[" propname "]: }");		\
-	    xo_emit(content,value);				\
-	    showsep = true;					\
+#define XOEMITPROP(propname,content,value) do {		\
+	    if(showsep)					\
+		xo_emit("{L:/%s}",sep);			\
+	    if (pflag)					\
+		xo_emit("{L:[" propname "]: }");	\
+	    xo_emit(content,value);			\
+	    showsep = true;				\
 	} while(0)
 
 	if (Nflag)
@@ -420,7 +421,7 @@ int display_tree(struct sysctlmif_object *object, char *newvalue)
 	    set_basic_value(object, newvalue);
 
 	if(showsep)
-		xo_emit("{L:\n}");
+	    xo_emit("{L:\n}");
 
     } /* end showable */
 
@@ -465,6 +466,16 @@ int display_basic_type(struct sysctlmif_object *object, void *value, size_t valu
 	return error;
     }
     
+    
+#define GTVL(typevar) do {						\
+	for (i=0; i< value_size / sizeof( typevar); i++) {		\
+	    if (i > 0)							\
+		xo_emit("{Pw:}");					\
+	    xo_emit_field("", "value", ctl_types[object->type].fmt,	\
+			  NULL, ((typevar *)value)[i] );		\
+	}								\
+    } while(0)
+    
     switch (object->type) {
     case CTLTYPE_NODE:
 	xo_emit("{:value/%s}", "--- TYPE NODE ---");
@@ -475,16 +486,6 @@ int display_basic_type(struct sysctlmif_object *object, void *value, size_t valu
 	    ((char*)value)[value_size]='\0';
 	xo_emit("{:value/%s}", (char *)value);
 	break;
-	
-#define GTVL(typevar) do {						\
-	    for (i=0; i< value_size / sizeof( typevar); i++) {		\
-		if (i > 0)						\
-		    xo_emit("{Pw:}");					\
-		xo_emit_field("", "value", ctl_types[object->type].fmt, \
-			      NULL, ((typevar *)value)[i] );		\
-	    }								\
-	} while(0)
-    
     case CTLTYPE_INT:   GTVL(int);      break;
     case CTLTYPE_LONG: 	GTVL(long);     break;
     case CTLTYPE_S8:	GTVL(int8_t);	break;
@@ -515,6 +516,24 @@ int set_basic_value(struct sysctlmif_object *object, char *input)
 
     /* XXX add Bflag support for setting, too */
     
+#define STVL(typevar) do {						\
+	input_m = strdup(input);					\
+	start = input_m;						\
+	end	= &input_m[strlen(input_m)+1];				\
+	int i = 0;							\
+	while(parse_string(start, &next, end, ',')) {			\
+	    /* XXX warn fmt != 'A' */					\
+	    newval_size += ctl_types[object->type].size;		\
+	    newval = realloc(newval, ctl_types[object->type].size);	\
+	    ((typevar *)newval)[i] = ctl_types[object->type].sign ?	\
+		(typevar)strtoll(start, NULL, 10) :			\
+		(typevar)strtoull(start, NULL, 10);			\
+	    i++;							\
+	    start = next;						\
+	}								\
+	free(input_m);							\
+    } while(0)
+    
     switch (object->type) {
     case CTLTYPE_STRING:
 	newval = input;
@@ -528,25 +547,6 @@ int set_basic_value(struct sysctlmif_object *object, char *input)
 	xo_warnx("oid \'%s\' isn't a leaf node",object->name);
 	error++;
 	break;
-
-#define STVL(typevar) do {						\
-	    input_m = strdup(input);					\
-	    start = input_m;						\
-	    end	= &input_m[strlen(input_m)+1];				\
-	    int i = 0;							\
-	    while(parse_string(start, &next, end, ',')) {		\
-		/* XXX warn fmt != 'A' */				\
-		newval_size += ctl_types[object->type].size;		\
-		newval = realloc(newval, ctl_types[object->type].size);	\
-		((typevar *)newval)[i] = ctl_types[object->type].sign ? \
-		    (typevar)strtoll(start, NULL, 10) :			\
-		    (typevar)strtoull(start, NULL, 10);			\
-		i++;							\
-		start = next;						\
-	    }								\
-	    free(input_m);						\
-	} while(0)
-
     case CTLTYPE_INT:   STVL(int);      break;
     case CTLTYPE_LONG:  STVL(long);     break;
     case CTLTYPE_S8:    STVL(int8_t);   break;
