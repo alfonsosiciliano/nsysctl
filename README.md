@@ -14,8 +14,9 @@ port: [sysutils/nsysctl](https://www.freshports.org/sysutils/nsysctl) and
 
 <u>Features:</u>
  * **sysctlmibinfo** provides a simple API to the sysctl MIB
- * all code about "opaque values" is in **opaque.c**
+ * all code about "opaque values" is in _opaque.c_
  * output via **libxo** in human and machine readable formats
+ * some string value is splitted to show structured output (_special\_value.c_)
  * **output is explicitly indicated** by the options
  * Options:
    * new **-D** show all properties
