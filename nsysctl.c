@@ -368,8 +368,8 @@ int display_tree(struct sysctlmif_object *object, char *newvalue)
 	if (Nflag)
 	    XOEMITPROP("NAME","{:name/%s}", object->name);
 	
-	if (lflag)
-	    XOEMITPROP("LABEL","{:label/%s}", object->label);
+	if (lflag) /* entry without label could return "\0" or NULL */
+	    XOEMITPROP("LABEL","{:label/%s}", object->label == NULL ? "" : object->label);
 
 	if (dflag) /* entry without descr could return "\0" or NULL */
 	    XOEMITPROP("DESCRIPTION","{:description/%s}", object->desc == NULL ? "" : object->desc);

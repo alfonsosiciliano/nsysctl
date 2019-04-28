@@ -46,6 +46,7 @@ port: [sysutils/nsysctl](https://www.freshports.org/sysutils/nsysctl) and
  * [ ] test: opaque S,efi\_map\_header (e.g. machdep.efi\_map)
  * [X] ~~fix: -x with numeric array~~
  * [X] ~~fix: -x if num == 0 print 00... else 0x... (compatibility)~~
+ * [X] ~~fix: don't show label "null"~~
 
 
 
