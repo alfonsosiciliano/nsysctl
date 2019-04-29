@@ -214,6 +214,8 @@ int main(int argc, char *argv[argc])
 	xo_open_list("tree");
 	root = sysctlmif_tree(idroot, idrootlevel, SYSCTLMIF_FALL,
 			      SYSCTLMIF_MAXDEPTH);
+	if(root == NULL)
+	    xo_err(1, "cannot build the MIB-tree");
 
 	SLIST_FOREACH(nodelevel1, root->children, object_link)
 	    error += display_tree(nodelevel1, NULL);
@@ -255,6 +257,8 @@ int parse_line_or_argv(char *arg)
     }
     else if (strlen(nodename) == strlen(arg)) { /* only nodename */
 	node = sysctlmif_tree(id, idlevel, SYSCTLMIF_FALL, SYSCTLMIF_MAXDEPTH);
+	if(node == NULL)
+	    xo_err(1, "cannot build the tree of '%s'", nodename);
 	error = display_tree(node, NULL);
 	sysctlmif_freetree(node);
     }
@@ -262,6 +266,9 @@ int parse_line_or_argv(char *arg)
 	/* FALL for fmt 'A' and for display_tree */
 	node = sysctlmif_object(id, idlevel,
 				SYSCTLMIF_FALL/*SYSCTLMIF_FNAME | SYSCTLMIF_FTYPE*/ );
+	if(node == NULL)
+	    xo_err(1, "cannot build the node to set '%s'", nodename);
+	
 	if(!IS_LEAF(node)) {
 	    xo_warnx("oid \'%s\' isn't a leaf node",node->name);
 	    error++;
@@ -322,7 +329,7 @@ int display_tree(struct sysctlmif_object *object, char *newvalue)
 	}
 	
 	if ((value = malloc(value_size)) == NULL) {
-	    printf("%s: Cannot get value MALLOC\n", object->name);
+	    xo_err(1, "allocation memory to get the value of '%s'", object->name);
 	    showable = false;
 	}
 	memset(value, 0, value_size);
@@ -527,6 +534,8 @@ int set_basic_value(struct sysctlmif_object *object, char *input)
 	    /* XXX warn fmt != 'A' */					\
 	    newval_size += ctl_types[object->type].size;		\
 	    newval = realloc(newval, ctl_types[object->type].size);	\
+	    if(newval == NULL)						\
+		xo_err(1, "realloc memory to set '%s'", object->name);	\
 	    ((typevar *)newval)[i] = ctl_types[object->type].sign ?	\
 		(typevar)strtoll(start, NULL, 10) :			\
 		(typevar)strtoull(start, NULL, 10);			\
