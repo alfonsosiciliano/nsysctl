@@ -603,7 +603,7 @@ int set_basic_value(struct sysctlmif_object *object, char *input)
 	}
 	else 
 	{
-	    xo_warn_c(errno, "\ncannot set new value %s",input);
+	    xo_warn_c(errno, "\ncannot set new value '%s'",input);
 	    error++;
 	}
     }
