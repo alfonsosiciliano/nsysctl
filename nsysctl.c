@@ -259,6 +259,7 @@ int parse_line_or_argv(char *arg)
 	node = sysctlmif_tree(id, idlevel, SYSCTLMIF_FALL, SYSCTLMIF_MAXDEPTH);
 	if(node == NULL)
 	    xo_err(1, "cannot build the tree of '%s'", nodename);
+	
 	error = display_tree(node, NULL);
 	sysctlmif_freetree(node);
     }
@@ -522,6 +523,20 @@ int set_basic_value(struct sysctlmif_object *object, char *input)
     void *newval = NULL;
     size_t newval_size = 0;
     char *start, *next, *input_m, *end;
+    
+    if (Tflag || Wflag) {
+	xo_warnx("Can't set variables when using -T or -W");
+	return error++;
+    }
+    if (!(object->flags & CTLFLAG_WR)) {
+	if (object->flags & CTLFLAG_TUN) {
+	    xo_warnx("oid '%s' is a read only tunable", object->name);
+	    xo_warnx("Tunable values are set in /boot/loader.conf");
+	} else
+	    xo_warnx("oid '%s' is read only", object->name);
+	return error++;
+    }
+	
 
     /* XXX add Bflag support for setting, too */
     
@@ -551,7 +566,7 @@ int set_basic_value(struct sysctlmif_object *object, char *input)
 	newval_size = strlen(input) + 1;
 	break;
     case CTLTYPE_OPAQUE:
-	xo_warnx("Cannot set an opaque input");
+	xo_warnx("'%s' cannot set an opaque input", object->name);
 	error++;
 	break;
     case CTLTYPE_NODE:
@@ -571,26 +586,30 @@ int set_basic_value(struct sysctlmif_object *object, char *input)
     case CTLTYPE_U32:   STVL(uint32_t); break;
     case CTLTYPE_U64:   STVL(uint64_t); break;
     default:
-	xo_warnx("Unknown type");
+	xo_warnx("Unknown type '%s'", object->name);
 	error++;
 	break;
     }
     
     if(error == 0) {
-	if(sysctl(object->id, object->idlevel, NULL, 0, newval, newval_size)==0)
+	if (newval_size == 0 && object->type != CTLTYPE_STRING) {
+	    xo_warnx("empty numeric value");
+	    error++;
+	}
+	else if(sysctl(object->id, object->idlevel, NULL, 0, newval, newval_size)==0)
 	{
 	    if(vflag || Vflag)
 		xo_emit("{L: -> }{:newvalue/%s}",input);
-	    //xo_emit("{L: -> }");
-	    //xo_emit_field("", "newvalue", formatstr, NULL, typedvalue);
 	}
 	else 
 	{
-	    /* XXX add \n */
-	    xo_warnx("cannot set new value %s",input);
+	    xo_warn_c(errno, "\ncannot set new value %s",input);
 	    error++;
 	}
     }
+    
+    if(object->type != CTLTYPE_STRING && newval != NULL)
+	free(newval);
 
     return (error);
 }
