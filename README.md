@@ -31,7 +31,7 @@ port: [sysutils/nsysctl](https://www.freshports.org/sysutils/nsysctl) and
  * [ ] clean code
 
 
-**TODO Version 0.9**
+~~**TODO Version 0.9**~~
 
  * [X] ~~change: option -m -> -F~~
  * [X] ~~change: option -F -> -g~~
