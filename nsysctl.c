@@ -525,15 +525,15 @@ int set_basic_value(struct sysctlmif_object *object, char *input)
     char *start, *next, *input_m, *end;
     
     if (Tflag || Wflag) {
-	xo_warnx("Can't set variables when using -T or -W");
+	xo_warnx("\nCan't set variables when using -T or -W");
 	return error++;
     }
     if (!(object->flags & CTLFLAG_WR)) {
 	if (object->flags & CTLFLAG_TUN) {
-	    xo_warnx("oid '%s' is a read only tunable", object->name);
+	    xo_warnx("\noid '%s' is a read only tunable", object->name);
 	    xo_warnx("Tunable values are set in /boot/loader.conf");
 	} else
-	    xo_warnx("oid '%s' is read only", object->name);
+	    xo_warnx("\noid '%s' is read only", object->name);
 	return error++;
     }
 	
@@ -550,7 +550,7 @@ int set_basic_value(struct sysctlmif_object *object, char *input)
 	    newval_size += ctl_types[object->type].size;		\
 	    newval = realloc(newval, ctl_types[object->type].size);	\
 	    if(newval == NULL)						\
-		xo_err(1, "realloc memory to set '%s'", object->name);	\
+		xo_err(1, "\nrealloc memory to set '%s'", object->name);\
 	    ((typevar *)newval)[i] = ctl_types[object->type].sign ?	\
 		(typevar)strtoll(start, NULL, 10) :			\
 		(typevar)strtoull(start, NULL, 10);			\
@@ -566,11 +566,11 @@ int set_basic_value(struct sysctlmif_object *object, char *input)
 	newval_size = strlen(input) + 1;
 	break;
     case CTLTYPE_OPAQUE:
-	xo_warnx("'%s' cannot set an opaque input", object->name);
+	xo_warnx("\n'%s' cannot set an opaque input", object->name);
 	error++;
 	break;
     case CTLTYPE_NODE:
-	xo_warnx("oid \'%s\' isn't a leaf node",object->name);
+	xo_warnx("\noid \'%s\' isn't a leaf node",object->name);
 	error++;
 	break;
     case CTLTYPE_INT:   STVL(int);      break;
@@ -586,14 +586,14 @@ int set_basic_value(struct sysctlmif_object *object, char *input)
     case CTLTYPE_U32:   STVL(uint32_t); break;
     case CTLTYPE_U64:   STVL(uint64_t); break;
     default:
-	xo_warnx("Unknown type '%s'", object->name);
+	xo_warnx("\nUnknown type '%s'", object->name);
 	error++;
 	break;
     }
     
     if(error == 0) {
 	if (newval_size == 0 && object->type != CTLTYPE_STRING) {
-	    xo_warnx("empty numeric value");
+	    xo_warnx("\nempty numeric value");
 	    error++;
 	}
 	else if(sysctl(object->id, object->idlevel, NULL, 0, newval, newval_size)==0)
