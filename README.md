@@ -4,36 +4,23 @@ nsysctl 0.2
 Legal notice: [FreeBSD](http://www.freebsd.org)&copy; is a registered trademark 
 of the [FreeBSD Foundation](https://www.freebsdfoundation.org).  
 
-**nsysctl** is a FreeBSD [/sbin/sysctl](https://man.freebsd.org/sysctl/8) 
-clone: to get or set the kernel state with [libxo](https://wiki.freebsd.org/LibXo), 
-[sysctlmibinfo](https://gitlab.com/alfix/sysctlmibinfo) 
-and extra options, 
+The **nsysctl** utility is a FreeBSD [/sbin/sysctl](https://man.freebsd.org/sysctl/8) 
+clone (depending on [sysctlmibinfo](https://gitlab.com/alfix/sysctlmibinfo)) 
+to get or set the kernel state supporting 
+[libxo](http://juniper.github.io/libxo/libxo-manual.html) 
+and extra options; 
 port: [sysutils/nsysctl](https://www.freshports.org/sysutils/nsysctl) and 
 **[TUTORIAL](http://alfix.gitlab.io/bsd/2019/02/19/nsysctl-tutorial.html)**.  
 
 
 <u>Features:</u>
- * **sysctlmibinfo** provides a simple API to the sysctl MIB
- * all code about "opaque values" is in _opaque.c_
- * output via **libxo** in human and machine readable formats
- * some string value is splitted to show structured output (_special\_value.c_)
- * **output is explicitly indicated** by the options
- * Options:
-   * new **-D** show all properties
-   * update **-e** specific _sep_ as a separator
-   * new **-F** show format string
-   * new **-G** show true-flags
-   * new **-g** show flags
-   * new **-I** show internal nodes
-   * new **-l** show label
-   * new **-r** show _tag-root_ with libxo
-   * delete **-n** simply do not use -N
-   * updated **-N** force to show name
-   * new **-p** show [_property-name_]: _property-value_
-   * new **-S** show magic nodes with -a
-   * new **-V** display value is "showable", otherwise hide the state
-   * new **-v** force to show value
-   * new **-y** show id
+ * **sysctlmibinfo** provides a simple API to the sysctl MIB,
+ * output via **libxo** in human and machine readable formats,
+ * isolated code to manage "opaque values" (_opaque.c_),
+ * some string value is splitted to show structured output (_special\_value.c_),
+ * **output is explicitly indicated** by the options,
+ * new options to show the properties of a state.
+
 
 
 **TODO**
