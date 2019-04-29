@@ -5,7 +5,7 @@ Legal notice: [FreeBSD](http://www.freebsd.org)&copy; is a registered trademark
 of the [FreeBSD Foundation](https://www.freebsdfoundation.org).  
 
 The **nsysctl** utility is a FreeBSD [/sbin/sysctl](https://man.freebsd.org/sysctl/8) 
-clone (depending on [sysctlmibinfo](https://gitlab.com/alfix/sysctlmibinfo)) 
+clone, depending on [sysctlmibinfo](https://gitlab.com/alfix/sysctlmibinfo), 
 to get or set the kernel state supporting 
 [libxo](http://juniper.github.io/libxo/libxo-manual.html) 
 and extra options; 
