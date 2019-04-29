@@ -10,7 +10,7 @@ to get or set the kernel state supporting
 [libxo](http://juniper.github.io/libxo/libxo-manual.html) 
 and extra options; 
 port: [sysutils/nsysctl](https://www.freshports.org/sysutils/nsysctl) and 
-**[TUTORIAL](http://alfix.gitlab.io/bsd/2019/02/19/nsysctl-tutorial.html)**.  
+**[TUTORIAL](https://alfix.gitlab.io/bsd/2019/02/19/nsysctl-tutorial.html)**.  
 
 
 <u>Features:</u>
