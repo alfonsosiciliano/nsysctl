@@ -1,4 +1,4 @@
-nsysctl 0.2
+nsysctl 0.9
 =============
 
 Legal notice: [FreeBSD](http://www.freebsd.org)&copy; is a registered trademark 
@@ -19,11 +19,19 @@ port: [sysutils/nsysctl](https://www.freshports.org/sysutils/nsysctl) and
  * isolated code to manage "opaque values" (_opaque.c_),
  * some string value is splitted to show structured output (_special\_value.c_),
  * **output is explicitly indicated** by the options,
+ * the options are not mutually exclusive,
  * new options to show the properties of a state.
 
 
 
 **TODO**
+
+ * [ ] testing
+ * [ ] test: opaque S,efi\_map\_header (e.g. machdep.efi\_map)
+ * [ ] clean code
+
+
+**TODO Version 0.9**
 
  * [X] ~~change: option -m -> -F~~
  * [X] ~~change: option -F -> -g~~
@@ -31,11 +39,9 @@ port: [sysutils/nsysctl](https://www.freshports.org/sysutils/nsysctl) and
  * [X] ~~add: array set: name=value,value,value...~~
  * [X] ~~add: xo\_warn and xo\_err messages~~
  * [X] ~~add: opaque S,input\_id (e.g. kern.evdev.input.0.id)~~
- * [ ] test: opaque S,efi\_map\_header (e.g. machdep.efi\_map)
  * [X] ~~fix: -x with numeric array~~
  * [X] ~~fix: -x if num == 0 print 00... else 0x... (compatibility)~~
  * [X] ~~fix: don't show label "null"~~
-
 
 
 ~~**TODO Version 0.2**~~
@@ -69,4 +75,3 @@ port: [sysutils/nsysctl](https://www.freshports.org/sysutils/nsysctl) and
  * [X] ~~fix: on failure return '1'~~
  * [X] ~~fix: libxo=xml debug.witness.fullgraph, segmentation fault (special\_value.c)~~
  * [X] ~~fix: libxo=text debug.fail\_point  (utf8)~~
-
