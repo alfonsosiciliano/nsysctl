@@ -489,7 +489,7 @@ int display_basic_type(struct sysctlmif_object *object, void *value, size_t valu
     
     switch (object->type) {
     case CTLTYPE_NODE:
-	xo_emit("{:value/%s}", "--- TYPE NODE ---");
+	xo_warnx("'%s' is a node", object->name);
 	break;
     case CTLTYPE_STRING:
 	/* XXX 'if' can be deleted after the 'change value_size' fix*/
@@ -510,7 +510,7 @@ int display_basic_type(struct sysctlmif_object *object, void *value, size_t valu
     case CTLTYPE_U32:	GTVL(uint32_t);	break;
     case CTLTYPE_U64:	GTVL(uint64_t);	break;
     default:
-	printf("%s, Error bad type!\n", object->name);
+	xo_warnx("'%s' unknown type", object->name);
 	error++;
     }
 
