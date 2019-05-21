@@ -402,6 +402,7 @@ S_efi_map(void *value, size_t value_size, bool hflag)
 
 	for (i = 0; i < ndesc; i++,
 	    map = efi_next_descriptor(map, efihdr->descriptor_size)) {
+		xo_open_container("md");
 		type = NULL;
 		if (map->md_type < nitems(types))
 			type = types[map->md_type];
@@ -411,24 +412,27 @@ S_efi_map(void *value, size_t value_size, bool hflag)
 		    type,
 		    (uintmax_t)map->md_phys, map->md_virt,
 		    (uintmax_t)map->md_pages);
+		xo_open_container("md_attrs");
 		if (map->md_attr & EFI_MD_ATTR_UC)
-			xo_emit("{L:UC }");
+			xo_emit("{:md_attr/%s}{L: }","UC");
 		if (map->md_attr & EFI_MD_ATTR_WC)
-			xo_emit("{L:WC }");
+			xo_emit("{:md_attr/%s}{L: }","WC");
 		if (map->md_attr & EFI_MD_ATTR_WT)
-			xo_emit("{L:WT }");
+			xo_emit("{:md_attr/%s}{L: }","WT");
 		if (map->md_attr & EFI_MD_ATTR_WB)
-			xo_emit("{L:WB }");
+			xo_emit("{:md_attr/%s}{L: }","WB");
 		if (map->md_attr & EFI_MD_ATTR_UCE)
-			xo_emit("{L:UCE }");
+			xo_emit("{:md_attr/%s}{L: }","UCE");
 		if (map->md_attr & EFI_MD_ATTR_WP)
-			xo_emit("{L:WP }");
+			xo_emit("{:md_attr/%s}{L: }","WP");
 		if (map->md_attr & EFI_MD_ATTR_RP)
-			xo_emit("{L:RP }");
+			xo_emit("{:md_attr/%s}{L: }","RP");
 		if (map->md_attr & EFI_MD_ATTR_XP)
-			xo_emit("{L:XP }");
+			xo_emit("{:md_attr/%s}{L: }","XP");
 		if (map->md_attr & EFI_MD_ATTR_RT)
-			xo_emit("{L:RUNTIME}");
+			xo_emit("{:md_attr/%s}","RUNTIME");
+		xo_close_container("md_attrs");
+		xo_close_container("md");
 	}
 	return (0);
 }
