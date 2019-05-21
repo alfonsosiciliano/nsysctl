@@ -1,4 +1,4 @@
-nsysctl 0.9
+nsysctl 0.9.1
 =============
 
 Legal notice: [FreeBSD](http://www.freebsd.org)&copy; is a registered trademark 
@@ -28,9 +28,12 @@ port: [sysutils/nsysctl](https://www.freshports.org/sysutils/nsysctl) and
 
  * [ ] testing
  * [ ] test: opaque S,efi\_map\_header (e.g. machdep.efi\_map)
- * [X] ~~fix: opaque S,efi\_map\_header (e.g. machdep.efi\_map)~~
  * [ ] clean code
 
+~~**TODO Version 0.9.1**~~
+
+ * [X] ~~fix: opaque S,efi\_map\_header (e.g. machdep.efi\_map)~~
+ * [X] ~~delete: delete bsd.prog.mk~~
 
 ~~**TODO Version 0.9**~~
 
