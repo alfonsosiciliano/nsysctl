@@ -1,24 +1,35 @@
-# PUBLIC DOMAIN - NO WARRANTY
-# written by Alfonso S. Siciliano https://alfix.gitlab.io
+# Any copyright is dedicated to the Public Domain.
+# <http://creativecommons.org/publicdomain/zero/1.0/>
+#
+# Written by Alfonso S. Siciliano https://alfix.gitlab.io
 
-PROG=	nsysctl
-SRCS=	nsysctl.c opaque.c special_value.c
-MAN=	${PROG}.8
+OUTPUT= nsysctl
+SOURCES= nsysctl.c opaque.c special_value.c
+OBJECTS= ${SOURCES:.c=.o}
+CCFLAGS= -I/usr/local/include -Wall # -g
+LDFLAGS= -L/usr/local/lib -lsysctlmibinfo -lxo
+RM= rm -f
+MAN= nsysctl.8
+GZIP= gzip -cn
+PREFIX= /usr/local
+INSTALL= install -o root -g wheel
 
-CFLAGS=		-I/usr/local/include -Wall -g
-LDFLAGS=	-L/usr/local/lib -lsysctlmibinfo -lxo
-MK_DEBUG_FILES= no
+all : ${OUTPUT}
 
-PREFIX?=        /usr/local
-MANDIR=		/man/man
-DESTDIR=	${PREFIX}
-BINDIR=		/bin
+clean:
+	${RM} ${OUTPUT} *.o *~ *.core ${MAN}.gz
 
-CLEANFILES=	*~ *.core
+${OUTPUT}: ${OBJECTS}
+	${CC} ${LDFLAGS} ${OBJECTS} -o ${.PREFIX}
 
-RM = rm -f
+.c.o:
+	${CC} ${CCFLAGS} -c ${.IMPSRC} -o ${.TARGET}
+
+install:
+	${INSTALL} -s -m 555 ${OUTPUT} ${PREFIX}/sbin/${OUTPUT}
+	${GZIP} ${MAN} > ${MAN}.gz
+	${INSTALL} -m 444 ${MAN}.gz ${PREFIX}/man/man8/
+
 unistall:
-	${RM} ${DESTDIR}${BINDIR}/${PROG}
-	${RM} ${PREFIX}${MANDIR}8/${MAN}.gz
-
-.include <bsd.prog.mk>
+	${RM} ${PREFIX}/sbin/${OUTPUT}
+	${RM} ${PREFIX}/man/man8/${MAN}.gz
