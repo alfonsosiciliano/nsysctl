@@ -6,12 +6,15 @@
 OUTPUT= nsysctl
 SOURCES= nsysctl.c opaque.c special_value.c
 OBJECTS= ${SOURCES:.c=.o}
-CCFLAGS= -I/usr/local/include -Wall # -g
+CCFLAGS= -I/usr/local/include -Wall -g
 LDFLAGS= -L/usr/local/lib -lsysctlmibinfo -lxo
-RM= rm -f
-MAN= nsysctl.8
+SBINDIR= /usr/local/sbin
+
+MAN= ${OUTPUT}.8
 GZIP= gzip -cn
-PREFIX= /usr/local
+MANDIR= /usr/local/man/man8
+
+RM= rm -f
 INSTALL= install -o root -g wheel
 
 all : ${OUTPUT}
@@ -26,10 +29,10 @@ ${OUTPUT}: ${OBJECTS}
 	${CC} ${CCFLAGS} -c ${.IMPSRC} -o ${.TARGET}
 
 install:
-	${INSTALL} -s -m 555 ${OUTPUT} ${PREFIX}/sbin/${OUTPUT}
+	${INSTALL} -s -m 555 ${OUTPUT} ${SBINDIR}/${OUTPUT}
 	${GZIP} ${MAN} > ${MAN}.gz
-	${INSTALL} -m 444 ${MAN}.gz ${PREFIX}/man/man8/
+	${INSTALL} -m 444 ${MAN}.gz ${MANDIR}/
 
 unistall:
-	${RM} ${PREFIX}/sbin/${OUTPUT}
-	${RM} ${PREFIX}/man/man8/${MAN}.gz
+	${RM} ${SBINDIR}/${OUTPUT}
+	${RM} ${MANDIR}/${MAN}.gz
