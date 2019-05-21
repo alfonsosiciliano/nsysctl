@@ -28,6 +28,7 @@ port: [sysutils/nsysctl](https://www.freshports.org/sysutils/nsysctl) and
 
  * [ ] testing
  * [ ] test: opaque S,efi\_map\_header (e.g. machdep.efi\_map)
+ * [X] ~~fix: opaque S,efi\_map\_header (e.g. machdep.efi\_map)~~
  * [ ] clean code
 
 
