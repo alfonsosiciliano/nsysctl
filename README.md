@@ -2,7 +2,7 @@ nsysctl 0.9.1
 =============
 
 The **nsysctl** utility is a [/sbin/sysctl](https://man.freebsd.org/sysctl/8) 
-clone for [FreeBSD](http://www.freebsd.org)&copy;, depending on 
+clone for [FreeBSD](http://www.freebsd.org)&reg;, depending on 
 [sysctlmibinfo](https://gitlab.com/alfix/sysctlmibinfo), 
 to get or set the kernel state supporting 
 [libxo](http://juniper.github.io/libxo/libxo-manual.html) 
