@@ -104,7 +104,7 @@ int display_basic_type(struct sysctlmif_object *object, void *value, size_t valu
 int set_basic_value(struct sysctlmif_object *object, char *input);
 
 bool aflag, bflag, dflag, Fflag, fflag, hflag, Gflag, gflag, Iflag;
-bool iflag, lflag, Nflag, nflag, oflag, pflag, qflag, rflag, Sflag;
+bool iflag, lflag, mflag, Nflag, nflag, oflag, pflag, qflag, rflag;
 bool Tflag, tflag, Vflag, vflag, Wflag, xflag, yflag;
 char *sep, *rflagstr;
 unsigned int Bflagsize;
@@ -131,8 +131,8 @@ int main(int argc, char *argv[argc])
     error = 0;
     Bflagsize = 0;
     aflag = bflag = dflag = Fflag = fflag = Gflag = gflag = hflag = Iflag = false;
-    iflag = lflag = Nflag = nflag = oflag = pflag = qflag = rflag = false;
-    Sflag = Tflag = tflag = Vflag = vflag = Wflag = xflag = yflag = false;
+    iflag = lflag = mflag = Nflag = nflag = oflag = pflag = qflag = rflag = false;
+    Tflag = tflag = Vflag = vflag = Wflag = xflag = yflag = false;
 
     atexit(xo_finish_atexit);
 
@@ -141,7 +141,7 @@ int main(int argc, char *argv[argc])
     if (argc < 0)
 	exit(EXIT_FAILURE);
 
-    while ((ch = getopt(argc, argv, "AabDde:Ff:GghiIlNnopqr:STtVvWXxy")) != -1) {
+    while ((ch = getopt(argc, argv, "AabDde:Ff:GghiIlmNnopqr:TtVvWXxy")) != -1) {
 	switch (ch) {
 	case 'A': aflag = true; oflag = true; break;
 	case 'a': aflag = true; break;
@@ -161,13 +161,13 @@ int main(int argc, char *argv[argc])
 	case 'I': Iflag = true; break;
 	case 'i': iflag = true; break;
 	case 'l': lflag = true; break;
+	case 'm': mflag = true; break;
 	case 'N': Nflag = true; break;
 	case 'n': nflag = true; break;
 	case 'o': oflag = true; break;
 	case 'p': pflag = true; break;
 	case 'q': qflag = true; break;
 	case 'r': rflag = true; rflagstr = optarg; break;
-	case 'S': Sflag = true; break;
 	case 'T': Tflag = true; break;
 	case 't': tflag = true; break;
 	case 'V': Vflag = true; break;
@@ -295,7 +295,7 @@ int display_tree(struct sysctlmif_object *object, char *newvalue)
     size_t value_size = 0;
     void *value;
 
-    if ((object->id[0] == 0) && !Sflag)
+    if ((object->id[0] == 0) && !mflag)
 	showable = false;
 
     if (Wflag && !((object->flags & CTLFLAG_WR) && !(object->flags & CTLFLAG_STATS)))

@@ -30,7 +30,7 @@ port: [sysutils/nsysctl](https://www.freshports.org/sysutils/nsysctl) and
  * [ ] add: setting kelvin value
  * [ ] add: setting with -B option
  * [ ] fix: delete useless strdup() to parse input
- * [ ] change: option -S -> -m
+ * [X] ~~change: option -S -> -m~~
 
 ~~**TODO Version 0.9.1**~~
 
