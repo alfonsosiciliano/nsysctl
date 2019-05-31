@@ -237,50 +237,50 @@ int main(int argc, char *argv[argc])
 
 int parse_line_or_argv(char *arg)
 {
-    char *tofree, *nodename, *parsestring;
+    char *name, *valuestr;
     int error = 0;
     int id[SYSCTLMIF_MAXIDLEVEL];
     size_t idlevel = SYSCTLMIF_MAXIDLEVEL;
     struct sysctlmif_object *node;
     
-    parsestring = strdup(arg);
-    tofree = nodename = strsep(&parsestring, "=");
+    name = arg;
+    valuestr = strchr(arg, '=');
+    if(valuestr != NULL) {
+	*valuestr='\0';
+	valuestr++;
+    }
     
-    if (sysctlmif_nametoid(nodename, strlen(nodename) +1,
-			   id, &idlevel) != 0) {
+    if (sysctlmif_nametoid(name, strlen(name) +1, id, &idlevel) != 0) {
 	/* nodename doesn't exist*/
 	if (!iflag)
 	    error++;
 
 	if (!iflag && !qflag)
-	    xo_warnx("unknow \'%s\' oid", nodename);
+	    xo_warnx("unknow \'%s\' oid", name);
     }
-    else if (strlen(nodename) == strlen(arg)) { /* only nodename */
+    else if (valuestr == NULL) { /* only nodename */
 	node = sysctlmif_tree(id, idlevel, SYSCTLMIF_FALL, SYSCTLMIF_MAXDEPTH);
 	if(node == NULL)
-	    xo_err(1, "cannot build the tree of '%s'", nodename);
+	    xo_err(1, "cannot build the tree of '%s'", name);
 	
 	error = display_tree(node, NULL);
 	sysctlmif_freetree(node);
-    }
+    } 
     else { /* nodename=value */
 	/* FALL for fmt 'A' and for display_tree */
 	node = sysctlmif_object(id, idlevel,
 				SYSCTLMIF_FALL/*SYSCTLMIF_FNAME | SYSCTLMIF_FTYPE*/ );
 	if(node == NULL)
-	    xo_err(1, "cannot build the node to set '%s'", nodename);
+	    xo_err(1, "cannot build the node to set '%s'", name);
 	
 	if(!IS_LEAF(node)) {
 	    xo_warnx("oid \'%s\' isn't a leaf node",node->name);
 	    error++;
-	}
-	else /* here node is a leaf */
-	    error += display_tree(node, parsestring);
+	} else /* here node is a leaf */
+	    error += display_tree(node, valuestr);
 	
 	sysctlmif_freeobject(node);
     }
-
-    free(tofree);
 
     return error;
 }
