@@ -25,13 +25,17 @@ port: [sysutils/nsysctl](https://www.freshports.org/sysutils/nsysctl) and
 **TODO**
 
  * [ ] testing
- * [ ] test: opaque S,efi\_map\_header (e.g. machdep.efi\_map)
  * [ ] clean code
+ * [ ] test: opaque S,efi\_map\_header (e.g. machdep.efi\_map)
+ * [ ] add: setting kelvin value
+ * [ ] add: setting with -B option
+ * [ ] fix: delete useless strdup() to parse input
+ * [ ] change: option -S -> -m
 
 ~~**TODO Version 0.9.1**~~
 
  * [X] ~~fix: opaque S,efi\_map\_header (e.g. machdep.efi\_map)~~
- * [X] ~~delete: delete bsd.prog.mk~~
+ * [X] ~~delete: bsd.prog.mk~~
 
 ~~**TODO Version 0.9**~~
 
