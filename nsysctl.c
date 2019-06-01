@@ -451,9 +451,6 @@ int display_tree(struct sysctlmif_object *object, char *newvalue)
 }
 
 
-/*
- * this func will be merged with set_basic_value() in version 1.0 
- */
 int display_basic_type(struct sysctlmif_object *object, void *value, size_t value_size)
 {
     int i, error = 0, j;
@@ -625,7 +622,7 @@ int set_basic_value(struct sysctlmif_object *object, char *input)
 	}// end while
 	free(input_m);
     
-    } // else no string
+    } // else numeric value
     
     if(error == 0) {
 	if (newval_size == 0 && object->type != CTLTYPE_STRING) {
