@@ -24,8 +24,8 @@ port: [sysutils/nsysctl](https://www.freshports.org/sysutils/nsysctl) and
 
 **TODO**
 
- * [ ] testing
- * [ ] clean code
+ * [ ] testing and fix (~~-B~~)
+ * [ ] clean code (delete macros)
  * [ ] test: opaque S,efi\_map\_header (e.g. machdep.efi\_map)
  
  ~~**TODO Version 1.0**~~
