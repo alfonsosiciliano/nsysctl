@@ -1,4 +1,4 @@
-nsysctl 0.9.1
+nsysctl 1.0
 =============
 
 The **nsysctl** utility is a [/sbin/sysctl](https://man.freebsd.org/sysctl/8) 
@@ -27,6 +27,9 @@ port: [sysutils/nsysctl](https://www.freshports.org/sysutils/nsysctl) and
  * [ ] testing
  * [ ] clean code
  * [ ] test: opaque S,efi\_map\_header (e.g. machdep.efi\_map)
+ 
+ ~~**TODO Version 1.0**~~
+ 
  * [X] ~~add: setting kelvin value~~
  * [X] ~~add: setting a numeric value with -B option~~
  * [X] ~~fix: delete useless strdup() to parse input~~
