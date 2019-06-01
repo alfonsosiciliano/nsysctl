@@ -1,4 +1,4 @@
-/*-
+/*
  * Copyright (c) 2018-2019 Alfonso Sabato Siciliano
  *
  * Redistribution and use in source and binary forms, with or without
