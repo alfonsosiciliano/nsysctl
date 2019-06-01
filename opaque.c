@@ -468,12 +468,12 @@ S_bios_smap_xattr(void* value, size_t value_size, bool hflag)
 
 /* strIK_to_int() and display_IK_value() could be in kelvin.c */
 int
-strIK_to_int(const char *str, char **endptrp, const char *fmt)
+strIK_to_int(const char *str, int *kelvin, const char *fmt)
 {
-	int kelv;
 	float temp;
 	size_t len;
 	const char *p;
+	char *endptrp;
 	int prec, i;
 
 	assert(errno == 0);
@@ -500,31 +500,31 @@ strIK_to_int(const char *str, char **endptrp, const char *fmt)
 	}
 	p = &str[len - 1];
 	if ((*p == 'C') || (*p == 'F') || (*p == 'K')) {
-		temp = strtof(str, endptrp);
-		if ((*endptrp != str) && (*endptrp == p) && (errno == 0)) {
+		temp = strtof(str, &endptrp);
+		if ((endptrp != str) && (endptrp == p) && (errno == 0)) {
 			if (*p == 'F') {
 				temp = (temp - 32) * 5 / 9;
 			}
-			*endptrp = NULL;
+			endptrp = NULL;
 			if (*p != 'K') {
 				temp += 273.15;
 			}
 			for (i = 0; i < prec; i++) {
 				temp *= 10.0;
 			}
-			return ((int)(temp + 0.5));
+			*kelvin = ((int)(temp + 0.5));
+			return 0;
 		}
 	} else {
 		/* No unit specified -> treat it as a raw number */
-		kelv = (int)strtol(str, endptrp, 10);
-		if ((*endptrp != str) && (*endptrp == p) && (errno == 0)) {
-			*endptrp = NULL;
-			return (kelv);
+		*kelvin = (int)strtol(str, &endptrp, 10);
+		if ((endptrp != str) && (endptrp == p) && (errno == 0)) {
+			endptrp = NULL;
+			return (0);
 		}
 	}
 
-	errno = ERANGE;
-	return (0);
+	return (1);
 }
 
 int display_IK_value(struct sysctlmif_object *obj, void *value, size_t value_size, bool hflag)

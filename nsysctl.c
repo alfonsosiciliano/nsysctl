@@ -412,9 +412,7 @@ int display_tree(struct sysctlmif_object *object, char *newvalue)
 	    if (pflag)
 		xo_emit("{L:[VALUE]: }");
 
-	    if (strncmp(object->fmt, "IK", 2) == 0)
-		error += display_IK_value(object, value, value_size, hflag);
-	    else if (is_special_value(object))
+	    if (is_special_value(object))
 		error += display_special_value(object,value,value_size);
 	    else if (object->type == CTLTYPE_OPAQUE || object->type == CTLTYPE_NODE)
 		error += display_opaque_value(object, value, value_size, hflag, oflag, xflag);
@@ -492,12 +490,17 @@ int display_basic_type(struct sysctlmif_object *object, void *value, size_t valu
 	xo_warnx("'%s' is a node", object->name);
 	break;
     case CTLTYPE_STRING:
-	/* XXX 'if' can be deleted after the 'change value_size' fix*/
+	/* PARANOIC 'if' can be deleted after the 'change value_size' fix*/
 	if( ((char*)value)[value_size]!='\0')
 	    ((char*)value)[value_size]='\0';
 	xo_emit("{:value/%s}", (char *)value);
 	break;
-    case CTLTYPE_INT:   GTVL(int);      break;
+    case CTLTYPE_INT:
+	if (strncmp(object->fmt, "IK", 2) == 0)
+	    error += display_IK_value(object, value, value_size, hflag);
+	else
+	    GTVL(int);      
+	break;
     case CTLTYPE_LONG: 	GTVL(long);     break;
     case CTLTYPE_S8:	GTVL(int8_t);	break;
     case CTLTYPE_S16:	GTVL(int16_t);	break;
@@ -520,7 +523,7 @@ int display_basic_type(struct sysctlmif_object *object, void *value, size_t valu
 
 int set_basic_value(struct sysctlmif_object *object, char *input)
 {
-    int error = 0;
+    int error = 0, kelvin;
     void *newval = NULL;
     size_t newval_size = 0;
     char *start, *next, *input_m, *end;
@@ -549,7 +552,7 @@ int set_basic_value(struct sysctlmif_object *object, char *input)
 	end	= &input_m[strlen(input_m)+1];				\
 	int i = 0;							\
 	while(parse_string(start, &next, end, ',')) {			\
-	    /* XXX warn fmt != 'A' */					\
+	    /* some oid (e.g. kern.cp_times) is an array but fmt != A */ \
 	    newval_size += ctl_types[object->type].size;		\
 	    newval = realloc(newval, ctl_types[object->type].size);	\
 	    if(newval == NULL){						\
@@ -580,7 +583,18 @@ int set_basic_value(struct sysctlmif_object *object, char *input)
 	xo_warnx("oid \'%s\' isn't a leaf node",object->name);
 	error++;
 	break;
-    case CTLTYPE_INT:   STVL(int);      break;
+    case CTLTYPE_INT:
+	if (strncmp(object->fmt, "IK", 2) == 0) {
+	    if((newval = malloc(ctl_types[object->type].size)) == NULL) {
+		xo_emit("{L:n}");					
+		xo_err(1, "mallocc memory to set '%s'", object->name);
+	    }
+	    newval_size += ctl_types[object->type].size; // sizeof(int)
+	    error += strIK_to_int(input, &kelvin, object->fmt);
+	} else {
+	    STVL(int); 
+	}
+	break;
     case CTLTYPE_LONG:  STVL(long);     break;
     case CTLTYPE_S8:    STVL(int8_t);   break;
     case CTLTYPE_S16:   STVL(int16_t);  break;
