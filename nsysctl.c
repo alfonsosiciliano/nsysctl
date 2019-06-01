@@ -542,84 +542,90 @@ int set_basic_value(struct sysctlmif_object *object, char *input)
 	    xo_warnx("oid '%s' is read only", object->name);
 	return ++error;
     }
+    if(object->type == CTLTYPE_OPAQUE) {
+	xo_emit("{L:\n}");
+	xo_warnx("'%s' cannot set an opaque input", object->name);
+	return ++error;
+    }
+    if(object->type == CTLTYPE_NODE) {
+	xo_emit("{L:\n}");
+	xo_warnx("oid \'%s\' isn't a leaf node",object->name);
+	return ++error;
+    }
+    
+    // the state is settable
 
+    if(Bflagsize > 0) {
+	newval_size = Bflagsize;
+	newval = malloc(newval_size);
+	if(newval == NULL){
+	    xo_emit("{L:n}");	
+	    xo_err(1, "malloc() to set '%s'", object->name);
+	}
+    }					
+    
+    if(object->type == CTLTYPE_STRING) {
+	newval = input;
+	newval_size = strlen(input) + 1;
+    }
+    else // numeric value
+    {
+	input_m = strdup(input);
+	start = input_m;
+	end = &input_m[strlen(input_m)+1];
 
+	i=0;
+    
 #define STVL(typevar) do {						\
-	input_m = strdup(input);					\
-	start = input_m;						\
-	end = &input_m[strlen(input_m)+1];				\
-	if(Bflagsize > 0) {						\
-	    newval_size = Bflagsize;					\
-	    newval = malloc(newval_size);				\
-	    if(newval == NULL){						\
-		xo_emit("{L:\n}");					\
-		xo_err(1, "malloc() to set '%s'", object->name);	\
-	    }								\
-	}								\
-	i=0;								\
-	while(parse_string(start, &next, end, ',')) {			\
-	    /* some oid (e.g. kern.cp_times) is an array but fmt != A */ \
-	    if(Bflagsize <= 0) {					\
-		newval_size += ctl_types[object->type].size;		\
-		newval = realloc(newval, ctl_types[object->type].size);	\
-		if(newval == NULL){					\
-		    xo_emit("{L:\n}");					\
-		    xo_err(1, "realloc() to set '%s'", object->name);	\
-		}							\
-	    }								\
 	    ((typevar *)newval)[i] = ctl_types[object->type].sign ?	\
 		(typevar)strtoll(start, NULL, 10) :			\
 		(typevar)strtoull(start, NULL, 10);			\
-	    i++;							\
-	    start = next;						\
-	}								\
-	free(input_m);							\
-    } while(0)
-    
-    switch (object->type) {
-    case CTLTYPE_STRING:
-	newval = input;
-	newval_size = strlen(input) + 1;
-	break;
-    case CTLTYPE_OPAQUE:
-	xo_emit("{L:\n}");
-	xo_warnx("'%s' cannot set an opaque input", object->name);
-	error++;
-	break;
-    case CTLTYPE_NODE:
-	xo_emit("{L:\n}");
-	xo_warnx("oid \'%s\' isn't a leaf node",object->name);
-	error++;
-	break;
-    case CTLTYPE_INT:
-	if (strncmp(object->fmt, "IK", 2) == 0) {
-	    if((newval = malloc(ctl_types[object->type].size)) == NULL) {
-		xo_emit("{L:n}");					
-		xo_err(1, "mallocc memory to set '%s'", object->name);
+	} while(0)
+		
+	while(object->type != CTLTYPE_STRING && parse_string(start, &next, end, ',')) {
+	    /* some oid (e.g. kern.cp_times) is an array but fmt != A */
+	    if(Bflagsize <= 0) {
+		newval_size += ctl_types[object->type].size;
+		newval = realloc(newval, ctl_types[object->type].size);
+		if(newval == NULL){
+		    xo_emit("{L:n}");
+		    xo_err(1, "realloc() to set '%s'", object->name);
+		}
 	    }
-	    newval_size += ctl_types[object->type].size; // sizeof(int)
-	    error += strIK_to_int(input, &kelvin, object->fmt);
-	} else {
-	    STVL(int); 
-	}
-	break;
-    case CTLTYPE_LONG:  STVL(long);     break;
-    case CTLTYPE_S8:    STVL(int8_t);   break;
-    case CTLTYPE_S16:   STVL(int16_t);  break;
-    case CTLTYPE_S32:   STVL(int32_t);  break;
-    case CTLTYPE_S64:   STVL(int64_t);  break;
-    case CTLTYPE_UINT:  STVL(u_int);    break;
-    case CTLTYPE_ULONG:	STVL(u_long);   break;
-    case CTLTYPE_U8:    STVL(uint8_t);  break;
-    case CTLTYPE_U16:   STVL(uint16_t); break;
-    case CTLTYPE_U32:   STVL(uint32_t); break;
-    case CTLTYPE_U64:   STVL(uint64_t); break;
-    default:
-	xo_emit("{L:\n}");
-	xo_warnx("Unknown type '%s'", object->name);
-	error++;
-	break;
-    }
+
+	    switch (object->type) {
+	    case CTLTYPE_INT:
+		if (strncmp(object->fmt, "IK", 2) == 0) {
+		    newval_size += ctl_types[object->type].size; // sizeof(int)
+		    error += strIK_to_int(input, &kelvin, object->fmt);
+		    ((int*)newval)[i] = kelvin;
+		} else {
+		    STVL(int); 
+		}
+		break;
+	    case CTLTYPE_LONG:  STVL(long);     break;
+	    case CTLTYPE_S8:    STVL(int8_t);   break;
+	    case CTLTYPE_S16:   STVL(int16_t);  break;
+	    case CTLTYPE_S32:   STVL(int32_t);  break;
+	    case CTLTYPE_S64:   STVL(int64_t);  break;
+	    case CTLTYPE_UINT:  STVL(u_int);    break;
+	    case CTLTYPE_ULONG: STVL(u_long);   break;
+	    case CTLTYPE_U8:    STVL(uint8_t);  break;
+	    case CTLTYPE_U16:   STVL(uint16_t); break;
+	    case CTLTYPE_U32:   STVL(uint32_t); break;
+	    case CTLTYPE_U64:   STVL(uint64_t); break;
+	    default:
+		xo_emit("{L:\n}");
+		xo_warnx("Unknown type '%s'", object->name);
+		error++;
+		break;
+	    }// end switch
+	    i++;
+	    start = next;
+	}// end while
+	free(input_m);
+    
+    } // else no string
     
     if(error == 0) {
 	if (newval_size == 0 && object->type != CTLTYPE_STRING) {
@@ -642,7 +648,6 @@ int set_basic_value(struct sysctlmif_object *object, char *input)
     
     if(object->type != CTLTYPE_STRING && newval != NULL)
 	free(newval);
-
+    
     return (error);
 }
-
