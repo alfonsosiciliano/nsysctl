@@ -28,7 +28,7 @@ port: [sysutils/nsysctl](https://www.freshports.org/sysutils/nsysctl) and
  * [ ] clean code
  * [ ] test: opaque S,efi\_map\_header (e.g. machdep.efi\_map)
  * [X] ~~add: setting kelvin value~~
- * [ ] add: setting with -B option
+ * [X] ~~add: setting a numeric value with -B option~~
  * [X] ~~fix: delete useless strdup() to parse input~~
  * [X] ~~change: option -S -> -m~~
 

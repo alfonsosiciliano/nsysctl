@@ -523,7 +523,7 @@ int display_basic_type(struct sysctlmif_object *object, void *value, size_t valu
 
 int set_basic_value(struct sysctlmif_object *object, char *input)
 {
-    int error = 0, kelvin;
+    int error = 0, kelvin, i;
     void *newval = NULL;
     size_t newval_size = 0;
     char *start, *next, *input_m, *end;
@@ -542,22 +542,30 @@ int set_basic_value(struct sysctlmif_object *object, char *input)
 	    xo_warnx("oid '%s' is read only", object->name);
 	return ++error;
     }
-	
 
-    /* XXX add Bflag support for setting, too */
-    
+
 #define STVL(typevar) do {						\
 	input_m = strdup(input);					\
 	start = input_m;						\
-	end	= &input_m[strlen(input_m)+1];				\
-	int i = 0;							\
-	while(parse_string(start, &next, end, ',')) {			\
-	    /* some oid (e.g. kern.cp_times) is an array but fmt != A */ \
-	    newval_size += ctl_types[object->type].size;		\
-	    newval = realloc(newval, ctl_types[object->type].size);	\
+	end = &input_m[strlen(input_m)+1];				\
+	if(Bflagsize > 0) {						\
+	    newval_size = Bflagsize;					\
+	    newval = malloc(newval_size);				\
 	    if(newval == NULL){						\
 		xo_emit("{L:\n}");					\
-		xo_err(1, "realloc memory to set '%s'", object->name);	\
+		xo_err(1, "malloc() to set '%s'", object->name);	\
+	    }								\
+	}								\
+	i=0;								\
+	while(parse_string(start, &next, end, ',')) {			\
+	    /* some oid (e.g. kern.cp_times) is an array but fmt != A */ \
+	    if(Bflagsize <= 0) {					\
+		newval_size += ctl_types[object->type].size;		\
+		newval = realloc(newval, ctl_types[object->type].size);	\
+		if(newval == NULL){					\
+		    xo_emit("{L:\n}");					\
+		    xo_err(1, "realloc() to set '%s'", object->name);	\
+		}							\
 	    }								\
 	    ((typevar *)newval)[i] = ctl_types[object->type].sign ?	\
 		(typevar)strtoll(start, NULL, 10) :			\
