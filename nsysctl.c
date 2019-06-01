@@ -487,7 +487,6 @@ int display_basic_type(struct sysctlmif_object *object, void *value, size_t valu
 	xo_warnx("'%s' is a node", object->name);
 	break;
     case CTLTYPE_STRING:
-	/* PARANOIC 'if' can be deleted after the 'change value_size' fix*/
 	if( ((char*)value)[value_size]!='\0')
 	    ((char*)value)[value_size]='\0';
 	xo_emit("{:value/%s}", (char *)value);
