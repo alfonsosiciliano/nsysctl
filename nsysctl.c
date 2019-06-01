@@ -141,7 +141,7 @@ int main(int argc, char *argv[argc])
     if (argc < 0)
 	exit(EXIT_FAILURE);
 
-    while ((ch = getopt(argc, argv, "AabDde:Ff:GghiIlmNnopqr:TtVvWXxy")) != -1) {
+    while ((ch = getopt(argc, argv, "AaB:bDde:Ff:GghiIlmNnopqr:TtVvWXxy")) != -1) {
 	switch (ch) {
 	case 'A': aflag = true; oflag = true; break;
 	case 'a': aflag = true; break;
@@ -558,11 +558,16 @@ int set_basic_value(struct sysctlmif_object *object, char *input)
 	    xo_emit("{L:n}");	
 	    xo_err(1, "malloc() to set '%s'", object->name);
 	}
+	memset(newval, 0 , newval_size);
     }					
     
     if(object->type == CTLTYPE_STRING) {
+	if(Bflagsize > 0) {
+	    strncpy(newval, input, Bflagsize);
+	} else {
 	newval = input;
 	newval_size = strlen(input) + 1;
+	}
     }
     else // numeric value
     {
@@ -642,7 +647,7 @@ int set_basic_value(struct sysctlmif_object *object, char *input)
 	}
     }
     
-    if(object->type != CTLTYPE_STRING && newval != NULL)
+    if((object->type != CTLTYPE_STRING || Bflagsize >0) && newval != NULL)
 	free(newval);
     
     return (error);
