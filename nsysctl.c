@@ -112,9 +112,9 @@ unsigned int Bflagsize;
 void usage()
 {
     printf("usage:\n");
-    printf("\tnsysctl [--libxo=opts [-r tagname]] [-DdFGgIilNpqTt[V|v[h[b|o|x]]]Wy]\n");
+    printf("\tnsysctl [--libxo=opts [-r tagname]] [-DdFGgIilmNpqTt[V|v[h[b|o|x]]]Wy]\n");
     printf("\t\t[-e sep] [-B <bufsize>] [-f filename] name[=value[,value]] ...\n");
-    printf("\tnsysctl [--libxo=opts [-r tagname]] [-DdFGgIlNpqSTt[V|v[h[b|o|x]]]Wy]\n");
+    printf("\tnsysctl [--libxo=opts [-r tagname]] [-DdFGgIlmNpqTt[V|v[h[b|o|x]]]Wy]\n");
     printf("\t\t[-e sep] [-B <bufsize>] -A|a|X\n");
 }
 
