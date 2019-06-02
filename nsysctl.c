@@ -312,7 +312,7 @@ int display_tree(struct sysctlmif_object *object, char *newvalue)
        !xflag && !oflag && !is_opaque_defined(object))
  	showable = false;
 
-    if(vflag || Vflag) // XXX && showable == true
+    if((vflag || Vflag) && showable == true)
     {
 	if(Bflagsize > 0) {
 	    value_size = Bflagsize;
