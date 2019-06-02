@@ -455,6 +455,7 @@ int display_basic_type(struct sysctlmif_object *object, void *value, size_t valu
 {
     int i, error = 0, j;
     unsigned char *hexvalue;
+    bool is_zero;
     
     if (bflag) {
 	for (i = 0; i < value_size; i++) {
@@ -463,54 +464,62 @@ int display_basic_type(struct sysctlmif_object *object, void *value, size_t valu
 	return error;
     }
     
-#define GTVL(typevar) do {						\
-	for (i=0; i< value_size / sizeof( typevar); i++) {		\
-	    if (i > 0)							\
-		xo_emit("{Pw:}");					\
-	    if(xflag) {							\
-		hexvalue = (unsigned char *)  &((typevar *)value)[i];	\
-		if(((typevar *)value)[i] !=0)				\
-		    xo_emit("{L:0x}");					\
-		else							\
-		    xo_emit("{L:00}");					\
-		for(j = ctl_types[object->type].size -1;j>=0; j--)	\
-		    xo_emit("{:dump/%02x}", hexvalue[j]);		\
-	    }								\
-	    else							\
-		xo_emit_field("", "value", ctl_types[object->type].fmt,	\
-			      NULL, ((typevar *)value)[i] );		\
-	}								\
-    } while(0)
-    
-    switch (object->type) {
-    case CTLTYPE_NODE:
+    if(object->type == CTLTYPE_NODE) {
 	xo_warnx("'%s' is a node", object->name);
-	break;
-    case CTLTYPE_STRING:
+	return ++error;
+    }
+    
+    if(object->type == CTLTYPE_STRING) {
 	if( ((char*)value)[value_size]!='\0')
 	    ((char*)value)[value_size]='\0';
 	xo_emit("{:value/%s}", (char *)value);
-	break;
-    case CTLTYPE_INT:
-	if (strncmp(object->fmt, "IK", 2) == 0)
-	    error += display_IK_value(object, value, value_size, hflag);
-	else
-	    GTVL(int);      
-	break;
-    case CTLTYPE_LONG: 	GTVL(long);     break;
-    case CTLTYPE_S8:	GTVL(int8_t);	break;
-    case CTLTYPE_S16:	GTVL(int16_t);	break;
-    case CTLTYPE_S32:	GTVL(int32_t);	break;
-    case CTLTYPE_S64:	GTVL(int64_t);	break;
-    case CTLTYPE_UINT:	GTVL(u_int);	break;
-    case CTLTYPE_ULONG:	GTVL(u_long);	break;
-    case CTLTYPE_U8:	GTVL(uint8_t);	break;
-    case CTLTYPE_U16:	GTVL(uint16_t);	break;
-    case CTLTYPE_U32:	GTVL(uint32_t);	break;
-    case CTLTYPE_U64:	GTVL(uint64_t);	break;
-    default:
-	xo_warnx("'%s' unknown type", object->name);
-	error++;
+	return error;
+    }
+
+    for (i=0; i< value_size / ctl_types[object->type].size; i++) {
+	if (i > 0)
+	    xo_emit("{Pw:}");
+	if(xflag) {
+	    hexvalue = &value[i * ctl_types[object->type].size];
+	    is_zero = true;
+	    /* XXX delete for inefficient */
+	    for(j = ctl_types[object->type].size -1; j>=0; j--)
+		if(hexvalue[j] != 0)
+		    is_zero=false;
+	    if(!is_zero)
+		xo_emit("{L:0x}");
+	    else
+		xo_emit("{L:00}");
+	    for(j = ctl_types[object->type].size -1; j>=0; j--)
+		xo_emit("{:dump/%02x}", hexvalue[j]);
+	    
+	    continue;
+	}
+	
+#define GTVL(typevar) xo_emit_field("", "value", ctl_types[object->type].fmt, NULL, ((typevar *)value)[i] );
+    	
+	switch (object->type) {
+	case CTLTYPE_INT:
+	    if (strncmp(object->fmt, "IK", 2) == 0)
+		error += display_IK_value(object, value, value_size, hflag);
+	    else
+		GTVL(int);
+	    break;
+	case CTLTYPE_LONG: 	GTVL(long);     break;
+	case CTLTYPE_S8:	GTVL(int8_t);	break;
+	case CTLTYPE_S16:	GTVL(int16_t);	break;
+	case CTLTYPE_S32:	GTVL(int32_t);	break;
+	case CTLTYPE_S64:	GTVL(int64_t);	break;
+	case CTLTYPE_UINT:	GTVL(u_int);	break;
+	case CTLTYPE_ULONG:	GTVL(u_long);	break;
+	case CTLTYPE_U8:	GTVL(uint8_t);	break;
+	case CTLTYPE_U16:	GTVL(uint16_t);	break;
+	case CTLTYPE_U32:	GTVL(uint32_t);	break;
+	case CTLTYPE_U64:	GTVL(uint64_t);	break;
+	default:
+	    xo_warnx("'%s' unknown type", object->name);
+	    error++;
+	}
     }
 
     return error;
