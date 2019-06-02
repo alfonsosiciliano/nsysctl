@@ -585,14 +585,7 @@ int set_basic_value(struct sysctlmif_object *object, char *input)
 	end = &input_m[strlen(input_m)+1];
 
 	i=0;
-    
-#define STVL(typevar) do {						\
-	    ((typevar *)newval)[i] = ctl_types[object->type].sign ?	\
-		(typevar)strtoll(start, NULL, 10) :			\
-		(typevar)strtoull(start, NULL, 10);			\
-	} while(0)
-		
-	while(object->type != CTLTYPE_STRING && parse_string(start, &next, end, ',')) {
+	while(parse_string(start, &next, end, ',')) {
 	    /* some oid (e.g. kern.cp_times) is an array but fmt != A */
 	    if(Bflagsize <= 0) {
 		newval_size += ctl_types[object->type].size;
@@ -610,20 +603,20 @@ int set_basic_value(struct sysctlmif_object *object, char *input)
 		    error += strIK_to_int(input, &kelvin, object->fmt);
 		    ((int*)newval)[i] = kelvin;
 		} else {
-		    STVL(int); 
+		    ((int *)newval)[i] = (int)strtoll(start, NULL, 10); 
 		}
 		break;
-	    case CTLTYPE_LONG:  STVL(long);     break;
-	    case CTLTYPE_S8:    STVL(int8_t);   break;
-	    case CTLTYPE_S16:   STVL(int16_t);  break;
-	    case CTLTYPE_S32:   STVL(int32_t);  break;
-	    case CTLTYPE_S64:   STVL(int64_t);  break;
-	    case CTLTYPE_UINT:  STVL(u_int);    break;
-	    case CTLTYPE_ULONG: STVL(u_long);   break;
-	    case CTLTYPE_U8:    STVL(uint8_t);  break;
-	    case CTLTYPE_U16:   STVL(uint16_t); break;
-	    case CTLTYPE_U32:   STVL(uint32_t); break;
-	    case CTLTYPE_U64:   STVL(uint64_t); break;
+	    case CTLTYPE_LONG:  ((long *)newval)[i] = (long)strtoll(start, NULL, 10);     break;
+	    case CTLTYPE_S8:    ((int8_t *)newval)[i] = (int8_t)strtoll(start, NULL, 10);   break;
+	    case CTLTYPE_S16:   ((int16_t *)newval)[i] = (int16_t)strtoll(start, NULL, 10);  break;
+	    case CTLTYPE_S32:   ((int32_t *)newval)[i] = (int32_t)strtoll(start, NULL, 10);  break;
+	    case CTLTYPE_S64:   ((int64_t *)newval)[i] = (int64_t)strtoll(start, NULL, 10);  break;
+	    case CTLTYPE_UINT:  ((u_int *)newval)[i] = (u_int)strtoull(start, NULL, 10);    break;
+	    case CTLTYPE_ULONG: ((u_long *)newval)[i] = (u_long)strtoull(start, NULL, 10);   break;
+	    case CTLTYPE_U8:    ((uint8_t *)newval)[i] = (uint8_t)strtoull(start, NULL, 10);  break;
+	    case CTLTYPE_U16:   ((uint16_t *)newval)[i] = (uint16_t)strtoull(start, NULL, 10); break;
+	    case CTLTYPE_U32:   ((uint32_t *)newval)[i] = (uint32_t)strtoull(start, NULL, 10); break;
+	    case CTLTYPE_U64:   ((uint64_t *)newval)[i] = (uint64_t)strtoull(start, NULL, 10); break;
 	    default:
 		xo_emit("{L:\n}");
 		xo_warnx("Unknown type '%s'", object->name);
