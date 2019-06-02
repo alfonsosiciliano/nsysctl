@@ -28,13 +28,8 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-/*
- * #ifndef lint
- * static const char copyright[] =
- * "@(#) Copyright (c) 1993\n\
- *       The Regents of the University of California.  All rights reserved.\n";
- * #endif / * not lint * /
-*/
+
+/* Original: https://svnweb.freebsd.org/base/head/sbin/sysctl/sysctl.c */
 
 //#include <sys/types.h>
 #include <sys/param.h>
