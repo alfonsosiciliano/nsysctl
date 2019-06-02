@@ -311,8 +311,11 @@ int display_tree(struct sysctlmif_object *object, char *newvalue)
        (object->type == CTLTYPE_OPAQUE || object->type == CTLTYPE_NODE) && 
        !xflag && !oflag && !is_opaque_defined(object))
  	showable = false;
+    
+    if(Vflag && !IS_LEAF(object))
+	showable = false;
 
-    if((vflag || Vflag) && showable == true)
+    if((vflag || Vflag) && showable && IS_LEAF(object))
     {
 	if(Bflagsize > 0) {
 	    value_size = Bflagsize;
@@ -321,12 +324,8 @@ int display_tree(struct sysctlmif_object *object, char *newvalue)
 	    /* XXX add an error check for this sysctl() */
 	    sysctl(object->id, object->idlevel, NULL, &value_size, NULL, 0);
 	    /*
-	     * change value_size between 2 sysctl calls (e.g., kern.file,
-	     * hw.dri.0.vblank and hw.dri.0.info.i915_drpc_info)
-	     * /sbin/sysctl.c solution:
-	     * j = 0;
-	     * i = sysctl(oid, nlen, 0, &j, 0, 0);
-	     * j += j; / * we want to be sure :-) * /
+	     * value_size change with 2 sysctl calls (e.g., hw.dri.0.vblank,
+	     * kern.file and hw.dri.0.info.i915_drpc_info) /sbin/sysctl.c solution:
 	     */
 	    value_size += value_size;
 	}
@@ -338,10 +337,10 @@ int display_tree(struct sysctlmif_object *object, char *newvalue)
 	memset(value, 0, value_size);
 
 	error =sysctl(object->id, object->idlevel, value, &value_size, NULL, 0);
-	if (error != 0 || value_size == 0 || !IS_LEAF(object)) {
+	if (error != 0 || value_size == 0) {
 	    if(Vflag)
 		showable = false;
-	    /* XXX free(value) */
+	    free(value);
 	}
 	else
 	    showvalue = true;
