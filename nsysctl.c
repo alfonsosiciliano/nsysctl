@@ -289,7 +289,7 @@ int parse_line_or_argv(char *arg)
 int display_tree(struct sysctlmif_object *object, char *newvalue)
 {
     struct sysctlmif_object *child;
-    bool showable = true, showsep = false, showvalue = true;
+    bool showable = true, showsep = false, showvalue = false;
     int i, error = 0;
     char idlevelstr[7];
     size_t value_size = 0;
@@ -341,9 +341,10 @@ int display_tree(struct sysctlmif_object *object, char *newvalue)
 	if (error != 0 || value_size == 0 || !IS_LEAF(object)) {
 	    if(Vflag)
 		showable = false;
-	    showvalue = false;
 	    /* XXX free(value) */
 	}
+	else
+	    showvalue = true;
     }
     
     if (showable)
