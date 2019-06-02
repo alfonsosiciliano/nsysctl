@@ -455,7 +455,7 @@ int display_basic_type(struct sysctlmif_object *object, void *value, size_t valu
 {
     int i, error = 0, j;
     unsigned char *hexvalue;
-    bool is_zero;
+    uintmax_t zero = 0;
     
     if (bflag) {
 	for (i = 0; i < value_size; i++) {
@@ -481,15 +481,10 @@ int display_basic_type(struct sysctlmif_object *object, void *value, size_t valu
 	    xo_emit("{Pw:}");
 	if(xflag) {
 	    hexvalue = &value[i * ctl_types[object->type].size];
-	    is_zero = true;
-	    /* XXX delete 'for' inefficient */
-	    for(j = ctl_types[object->type].size -1; j>=0; j--)
-		if(hexvalue[j] != 0)
-		    is_zero=false;
-	    if(!is_zero)
-		xo_emit("{L:0x}");
-	    else
+	    if(memcmp(hexvalue, &zero, ctl_types[object->type].size) == 0)
 		xo_emit("{L:00}");
+	    else
+		xo_emit("{L:0x}");
 	    for(j = ctl_types[object->type].size -1; j>=0; j--)
 		xo_emit("{:dump/%02x}", hexvalue[j]);
 	    
