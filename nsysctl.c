@@ -501,19 +501,19 @@ int display_basic_type(struct sysctlmif_object *object, void *value, size_t valu
 	    if (strncmp(object->fmt, "IK", 2) == 0)
 		error += display_IK_value(object, value, value_size, hflag);
 	    else
-		xo_emit_field("", "value", ctl_types[object->type].fmt, NULL, ((int*)value)[i]);
+		xo_emit("{:value/%d}", ((int*)value)[i]);
 	    break;
-	case CTLTYPE_LONG: 	xo_emit_field("", "value", ctl_types[object->type].fmt, NULL, ((long*)value)[i]);    break;
-	case CTLTYPE_S8:	xo_emit_field("", "value", ctl_types[object->type].fmt, NULL, ((int8_t*)value)[i]);	break;
-	case CTLTYPE_S16:	xo_emit_field("", "value", ctl_types[object->type].fmt, NULL, ((int16_t*)value)[i]);	break;
-	case CTLTYPE_S32:	xo_emit_field("", "value", ctl_types[object->type].fmt, NULL, ((int32_t*)value)[i]);	break;
-	case CTLTYPE_S64:	xo_emit_field("", "value", ctl_types[object->type].fmt, NULL, ((int64_t*)value)[i]);	break;
-	case CTLTYPE_UINT:	xo_emit_field("", "value", ctl_types[object->type].fmt, NULL, ((u_int*)value)[i]);	break;
-	case CTLTYPE_ULONG:	xo_emit_field("", "value", ctl_types[object->type].fmt, NULL, ((u_long*)value)[i]);	break;
-	case CTLTYPE_U8:	xo_emit_field("", "value", ctl_types[object->type].fmt, NULL, ((uint8_t*)value)[i]);	break;
-	case CTLTYPE_U16:	xo_emit_field("", "value", ctl_types[object->type].fmt, NULL, ((uint16_t*)value)[i]);	break;
-	case CTLTYPE_U32:	xo_emit_field("", "value", ctl_types[object->type].fmt, NULL, ((uint32_t*)value)[i]);	break;
-	case CTLTYPE_U64:	xo_emit_field("", "value", ctl_types[object->type].fmt, NULL, ((uint64_t*)value)[i]);	break;
+	case CTLTYPE_LONG: 	xo_emit("{:value/%ld}", ((long*)value)[i]);    break;
+	case CTLTYPE_S8:	xo_emit("{:value/%d}", ((int8_t*)value)[i]);	break;
+	case CTLTYPE_S16:	xo_emit("{:value/%d}", ((int16_t*)value)[i]);	break;
+	case CTLTYPE_S32:	xo_emit("{:value/%d}", ((int32_t*)value)[i]);	break;
+	case CTLTYPE_S64:	xo_emit("{:value/%ld}", ((int64_t*)value)[i]);	break;
+	case CTLTYPE_UINT:	xo_emit("{:value/%u}", ((u_int*)value)[i]);	break;
+	case CTLTYPE_ULONG:	xo_emit("{:value/%lu}", ((u_long*)value)[i]);	break;
+	case CTLTYPE_U8:	xo_emit("{:value/%u}", ((uint8_t*)value)[i]);	break;
+	case CTLTYPE_U16:	xo_emit("{:value/%u}", ((uint16_t*)value)[i]);	break;
+	case CTLTYPE_U32:	xo_emit("{:value/%u}", ((uint32_t*)value)[i]);	break;
+	case CTLTYPE_U64:	xo_emit("{:value/%lu}", ((uint64_t*)value)[i]);	break;
 	default:
 	    xo_warnx("'%s' unknown type", object->name);
 	    error++;
