@@ -307,7 +307,9 @@ int display_tree(struct sysctlmif_object *object, char *newvalue)
     if (!Iflag && (!IS_LEAF(object)))
 	showable = false;
 
-    if(Vflag && (object->type == CTLTYPE_OPAQUE || object->type == CTLTYPE_NODE) && aflag && !xflag && !oflag && !is_opaque_defined(object))
+    if(Vflag && aflag && 
+       (object->type == CTLTYPE_OPAQUE || object->type == CTLTYPE_NODE) && 
+       !xflag && !oflag && !is_opaque_defined(object))
  	showable = false;
 
     if(vflag || Vflag) // XXX && showable == true
