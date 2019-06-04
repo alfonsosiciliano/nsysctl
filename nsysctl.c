@@ -145,8 +145,7 @@ int main(int argc, char *argv[argc])
 	switch (ch) {
 	case 'A': aflag = true; oflag = true; break;
 	case 'a': aflag = true; break;
-	case 'B': Bflagsize = (unsigned int) strtoull(optarg, NULL, 10);
-	    break;
+	case 'B': Bflagsize = (unsigned int) strtoull(optarg, NULL, 10); break;
 	case 'b': bflag = true; break;
 	case 'd': dflag = true; break;
 	case 'D': dflag = Fflag = lflag = Gflag = gflag = true;
@@ -458,7 +457,8 @@ int display_basic_type(struct sysctlmif_object *object, void *value, size_t valu
     int i, error = 0, j;
     unsigned char *hexvalue;
     uintmax_t zero = 0;
-    
+    char *hfield = hflag ? "hn" : NULL;
+        
     if (bflag) {
 	for (i = 0; i < value_size; i++) {
 	    xo_emit("{:raw/%c}", ((unsigned char*)(value))[i]);
@@ -498,19 +498,41 @@ int display_basic_type(struct sysctlmif_object *object, void *value, size_t valu
 	    if (strncmp(object->fmt, "IK", 2) == 0)
 		error += display_IK_value(object, value, value_size, hflag);
 	    else
-		xo_emit("{:value/%d}", ((int*)value)[i]);
+		xo_emit_field(hfield, "value", "%d}", NULL, ((int*)value)[i]);
 	    break;
-	case CTLTYPE_LONG:  xo_emit("{:value/%ld}", ((long*)value)[i]);    break;
-	case CTLTYPE_S8:    xo_emit("{:value/%d}",  ((int8_t*)value)[i]);  break;
-	case CTLTYPE_S16:   xo_emit("{:value/%d}",  ((int16_t*)value)[i]); break;
-	case CTLTYPE_S32:   xo_emit("{:value/%d}",  ((int32_t*)value)[i]); break;
-	case CTLTYPE_S64:   xo_emit("{:value/%ld}", ((int64_t*)value)[i]); break;
-	case CTLTYPE_UINT:  xo_emit("{:value/%u}",  ((u_int*)value)[i]);   break;
-	case CTLTYPE_ULONG: xo_emit("{:value/%lu}", ((u_long*)value)[i]);  break;
-	case CTLTYPE_U8:    xo_emit("{:value/%u}",  ((uint8_t*)value)[i]); break;
-	case CTLTYPE_U16:   xo_emit("{:value/%u}",  ((uint16_t*)value)[i]);break;
-	case CTLTYPE_U32:   xo_emit("{:value/%u}",  ((uint32_t*)value)[i]);break;
-	case CTLTYPE_U64:   xo_emit("{:value/%lu}", ((uint64_t*)value)[i]);break;
+	case CTLTYPE_LONG:  
+	    xo_emit_field(hfield, "value", "%ld", NULL, ((long*)value)[i]);    
+	    break;
+	case CTLTYPE_S8:    
+	    xo_emit_field(hfield, "value", "%d",  NULL, ((int8_t*)value)[i]);  
+	    break;
+	case CTLTYPE_S16:   
+	    xo_emit_field(hfield, "value", "%d",  NULL, ((int16_t*)value)[i]); 
+	    break;
+	case CTLTYPE_S32:   
+	    xo_emit_field(hfield, "value", "%d",  NULL, ((int32_t*)value)[i]); 
+	    break;
+	case CTLTYPE_S64:   
+	    xo_emit_field(hfield, "value", "%ld", NULL, ((int64_t*)value)[i]); 
+	    break;
+	case CTLTYPE_UINT:  
+	    xo_emit_field(hfield, "value", "%u",  NULL, ((u_int*)value)[i]);   
+	    break;
+	case CTLTYPE_ULONG: 
+	    xo_emit_field(hfield, "value", "%lu", NULL, ((u_long*)value)[i]);  
+	    break;
+	case CTLTYPE_U8:    
+	    xo_emit_field(hfield, "value", "%u",  NULL, ((uint8_t*)value)[i]); 
+	    break;
+	case CTLTYPE_U16:   
+	    xo_emit_field(hfield, "value", "%u",  NULL, ((uint16_t*)value)[i]);
+	    break;
+	case CTLTYPE_U32:   
+	    xo_emit_field(hfield, "value", "%u",  NULL, ((uint32_t*)value)[i]);
+	    break;
+	case CTLTYPE_U64:   
+	    xo_emit_field(hfield, "value", "%lu", NULL, ((uint64_t*)value)[i]);
+	    break;
 	default:
 	    xo_warnx("'%s' unknown type", object->name);
 	    error++;
@@ -601,17 +623,39 @@ int set_basic_value(struct sysctlmif_object *object, char *input)
 		    ((int *)newval)[i] = (int)strtoll(start, NULL, 10); 
 		}
 		break;
-	    case CTLTYPE_LONG:  ((long *)newval)[i]     = (long)strtoll(start, NULL, 10);     break;
-	    case CTLTYPE_S8:    ((int8_t *)newval)[i]   = (int8_t)strtoll(start, NULL, 10);   break;
-	    case CTLTYPE_S16:   ((int16_t *)newval)[i]  = (int16_t)strtoll(start, NULL, 10);  break;
-	    case CTLTYPE_S32:   ((int32_t *)newval)[i]  = (int32_t)strtoll(start, NULL, 10);  break;
-	    case CTLTYPE_S64:   ((int64_t *)newval)[i]  = (int64_t)strtoll(start, NULL, 10);  break;
-	    case CTLTYPE_UINT:  ((u_int *)newval)[i]    = (u_int)strtoull(start, NULL, 10);   break;
-	    case CTLTYPE_ULONG: ((u_long *)newval)[i]   = (u_long)strtoull(start, NULL, 10);  break;
-	    case CTLTYPE_U8:    ((uint8_t *)newval)[i]  = (uint8_t)strtoull(start, NULL, 10); break;
-	    case CTLTYPE_U16:   ((uint16_t *)newval)[i] = (uint16_t)strtoull(start, NULL, 10);break;
-	    case CTLTYPE_U32:   ((uint32_t *)newval)[i] = (uint32_t)strtoull(start, NULL, 10);break;
-	    case CTLTYPE_U64:   ((uint64_t *)newval)[i] = (uint64_t)strtoull(start, NULL, 10);break;
+	    case CTLTYPE_LONG:  
+		((long *)newval)[i] = (long)strtoll(start, NULL, 10);     
+		break;
+	    case CTLTYPE_S8:    
+		((int8_t *)newval)[i] = (int8_t)strtoll(start, NULL, 10);   
+		break;
+	    case CTLTYPE_S16:   
+		((int16_t *)newval)[i] = (int16_t)strtoll(start, NULL, 10);  
+		break;
+	    case CTLTYPE_S32:   
+		((int32_t *)newval)[i] = (int32_t)strtoll(start, NULL, 10);  
+		break;
+	    case CTLTYPE_S64:   
+		((int64_t *)newval)[i] = (int64_t)strtoll(start, NULL, 10);  
+		break;
+	    case CTLTYPE_UINT:  
+		((u_int *)newval)[i] = (u_int)strtoull(start, NULL, 10);   
+		break;
+	    case CTLTYPE_ULONG: 
+		((u_long *)newval)[i] = (u_long)strtoull(start, NULL, 10);  
+		break;
+	    case CTLTYPE_U8:    
+		((uint8_t *)newval)[i] = (uint8_t)strtoull(start, NULL, 10); 
+		break;
+	    case CTLTYPE_U16:   
+		((uint16_t *)newval)[i] = (uint16_t)strtoull(start, NULL, 10);
+		break;
+	    case CTLTYPE_U32:   
+		((uint32_t *)newval)[i] = (uint32_t)strtoull(start, NULL, 10);
+		break;
+	    case CTLTYPE_U64:   
+		((uint64_t *)newval)[i] = (uint64_t)strtoull(start, NULL, 10);
+		break;
 	    default:
 		xo_emit("{L:\n}");
 		xo_warnx("Unknown type '%s'", object->name);
