@@ -143,7 +143,7 @@ int main(int argc, char *argv[argc])
 
     while ((ch = getopt(argc, argv, "AaB:bDde:Ff:GghiIlmNnopqr:TtVvWXxy")) != -1) {
 	switch (ch) {
-	case 'A': aflag = true; oflag = true; break;
+	case 'A': aflag = true; oflag = true; Vflag=true; break;
 	case 'a': aflag = true; break;
 	case 'B': Bflagsize = (unsigned int) strtoull(optarg, NULL, 10); break;
 	case 'b': bflag = true; break;
@@ -173,7 +173,7 @@ int main(int argc, char *argv[argc])
 	case 'v': vflag = true; break;
 	case 'W': Wflag = true; break;
 	case 'w': /* compatibility, ignored */ break;
-	case 'X': aflag = true; xflag = true; break;
+	case 'X': aflag = true; xflag = true; Vflag=true; break;
 	case 'x': xflag = true; break;
 	case 'y': yflag = true; break;
 	default:
@@ -498,7 +498,7 @@ int display_basic_type(struct sysctlmif_object *object, void *value, size_t valu
 	    if (strncmp(object->fmt, "IK", 2) == 0)
 		error += display_IK_value(object, value, value_size, hflag);
 	    else
-		xo_emit_field(hfield, "value", "%d}", NULL, ((int*)value)[i]);
+		xo_emit_field(hfield, "value", "%d", NULL, ((int*)value)[i]);
 	    break;
 	case CTLTYPE_LONG:  
 	    xo_emit_field(hfield, "value", "%ld", NULL, ((long*)value)[i]);    

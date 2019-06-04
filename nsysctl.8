@@ -22,7 +22,7 @@
 .\" OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 .\" SUCH DAMAGE.
 .\"
-.Dd June 2, 2019
+.Dd June 5, 2019
 .Dt NSYSCTL 8
 .Os
 .Sh NAME
@@ -64,7 +64,7 @@ and machine readable formats.
 See xo_parse_args(3)
 .It Fl A
 Equivalent to
-.Fl a Fl o .
+.Fl a Fl V Fl o .
 .It Fl a
 Display all states.
 .It Fl b
@@ -120,7 +120,7 @@ Display value.
 Display only writable variables that are not statistical.
 .It Fl X
 Equivalent to
-.Fl a Fl x .
+.Fl a Fl V Fl x .
 .It Fl x
 Print value in hex format.
 .It Fl y
@@ -152,13 +152,15 @@ Dump all info about a state in xml format:
 % sysctl -N "name"     % nsysctl -N  "name"
 % sysctl -n "name"     % nsysctl -v  "name"
 % sysctl -d "name"     % nsysctl -Nd "name"
-% sysctl -a            % nsysctl -NVa
-% sysctl -ae           % nsysctl -Nva -e '='
+% sysctl -a            % nsysctl -aNV
 % sysctl -aN           % nsysctl -aN
+% sysctl -an           % nsysctl -aV
 % sysctl -ad           % nsysctl -aNd
 % sysctl -at           % nsysctl -aNt
 % sysctl -ao           % nsysctl -aNVo
-% sysctl -ax           % nsysctl -aNx
+% sysctl -ax           % nsysctl -aNVx
+% sysctl -A            % nsysctl -AN
+% sysctl -X            % nsysctl -XN
 .Ed
 .Sh SEE ALSO
 .Xr sysctl 3 ,
