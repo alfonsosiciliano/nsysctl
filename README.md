@@ -24,9 +24,9 @@ port: [sysutils/nsysctl](https://www.freshports.org/sysutils/nsysctl) and
 
 **TODO**
 
- * [ ] testing and fix (~~"-B",~~ "-h" for basic types)
+ * [ ] testing and fix (~~"-B",~~ "-h" for basic types, ~~error variable~~)
  * [X] ~~clean code (delete macros, delete strdup, vflag ans Vflag efficiency)~~
- * [ ] test: opaque S,efi\_map\_header (e.g. machdep.efi\_map)
+ * [ ] I cannot test opaque S,efi\_map\_header (e.g. machdep.efi\_map) on my laptop
  
  ~~**TODO Version 1.0**~~
  

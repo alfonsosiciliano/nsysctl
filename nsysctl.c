@@ -198,7 +198,7 @@ int main(int argc, char *argv[argc])
 		continue;
 	    if(strchr(line, '\n') != NULL)
 		strchr(line, '\n')[0] = '\0';
-	    parse_line_or_argv(line);
+	    error += parse_line_or_argv(line);
 	}
     }
 
@@ -463,19 +463,19 @@ int display_basic_type(struct sysctlmif_object *object, void *value, size_t valu
 	for (i = 0; i < value_size; i++) {
 	    xo_emit("{:raw/%c}", ((unsigned char*)(value))[i]);
 	}
-	return error;
+	return 0;
     }
     
     if(object->type == CTLTYPE_NODE) {
 	xo_warnx("'%s' is a node", object->name);
-	return ++error;
+	return 1;
     }
     
     if(object->type == CTLTYPE_STRING) {
 	if( ((char*)value)[value_size]!='\0')
 	    ((char*)value)[value_size]='\0';
 	xo_emit("{:value/%s}", (char *)value);
-	return error;
+	return 0;
     }
 
     for (i=0; i< value_size / ctl_types[object->type].size; i++) {
@@ -531,7 +531,7 @@ int set_basic_value(struct sysctlmif_object *object, char *input)
     if (Tflag || Wflag) {
 	xo_emit("{L:\n}");
 	xo_warnx("Can't set variables when using -T or -W");
-	return ++error;
+	return 1;
     }
     if (!(object->flags & CTLFLAG_WR)) {
 	xo_emit("{L:\n}");
@@ -540,17 +540,17 @@ int set_basic_value(struct sysctlmif_object *object, char *input)
 	    xo_warnx("Tunable values are set in /boot/loader.conf");
 	} else
 	    xo_warnx("oid '%s' is read only", object->name);
-	return ++error;
+	return 1;
     }
     if(object->type == CTLTYPE_OPAQUE) {
 	xo_emit("{L:\n}");
 	xo_warnx("'%s' cannot set an opaque input", object->name);
-	return ++error;
+	return 1;
     }
     if(object->type == CTLTYPE_NODE) {
 	xo_emit("{L:\n}");
 	xo_warnx("oid \'%s\' isn't a leaf node",object->name);
-	return ++error;
+	return 1;
     }
     
     // the state is settable
