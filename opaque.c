@@ -31,7 +31,6 @@
 
 /* Original: https://svnweb.freebsd.org/base/head/sbin/sysctl/sysctl.c */
 
-//#include <sys/types.h>
 #include <sys/param.h>
 #include <sys/resource.h>
 #include <sys/time.h>
@@ -48,14 +47,11 @@
 #endif
 
 #include <assert.h>     //assert
-#include <err.h>        //warnx
-#include <errno.h>      //errno
 #include <stdbool.h>
 #include <stdio.h>      //printf
 #include <stdlib.h>     //free
 #include <string.h>     //strdup
 #include <unistd.h>     //getpagesize
-
 
 #include <libxo/xo.h>
 #include <sysctlmibinfo.h>
@@ -283,7 +279,7 @@ S_vmtotal(void *value, size_t value_size, bool hflag)
 	char *hfield = hflag ? "h,hn-decimal" : NULL;
 
 	if (value_size != sizeof(struct vmtotal)) {
-		warnx("S_vmtotal %zu != %zu", value_size, sizeof(*v));
+		xo_warnx("S_vmtotal %zu != %zu", value_size, sizeof(*v));
 		return (1);
 	}
 
