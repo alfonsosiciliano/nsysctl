@@ -27,12 +27,10 @@
  * 'Special values' are strings splitted for xo-output
  */
 
-#include <sys/types.h>
-
 #include <libxo/xo.h>
-#include <stdbool.h>
 #include <string.h>
-#include <sysctlmibinfo.h>
+
+#include "special_value.h"
 
 static int vm_phys_free(void *value, size_t value_size);
 static int debug_witness_fullgraph(void *value, size_t value_size);
@@ -210,7 +208,6 @@ static int vm_phys_free(void* value, size_t value_size)
 static int debug_witness_fullgraph(void *value, size_t value_size)
 {
     char *line, *next;
-    char *tofree, *prop_name, *parsestring;
 
     xo_open_container("value");
     line = value;
@@ -218,11 +215,11 @@ static int debug_witness_fullgraph(void *value, size_t value_size)
     while(parse_string(line, &next, &value[value_size], '\n')) {
 	if(line[0] != '\0') {
 	    xo_open_container("property");
-	    parsestring = strdup(line);
-	    tofree = prop_name = strsep(&parsestring, ",");
-	    xo_emit("{:name/%s}{L:,}", prop_name);
-	    xo_emit("{:value/%s}{L:\n}", parsestring);
-	    free(tofree);
+	    parse_string(line, &next, next, ',');
+	    xo_emit("{:name/%s}{L:,}", line);
+	    line=next;
+	    parse_string(line, &next, &value[value_size], '\n');
+	    xo_emit("{:value/%s}{L:\n}", line);
 	    xo_close_container("property");
 	}
 	
