@@ -23,9 +23,7 @@
  * SUCH DAMAGE.
  */
 
-/*
- * 'Special values' are strings splitted for xo-output
- */
+/* 'Special values' are strings splitted for xo-output */
 
 #include <libxo/xo.h>
 #include <string.h>
