@@ -155,10 +155,6 @@ S_clockinfo(void *value, size_t value_size, bool hflag)
        
 	xo_open_container("clockinfo");
 
-	/*printf(hflag ? "{ hz = %'d, tick = %'d, profhz = %'d, stathz = %'d }" :
-	    "{ hz = %d, tick = %d, profhz = %d, stathz = %d }",
-	    ci->hz, ci->tick, ci->profhz, ci->stathz);*/
-
 	xo_emit("{L:{ }");
 	xo_emit("{Lw:hz =}");
 	xo_emit_field(hfield, "hz", "%d", NULL, ci->hz);
@@ -181,17 +177,12 @@ S_loadavg(void *value, size_t value_size, bool hflag)
 {
 	struct loadavg *tv = (struct loadavg*)value;
 	char *hfield = /*hflag ? "h" :*/ NULL;
-	/*libxo 'h' modifier does not affect the size and treatment of %f */
+	/* libxo 'h' modifier does not affect the size and treatment of %f */
 
 	if (value_size != sizeof(*tv)) {
 		xo_warnx("S_loadavg %zu != %zu", value_size, sizeof(*tv));
 		return (1);
 	}
-
-	/*printf(hflag ? "{ %'.2f %'.2f %'.2f }" : "{ %.2f %.2f %.2f }",
-		(double)tv->ldavg[0]/(double)tv->fscale,
-		(double)tv->ldavg[1]/(double)tv->fscale,
-		(double)tv->ldavg[2]/(double)tv->fscale);*/
 
 #define TV_FSCALE(idx)    ((double)tv->ldavg[idx]/(double)tv->fscale)
 
@@ -247,10 +238,6 @@ S_timeval(void *value, size_t value_size, bool hflag)
 		xo_warnx("S_timeval %zu != %zu", value_size, sizeof(*tv));
 		return (1);
 	}
-	/*printf(hflag ? "{ sec = %'jd, usec = %'ld } " :
-		"{ sec = %jd, usec = %ld } ",
-		(intmax_t)tv->tv_sec, tv->tv_usec);*/
-
 	xo_open_container("timeval");
 
 	xo_emit("{Lw:{ sec =}");
