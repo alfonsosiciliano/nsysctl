@@ -24,8 +24,8 @@ port: [sysutils/nsysctl](https://www.freshports.org/sysutils/nsysctl) and
 
 **TODO**
 
- * [ ] testing and fix (~~-B~~)
- * [ ] clean code (delete macros)
+ * [ ] testing and fix (~~"-B",~~ "-h" for basic types)
+ * [X] ~~clean code (delete macros, delete strdup, vflag ans Vflag efficiency)~~
  * [ ] test: opaque S,efi\_map\_header (e.g. machdep.efi\_map)
  
  ~~**TODO Version 1.0**~~
