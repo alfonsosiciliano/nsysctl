@@ -250,7 +250,7 @@ int parse_line_or_argv(char *arg)
     }
     
     if (sysctlmif_nametoid(name, strlen(name) +1, id, &idlevel) != 0) {
-	/* nodename doesn't exist*/
+	/* nodename doesn't exist */
 	if (!iflag)
 	    error++;
 
@@ -318,14 +318,10 @@ int display_tree(struct sysctlmif_object *object, char *newvalue)
     {
 	if(Bflagsize > 0) {
 	    value_size = Bflagsize;
-	} 
-	else {
-	    /* XXX add an error check for this sysctl() */
+	} else {
 	    sysctl(object->id, object->idlevel, NULL, &value_size, NULL, 0);
-	    /*
-	     * value_size change with 2 sysctl calls (e.g., hw.dri.0.vblank,
-	     * kern.file and hw.dri.0.info.i915_drpc_info) /sbin/sysctl.c solution:
-	     */
+	    // value_size change with 2 sysctl calls (e.g., hw.dri.0.vblank,
+	    // kern.file and hw.dri.0.info.i915_drpc_info) /sbin/sysctl.c solution:
 	    value_size += value_size;
 	}
 	
@@ -340,8 +336,7 @@ int display_tree(struct sysctlmif_object *object, char *newvalue)
 	    if(Vflag)
 		showable = false;
 	    free(value);
-	}
-	else
+	} else
 	    showvalue = true;
     }
     
@@ -458,17 +453,17 @@ int display_basic_type(struct sysctlmif_object *object, void *value, size_t valu
     unsigned char *hexvalue;
     uintmax_t zero = 0;
     char *hfield = hflag ? "hn" : NULL;
-        
+    
+    if(object->type == CTLTYPE_NODE) {
+	xo_warnx("'%s' is a node", object->name);
+	return 1;
+    }
+    
     if (bflag) {
 	for (i = 0; i < value_size; i++) {
 	    xo_emit("{:raw/%c}", ((unsigned char*)(value))[i]);
 	}
 	return 0;
-    }
-    
-    if(object->type == CTLTYPE_NODE) {
-	xo_warnx("'%s' is a node", object->name);
-	return 1;
     }
     
     if(object->type == CTLTYPE_STRING) {
@@ -666,7 +661,6 @@ int set_basic_value(struct sysctlmif_object *object, char *input)
 	    start = next;
 	}// end while
 	free(input_m);
-    
     } // else numeric value
     
     if(error == 0) {
@@ -674,14 +668,12 @@ int set_basic_value(struct sysctlmif_object *object, char *input)
 	    xo_emit("{L:\n}");
 	    xo_warnx("empty numeric value");
 	    error++;
-	}
-	else if(sysctl(object->id, object->idlevel, NULL, 0, newval, newval_size)==0)
-	{
+	} 
+	else if(sysctl(object->id, object->idlevel, NULL, 0, newval, newval_size)==0) {
 	    if(vflag || Vflag)
 		xo_emit("{L: -> }{:newvalue/%s}",input);
-	}
-	else 
-	{
+	} 
+	else {
 	    xo_emit("{L:\n}");
 	    xo_warn_c(errno, "cannot set new value '%s'",input);
 	    error++;
