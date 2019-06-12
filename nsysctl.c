@@ -394,7 +394,7 @@ int display_tree(struct sysctlmif_object *object, char *newvalue)
 		xo_emit("{L:[TRUE-FLAGS]:}");
 	    xo_open_container("true-flags");
 	    for(i=0; i < NUM_CTLFLAGS; i++) {
-		if(object->flags & ctl_flags[i].flag_bit)
+		if( (object->flags & ctl_flags[i].flag_bit) == ctl_flags[i].flag_bit)
 		    xo_emit("{Lw:}{:flag/%s}",ctl_flags[i].flag_name);
 	    }
 	    xo_close_container("true-flags");
