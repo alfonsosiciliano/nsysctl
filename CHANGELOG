@@ -1,0 +1,49 @@
+2019-6-1 version 1.0
+
+	* add: setting a kelvin value
+	* add: setting a numeric value with -B option
+	* fix: delete useless strdup() to parse input
+	* change: option -S -> -m
+
+2019-5-21 version 0.9.1
+
+	* fix: opaque S,efi_map_header (e.g. machdep.efi_map)
+	* delete: bsd.prog.mk (Makefile)
+
+2019-4-29 version 0.9
+
+	* change: option -m -> -F
+	* change: option -F -> -g
+	* add: option -G
+	* add: setting array ( name=value,value,value... )
+	* add: xo_warn and xo_err messages
+	* add: opaque S,input_id (e.g. kern.evdev.input.0.id)
+	* fix: -x with numeric array
+	* fix: -x if num == 0 print 00... else 0x... (sysctl compatibility)
+	* fix: don't show "null" label
+
+2019-4-8 version 0.2
+
+	* fix: debug.fail_point.test_trigger_fail_point with -a (sysctl problem)
+	* fix: hw.dri.0.bufs with -a (sysctl problem)
+	* fix: size change with double sysctl() call (kern.file, hw.dri.0.vblank and hw.dri.0.info.i915_drpc_info)
+	* fix: "--libxo=xml -aD" segmentation fault with xo_set_flags(NULL, XOF_FLUSH) but new problem:
+	* fix: problem-xof-flush.c https://bugs.freebsd.org/236935
+	* fix: problem-xo-huge-string.c https://bugs.freebsd.org/236937
+	* delete oid-only-value.txt, problem-xo-huge-string.c and problem-xof-flush.c (PRs commit)
+
+2019-3-26 version 0.1.1
+
+	* fix headers in opaque.c for no i386/amd64
+	* delete sysctlmibinfo.h/c (dynamic linking)
+
+2019-2-19 version 0.1
+
+	* add: opaque.c with libxo support
+	* add: comparetest.sh
+	* add: nsysctl.c
+	* add: manual page nsysctl.8
+	* add: FreeBSD port
+	* add: special_value.c
+	* fix: libxo=xml debug.witness.fullgraph, segmentation fault
+	* fix: libxo=text debug.fail_point  (utf8)
