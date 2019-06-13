@@ -200,7 +200,7 @@ int main(int argc, char *argv[argc])
     {
 	fp = fopen(filename, "r");
 	if(fp == NULL)
-	    xo_errx(1, "cannot open: %s", filename);
+	    xo_err(1, "cannot open: %s", filename);
 	while(fgets(line,MAXSIZELINE,fp) != NULL) {
 	    if(line[0] == '#' || line[0] == '\n')
 		continue;
@@ -223,7 +223,7 @@ int main(int argc, char *argv[argc])
 	root = sysctlmif_tree(idroot, idrootlevel, SYSCTLMIF_FALL,
 			      SYSCTLMIF_MAXDEPTH);
 	if(root == NULL)
-	    xo_errx(1, "cannot build the MIB-tree");
+	    xo_err(1, "cannot build the MIB-tree");
 
 	SLIST_FOREACH(nodelevel1, root->children, object_link)
 	    error += display_tree(nodelevel1, NULL);
@@ -269,7 +269,7 @@ int parse_line_or_argv(char *arg)
     else if (valuestr == NULL) { /* only nodename */
 	node = sysctlmif_tree(id, idlevel, SYSCTLMIF_FALL, SYSCTLMIF_MAXDEPTH);
 	if(node == NULL)
-	    xo_errx(1, "cannot build the tree of '%s'", name);
+	    xo_err(1, "cannot build the tree of '%s'", name);
 	
 	error = display_tree(node, NULL);
 	sysctlmif_freetree(node);
@@ -279,7 +279,7 @@ int parse_line_or_argv(char *arg)
 	node = sysctlmif_object(id, idlevel,
 				SYSCTLMIF_FALL/*SYSCTLMIF_FNAME | SYSCTLMIF_FTYPE*/ );
 	if(node == NULL)
-	    xo_errx(1, "cannot build the node to set '%s'", name);
+	    xo_err(1, "cannot build the node to set '%s'", name);
 	
 	if(!IS_LEAF(node)) {
 	    xo_warnx("oid \'%s\' isn't a leaf node",node->name);
@@ -335,7 +335,7 @@ int display_tree(struct sysctlmif_object *object, char *newvalue)
 	}
 	
 	if ((value = malloc(value_size)) == NULL) {
-	    xo_errx(1, "allocation memory to get the value of '%s'", object->name);
+	    xo_err(1, "allocation memory to get the value of '%s'", object->name);
 	    showable = false;
 	}
 	memset(value, 0, value_size);
@@ -586,7 +586,7 @@ int set_basic_value(struct sysctlmif_object *object, char *input)
 	newval = malloc(newval_size);
 	if(newval == NULL){
 	    xo_emit("{L:n}");	
-	    xo_errx(1, "malloc() to set '%s'", object->name);
+	    xo_err(1, "malloc() to set '%s'", object->name);
 	}
 	memset(newval, 0 , newval_size);
     }					
@@ -613,7 +613,7 @@ int set_basic_value(struct sysctlmif_object *object, char *input)
 		newval = realloc(newval, ctl_types[object->type].size);
 		if(newval == NULL){
 		    xo_emit("{L:n}");
-		    xo_errx(1, "realloc() to set '%s'", object->name);
+		    xo_err(1, "realloc() to set '%s'", object->name);
 		}
 	    }
 
