@@ -26,7 +26,6 @@ port: [sysutils/nsysctl](https://www.freshports.org/sysutils/nsysctl) and
 
  * [X] ~~fix: -B~~
  * [X] ~~fix: -h~~
- * [X] ~~fix: 'error' variable~~
  * [X] ~~fix: AND flags~~
  * [X] ~~fix: mutually exclusive options~~
  * [X] ~~fix: vflag ans Vflag efficiency~~
