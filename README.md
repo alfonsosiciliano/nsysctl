@@ -24,23 +24,28 @@ port: [sysutils/nsysctl](https://www.freshports.org/sysutils/nsysctl) and
 
 **TODO**
 
- * [X] ~~testing and fix ("-B", "-h" for basic types, 'error' var., AND flags)~~
- * [X] ~~clean code (delete macros, delete strdup, vflag ans Vflag efficiency)~~
- * [ ] I cannot test opaque S,efi\_map\_header (e.g. machdep.efi\_map) on my laptop
+ * [X] ~~fix: -B~~
+ * [X] ~~fix: -h~~
+ * [X] ~~fix: 'error' variable~~
+ * [X] ~~fix: AND flags~~
+ * [X] ~~fix: mutually exclusive options~~
+ * [X] ~~fix: vflag ans Vflag efficiency~~
+ * [X] ~~clean code: delete macros to get and set a value~~
+ * [ ] I can not test opaque S,efi\_map\_header (machdep.efi\_map) on my laptop
  
- ~~**TODO Version 1.0**~~
+ ~~**Version 1.0**~~
  
  * [X] ~~add: setting kelvin value~~
  * [X] ~~add: setting a numeric value with -B option~~
  * [X] ~~fix: delete useless strdup() to parse input~~
  * [X] ~~change: option -S -> -m~~
 
-~~**TODO Version 0.9.1**~~
+~~**Version 0.9.1**~~
 
  * [X] ~~fix: opaque S,efi\_map\_header (e.g. machdep.efi\_map)~~
  * [X] ~~delete: bsd.prog.mk~~
 
-~~**TODO Version 0.9**~~
+~~**Version 0.9**~~
 
  * [X] ~~change: option -m -> -F~~
  * [X] ~~change: option -F -> -g~~
@@ -53,7 +58,7 @@ port: [sysutils/nsysctl](https://www.freshports.org/sysutils/nsysctl) and
  * [X] ~~fix: don't show label "null"~~
 
 
-~~**TODO Version 0.2**~~
+~~**Version 0.2**~~
 
  * [X] ~~fix: "sysctl -a[o]" != "nsysctl -aNv[o]" debug.fail\_point.test\_trigger\_fail\_point (sysctl problem)~~
  * [X] ~~fix: "sysctl -a[o]" != "nsysctl -aNv[o]" hw.dri.0.bufs (sysctl problem)~~
@@ -65,13 +70,13 @@ port: [sysutils/nsysctl](https://www.freshports.org/sysutils/nsysctl) and
  * [X] ~~delete oid-only-value.txt, problem-xo-huge-string.c and problem-xof-flush.c (after PRs commit)~~
 
 
-~~**TODO Version 0.1.1**~~
+~~**Version 0.1.1**~~
 
 * [X] ~~fix headerss in opaque.c for no i386/amd64~~
 * [X] ~~delete sysctlmibinfo.h/c (dynamic linking)~~
 
 
-~~**TODO Version 0.1**~~
+~~**Version 0.1**~~
 
  * [X] ~~add: 'set' for NUMERIC value: value=NUMBER~~
  * [X] ~~add: libxo support to opaque.c~~
