@@ -22,7 +22,7 @@
 .\" OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 .\" SUCH DAMAGE.
 .\"
-.Dd June 5, 2019
+.Dd June 14, 2019
 .Dt NSYSCTL 8
 .Os
 .Sh NAME
@@ -44,13 +44,13 @@
 .Op Fl B Ar bufsize
 .Fl A|a|X
 .Sh DESCRIPTION
-The systems maintains a
+The system maintains a
 .Dq Management Information Base
 .Pq Dq MIB
-of properties of the system,
+where the objects are properties to tuning the system,
 the
 .Nm
-tool can get and set the value of a property.
+utility can get and set the value of a property.
 .Pp
 The output is explicitly indicated by the options,
 see COMPATIBILITY for a comparison with
@@ -146,25 +146,28 @@ Dump all info about a state in xml format:
 .Dl "nsysctl --libxo=xml,pretty -r 'ROOT-NAME' -D kern.ostype"
 .Sh COMPATIBILITY
 .Bd -literal -offset indent -compact
-/sbin/sysctl           /usr/local/sbin/nsysctl
-% sysctl    "name"     % nsysctl -Nv "name"
-% sysctl -e "name"     % nsysctl -Nv -e '=' "name"
-% sysctl -N "name"     % nsysctl -N  "name"
-% sysctl -n "name"     % nsysctl -v  "name"
-% sysctl -d "name"     % nsysctl -Nd "name"
-% sysctl -a            % nsysctl -aNV
-% sysctl -aN           % nsysctl -aN
-% sysctl -an           % nsysctl -aV
-% sysctl -ad           % nsysctl -aNd
-% sysctl -at           % nsysctl -aNt
-% sysctl -ao           % nsysctl -aNVo
-% sysctl -ax           % nsysctl -aNVx
-% sysctl -A            % nsysctl -AN
-% sysctl -X            % nsysctl -XN
+/sbin/sysctl             /usr/local/sbin/nsysctl
+% sysctl    name=value   % nsysctl -Nv name=value
+% sysctl    name         % nsysctl -Nv name
+% sysctl -d name         % nsysctl -Nd name
+% sysctl -e name         % nsysctl -Nv -e ‘=’ name
+% sysctl -N name         % nsysctl -N name
+% sysctl -n name         % nsysctl -v name
+% sysctl -t name         % nsysctl -Nt name
+% sysctl -a              % nsysctl -aNV
+% sysctl -aN             % nsysctl -aN
+% sysctl -an             % nsysctl -aV
+% sysctl -ad             % nsysctl -aNd
+% sysctl -at             % nsysctl -aNt
+% sysctl -ao             % nsysctl -aNVo
+% sysctl -ax             % nsysctl -aNVx
+% sysctl -A              % nsysctl -AN
+% sysctl -X              % nsysctl -XN
 .Ed
 .Sh SEE ALSO
 .Xr sysctl 3 ,
 .Xr sysctlmibinfo 3 ,
+.Xr xo_parse_args 3 ,
 .Xr sysctl 8
 .Sh HISTORY
 The
