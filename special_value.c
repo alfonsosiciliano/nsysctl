@@ -1,4 +1,6 @@
-/*
+/*-
+ * SPDX-License-Identifier: BSD-2-Clause
+ *
  * Copyright (c) 2019 Alfonso Sabato Siciliano
  *
  * Redistribution and use in source and binary forms, with or without
@@ -23,7 +25,7 @@
  * SUCH DAMAGE.
  */
 
-/* 'Special values' are strings splitted for xo-output */
+/* 'Special values' are strings parsed for xo-output */
 
 #include <libxo/xo.h>
 #include <string.h>
