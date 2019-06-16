@@ -191,9 +191,6 @@ int main(int argc, char *argv[argc])
     if( (bflag && oflag) || (bflag && xflag) || (oflag && xflag) )
 	xo_errx(1, "-[b|o|x] are mutually exclusive");
     
-    if( (!vflag && !Vflag) && (bflag || hflag || oflag || xflag) )
-	xo_errx(1, "-[b|h|o|x] without -[V|v]");
-
     
     if (rflag)
 	xo_open_container(rflagstr);
@@ -396,7 +393,7 @@ int display_tree(struct sysctlmif_object *object, char *newvalue)
 	    XOEMITPROP("FORMAT STRING","{:format/%s}", object->fmt);
 
 	if (gflag)
-	    XOEMITPROP("FLAGS","{:flags/%x}", object->flags);
+	    XOEMITPROP("FLAGS", (oflag || xflag) ? "{:flags/%x}" : "{:flags/%u}", object->flags);
 	
 	if (Gflag) {
 	    if(showsep)
