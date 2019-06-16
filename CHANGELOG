@@ -30,12 +30,12 @@
 	* fix: "--libxo=xml -aD" segmentation fault with xo_set_flags(NULL, XOF_FLUSH) but new problem:
 	* fix: problem-xof-flush.c https://bugs.freebsd.org/236935
 	* fix: problem-xo-huge-string.c https://bugs.freebsd.org/236937
-	* delete oid-only-value.txt, problem-xo-huge-string.c and problem-xof-flush.c (PRs commit)
+	* delete: oid-only-value.txt, problem-xo-huge-string.c and problem-xof-flush.c (PRs commit)
 
 2019-3-26 version 0.1.1
 
-	* fix headers in opaque.c for no i386/amd64
-	* delete sysctlmibinfo.h/c (dynamic linking)
+	* fix: headers in opaque.c for no i386/amd64
+	* delete: sysctlmibinfo.h/c (dynamic linking)
 
 2019-2-19 version 0.1
 
