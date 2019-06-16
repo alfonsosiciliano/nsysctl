@@ -26,7 +26,8 @@ port: [sysutils/nsysctl](https://www.freshports.org/sysutils/nsysctl) and
 
  * [X] ~~fix: -B~~
  * [X] ~~fix: -h~~
- * [X] ~~fix: AND flags~~
+ * [X] ~~fix: "AND" flags~~
+ * [X] ~~fix: -g with [x|o]~~
  * [X] ~~fix: mutually exclusive options~~
  * [X] ~~fix: vflag ans Vflag efficiency~~
  * [X] ~~clean code: delete macros to get and set a value~~
