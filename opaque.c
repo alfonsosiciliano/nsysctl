@@ -514,11 +514,9 @@ int display_IK_value(struct sysctlmif_object *obj, void *value, size_t value_siz
     base = 1.0;
     for (i = 0; i < prec; i++)
 	base *= 10.0;
-    //printf("%.*fC\n", prec,(float)intvalue / base - 273.15);
-    if(hflag)
-	xo_emit("{h:value/%f}{U:C}", (float)intvalue / base - 273.15);
-    else
-	xo_emit("{:value/%f}{U:C}", (float)intvalue / base - 273.15);
-    
+
+    xo_emit(hflag ? "{h:value/%f}{U:C}" : "{:value/%f}{U:C}", 
+	    (float)intvalue / base - 273.15);
+
     return 0;
 }
