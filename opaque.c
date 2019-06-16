@@ -48,7 +48,6 @@
 
 #include <assert.h>     //assert
 #include <stdbool.h>
-#include <stdio.h>      //printf
 #include <stdlib.h>     //free
 #include <string.h>     //strdup
 #include <unistd.h>     //getpagesize
