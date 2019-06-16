@@ -12,24 +12,22 @@ port: [sysutils/nsysctl](https://www.freshports.org/sysutils/nsysctl) and
 
 
 <u>Features:</u>
- * sysctlmibinfo provides a simple API to the sysctl MIB,
+ * output is explicitly indicated by the options,
+ * new options to show the properties of a state,
+ * the options are not mutually exclusive,
  * output via libxo in human and machine readable formats,
  * isolated code to manage "opaque values" (opaque.c),
- * some string value is splitted to show structured output (special\_value.c),
- * output is explicitly indicated by the options,
- * the options are not mutually exclusive,
- * new options to show the properties of a state.
-
+ * some string value is parsed to show structured output (special\_value.c).
 
 
 **TODO**
 
  * [X] ~~fix: -B~~
  * [X] ~~fix: -h~~
- * [X] ~~fix: "AND" flags~~
- * [X] ~~fix: -g with [x|o]~~
- * [X] ~~fix: mutually exclusive options~~
+ * [X] ~~fix: -G with "AND" flags~~
+ * [X] ~~fix: -g with -[x|o]~~
  * [X] ~~fix: vflag ans Vflag efficiency~~
+ * [X] ~~add checking for mutually exclusive options~~
  * [X] ~~clean code: delete macros to get and set a value~~
  * [ ] I can not test opaque S,efi\_map\_header (machdep.efi\_map) on my laptop
  
