@@ -27,6 +27,6 @@ Port: [sysutils/nsysctl](https://www.freshports.org/sysutils/nsysctl) and
  * [X] ~~fix: vflag ans Vflag efficiency~~
  * [X] ~~fix: do not show \<children\> of a hidden node~~
  * [X] ~~add checking for mutually exclusive options~~
- * [X] ~~clean code: delete macros to get and set a value~~
+ * [X] ~~delete: macros to get and set a value~~
  * [ ] I can not test opaque S,efi\_map\_header (machdep.efi\_map) on my laptop
  
