@@ -438,13 +438,13 @@ int display_tree(struct sysctlmif_object *object, char *newvalue)
 
     /* visit children */
     if (!IS_LEAF(object)) {
-	if (Iflag)
+	if (Iflag && showable)
 	    xo_open_container("children");
 
 	SLIST_FOREACH(child, object->children, object_link)
 	    error += display_tree(child, NULL);
 	
-	if (Iflag)
+	if (Iflag && showable)
 	    xo_close_container("children");
     }
 
