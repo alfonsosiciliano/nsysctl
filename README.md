@@ -25,7 +25,7 @@ port: [sysutils/nsysctl](https://www.freshports.org/sysutils/nsysctl) and
  * [X] ~~fix: -B~~
  * [X] ~~fix: -h~~
  * [X] ~~fix: -G with "AND" flags~~
- * [X] ~~fix: -g with -[x|o]~~
+ * [X] ~~fix: -x with -y and -g~~
  * [X] ~~fix: vflag ans Vflag efficiency~~
  * [X] ~~fix: do not show \<children\> of a hidden node~~
  * [X] ~~add checking for mutually exclusive options~~
