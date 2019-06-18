@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# Regression % sysctl -N = only name
+# Regression % sysctl -N, name
 for t in -aN -aNT -aNW
 do
     echo "$t"
@@ -10,7 +10,7 @@ do
     rm sysctl.txt nsysctl.txt
 done
 
-#Regression  % sysctl -ad = name: description
+#Regression  % sysctl -ad, name and description
 for t in -ad -adT -adW
 do
     echo "$t"
@@ -20,7 +20,7 @@ do
     rm sysctl.txt nsysctl.txt
 done
 
-#Regression  % sysctl -at = name: type
+#Regression  % sysctl -at, name and type
 for t in -at
 do
     echo "$t"
@@ -30,7 +30,7 @@ do
     rm sysctl.txt nsysctl.txt
 done
 
-#Regression  % sysctl -a = name: value
+#Regression  % sysctl -a, name and value
 for t in -aT -aTo -aWo -aWx -aW -ao
 do
     echo "$t"
@@ -40,7 +40,6 @@ do
     rm sysctl.txt nsysctl.txt
 done
 
-# TO FIX
 echo "sysctl -a"
 sysctl -a >> sysctl.txt
 ./nsysctl -aNV >> nsysctl.txt
