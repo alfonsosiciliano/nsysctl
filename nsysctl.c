@@ -362,7 +362,7 @@ int display_tree(struct sysctlmif_object *object, char *newvalue)
 		if (i > 0)
 		    xo_emit("{L:.}");
 		snprintf(idlevelstr, sizeof(idlevelstr), "level%d", i+1);
-		xo_emit_field(NULL, idlevelstr, (oflag || xflag) ? "%x" : "%d", NULL, object->id[i]);
+		xo_emit_field(NULL, idlevelstr, xflag ? "%x" : "%d", NULL, object->id[i]);
 	    }
 	    xo_close_container("id");
 	    showsep=true;
@@ -393,7 +393,7 @@ int display_tree(struct sysctlmif_object *object, char *newvalue)
 	    XOEMITPROP("FORMAT STRING","{:format/%s}", object->fmt);
 
 	if (gflag)
-	    XOEMITPROP("FLAGS", (oflag || xflag) ? "{:flags/%x}" : "{:flags/%u}", object->flags);
+	    XOEMITPROP("FLAGS", xflag ? "{:flags/%x}" : "{:flags/%u}", object->flags);
 	
 	if (Gflag) {
 	    if(showsep)
