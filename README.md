@@ -4,8 +4,8 @@ nsysctl 1.0
 The **nsysctl** utility is a [/sbin/sysctl](https://man.freebsd.org/sysctl/8) 
 clone to get or set the [FreeBSD](http://www.freebsd.org) kernel state, 
 supporting [libxo](http://juniper.github.io/libxo/libxo-manual.html) and extra 
-options. It depends on [sysctlmibinfo](https://gitlab.com/alfix/sysctlmibinfo), 
-port: [sysutils/nsysctl](https://www.freshports.org/sysutils/nsysctl) and 
+options; It depends on [sysctlmibinfo](https://gitlab.com/alfix/sysctlmibinfo). 
+Port: [sysutils/nsysctl](https://www.freshports.org/sysutils/nsysctl) and 
 **[TUTORIAL](https://alfix.gitlab.io/bsd/2019/02/19/nsysctl-tutorial.html)**.  
 
 
