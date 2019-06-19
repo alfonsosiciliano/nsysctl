@@ -1,3 +1,14 @@
+Current
+
+	* fix: -B
+	* fix: -h
+	* fix: -G with "AND" flags
+	* fix: -x with -y and -g
+	* fix: vflag ans Vflag efficiency
+	* fix: do not show <children> of a hidden node
+	* fix: mutually exclusive options [V|v] and [b|o|x]
+	* delete: macros to get and set a value
+
 2019-6-1 version 1.0
 
 	* add: setting a kelvin value
@@ -26,11 +37,15 @@
 
 	* fix: debug.fail_point.test_trigger_fail_point with -a (sysctl problem)
 	* fix: hw.dri.0.bufs with -a (sysctl problem)
-	* fix: size change with double sysctl() call (kern.file, hw.dri.0.vblank and hw.dri.0.info.i915_drpc_info)
-	* fix: "--libxo=xml -aD" segmentation fault with xo_set_flags(NULL, XOF_FLUSH) but new problem:
+	* fix: size change with double sysctl() call,
+	       (e.g, kern.file, hw.dri.0.vblank and hw.dri.0.info.i915_drpc_info)
+	* fix: libxo=xml -aD segmentation fault, fixed by xo_set_flags(NULL, XOF_FLUSH)
+	       but new problems:
 	* fix: problem-xof-flush.c https://bugs.freebsd.org/236935
 	* fix: problem-xo-huge-string.c https://bugs.freebsd.org/236937
-	* delete: oid-only-value.txt, problem-xo-huge-string.c and problem-xof-flush.c (PRs commit)
+	* delete: oid-only-value.txt (PR commit)
+	* delete: problem-xo-huge-string.c (PR commit)
+	* delete: problem-xof-flush.c (PR commit)
 
 2019-3-26 version 0.1.1
 
