@@ -7,7 +7,8 @@ Current
 	* fix: vflag ans Vflag efficiency
 	* fix: do not show <children> of a hidden node
 	* fix: mutually exclusive options [V|v] and [b|o|x]
-	* delete: macros to get and set a value
+	* delete: macro to get a value
+	* delete: macro to set a value
 
 2019-6-1 version 1.0
 
