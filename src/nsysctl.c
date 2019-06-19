@@ -75,27 +75,25 @@ static const struct ctl_flag ctl_flags[NUM_CTLFLAGS] = {
 struct ctl_type {
     char *name;
     size_t size;
-    bool sign;
-    char *fmt;
 };
 
 static const struct ctl_type ctl_types[CTLTYPE+1] = {
-    { "ZEROUNUSED", 0, false , "error"},
-    { "node", 0, false, "error"},
-    { "integer", sizeof(int), true, "%d" },
-    { "string", 0, false, "%s" },
-    { "int64_t", sizeof(int64_t), true, "%ld" },
-    { "opaque", 0, false, "error" },
-    { "unsigned integer", sizeof(unsigned int), false, "%u" },
-    { "long integer", sizeof(long int), true, "%ld" },
-    { "unsigned long", sizeof(unsigned long), false, "%lu" },
-    { "uint64_t", sizeof(uint64_t), false, "%lu" },
-    { "uint8_t", sizeof(uint8_t), false, "%u" },
-    { "uint16_t", sizeof(uint16_t), false, "%u" },
-    { "int8_t", sizeof(int8_t), true, "%d" },
-    { "int16_t", sizeof(int16_t), true, "%d" },
-    { "int32_t", sizeof(int32_t), true, "%d" },
-    { "uint32_t", sizeof(uint32_t), false, "%u" }
+    { "ZEROUNUSED", 0 },
+    { "node", 0 },
+    { "integer", sizeof(int) },
+    { "string", 0 },
+    { "int64_t", sizeof(int64_t) },
+    { "opaque", 0 },
+    { "unsigned integer", sizeof(unsigned int) },
+    { "long integer", sizeof(long int) },
+    { "unsigned long", sizeof(unsigned long) },
+    { "uint64_t", sizeof(uint64_t) },
+    { "uint8_t", sizeof(uint8_t) },
+    { "uint16_t", sizeof(uint16_t) },
+    { "int8_t", sizeof(int8_t) },
+    { "int16_t", sizeof(int16_t) },
+    { "int32_t", sizeof(int32_t) },
+    { "uint32_t", sizeof(uint32_t) }
 };
 
 
