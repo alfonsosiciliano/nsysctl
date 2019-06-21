@@ -1,10 +1,5 @@
 nsysctl
 *.core
 *.o
-*.depend
-nsysctl.8.gz
-nsysctl.debug
-nsysctl.full
 *~
 icon
-newopaques.txt
