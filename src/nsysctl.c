@@ -100,7 +100,7 @@ static const struct ctl_type ctl_types[CTLTYPE+1] = {
 void usage(void);
 int parse_line_or_argv(char *arg);
 int display_tree(struct sysctlmif_object *object, char *newvalue);
-int display_basic_type(struct sysctlmif_object *object, void *value, size_t valuesize);
+int display_basic_value(struct sysctlmif_object *object, void *value, size_t valuesize);
 int set_basic_value(struct sysctlmif_object *object, char *input);
 
 bool aflag, bflag, dflag, Fflag, fflag, hflag, Gflag, gflag;
@@ -419,7 +419,7 @@ int display_tree(struct sysctlmif_object *object, char *newvalue)
 	    else if (object->type == CTLTYPE_OPAQUE || object->type == CTLTYPE_NODE)
 		error += display_opaque_value(object, value, value_size, hflag, oflag, xflag);
 	    else if ( object->id[0] != 0)
-		error += display_basic_type(object, value, value_size);
+		error += display_basic_value(object, value, value_size);
 
 	    free(value);
 	    showsep = true;
@@ -453,7 +453,7 @@ int display_tree(struct sysctlmif_object *object, char *newvalue)
 }
 
 
-int display_basic_type(struct sysctlmif_object *object, void *value, size_t value_size)
+int display_basic_value(struct sysctlmif_object *object, void *value, size_t value_size)
 {
     int i, error = 0, j;
     unsigned char *hexvalue;
