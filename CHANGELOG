@@ -9,6 +9,7 @@ Current
 	* fix: mutually exclusive options [V|v] and [b|o|x]
 	* delete: macro to get a value
 	* delete: macro to set a value
+	* add kern.conftxt as special_value
 
 2019-6-1 version 1.0
 
@@ -55,11 +56,11 @@ Current
 
 2019-2-19 version 0.1
 
-	* add: opaque.c with libxo support
-	* add: comparetest.sh
 	* add: nsysctl.c
+	* add: special_value.c
+	* add: opaque.c
+	* add: comparetest.sh
 	* add: manual page nsysctl.8
 	* add: FreeBSD port
-	* add: special_value.c
 	* fix: libxo=xml debug.witness.fullgraph, segmentation fault
 	* fix: libxo=text debug.fail_point  (utf8)

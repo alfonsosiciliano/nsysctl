@@ -34,6 +34,7 @@
 
 static int vm_phys_free(void *value, size_t value_size);
 static int debug_witness_fullgraph(void *value, size_t value_size);
+static int kern_conftxt(void *value, size_t value_size);
 
 /*
  * char *start, *next, sep;
@@ -97,6 +98,7 @@ bool is_special_value(struct sysctlmif_object *object)
     bool special = false;
 
     special = ( strcmp(object->name,"vm.phys_free") == 0 ||
+		strcmp(object->name,"kern.conftxt") == 0 ||
 		strcmp(object->name,"debug.witness.fullgraph") == 0);
 
     return special;
@@ -108,12 +110,36 @@ int display_special_value(struct sysctlmif_object *object, void* value, size_t v
 
     if( strcmp(object->name,"vm.phys_free") == 0)
 	error += vm_phys_free(value, value_size);
+    else if(strcmp(object->name, "kern.conftxt") == 0)
+	error += kern_conftxt(value, value_size);
     else if(strcmp(object->name, "debug.witness.fullgraph") == 0)
 	error += debug_witness_fullgraph(value, value_size);
     else
 	error++;
     
     return error;
+}
+
+static int kern_conftxt(void *value, size_t value_size)
+{
+    int error = 0;
+    char *line = value, *next, *n, *v;
+    
+    xo_open_container("value");
+    while(parse_string(line, &next, &value[value_size], '\n')) {
+	if(line[0] != '\0') {
+	    xo_open_container("configuration");
+	    n= line;
+	    parse_string(n, &v, next, '\t');
+	    xo_emit("{:name/%s}{L:\t}", n);
+	    xo_emit("{:value/%s}{L:\n}", v);
+	    xo_close_container("configuration");
+	    }
+	line = next;
+    }
+    xo_close_container("value");
+    
+    return  error;
 }
 
 static int vm_phys_free(void* value, size_t value_size)
