@@ -637,7 +637,7 @@ int set_basic_value(struct sysctlmif_object *object, char *input)
 		((int32_t *)newval)[i] = (int32_t)strtoll(start, NULL, 10);  
 		break;
 	    case CTLTYPE_S64:   
-		((int64_t *)newval)[i] = (int64_t)strtoll(start, NULL, 10);  
+		((int64_t *)newval)[i] = (int64_t)strtoimax(start, NULL, 10);  
 		break;
 	    case CTLTYPE_UINT:  
 		((u_int *)newval)[i] = (u_int)strtoull(start, NULL, 10);   
@@ -655,7 +655,7 @@ int set_basic_value(struct sysctlmif_object *object, char *input)
 		((uint32_t *)newval)[i] = (uint32_t)strtoull(start, NULL, 10);
 		break;
 	    case CTLTYPE_U64:   
-		((uint64_t *)newval)[i] = (uint64_t)strtoull(start, NULL, 10);
+		((uint64_t *)newval)[i] = (uint64_t)strtoumax(start, NULL, 10);
 		break;
 	    default:
 		xo_emit("{L:\n}");
