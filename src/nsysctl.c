@@ -27,6 +27,7 @@
 
 #include <sys/queue.h>
 
+#include <inttypes.h>
 #include <libxo/xo.h>
 #include <stdbool.h>
 #include <stdio.h>
@@ -621,41 +622,41 @@ int set_basic_value(struct sysctlmif_object *object, char *input)
 		    error += strIK_to_int(input, &kelvin, object->fmt);
 		    ((int*)newval)[i] = kelvin;
 		} else {
-		    ((int *)newval)[i] = (int)strtoll(start, NULL, 10); 
+		    ((int *)newval)[i] = (int)strtoll(start, NULL, 0); 
 		}
 		break;
 	    case CTLTYPE_LONG:  
-		((long *)newval)[i] = (long)strtoll(start, NULL, 10);     
+		((long *)newval)[i] = (long)strtoll(start, NULL, 0);     
 		break;
 	    case CTLTYPE_S8:    
-		((int8_t *)newval)[i] = (int8_t)strtoll(start, NULL, 10);   
+		((int8_t *)newval)[i] = (int8_t)strtoll(start, NULL, 0);   
 		break;
 	    case CTLTYPE_S16:   
-		((int16_t *)newval)[i] = (int16_t)strtoll(start, NULL, 10);  
+		((int16_t *)newval)[i] = (int16_t)strtoll(start, NULL, 0);  
 		break;
 	    case CTLTYPE_S32:   
-		((int32_t *)newval)[i] = (int32_t)strtoll(start, NULL, 10);  
+		((int32_t *)newval)[i] = (int32_t)strtoll(start, NULL, 0);  
 		break;
 	    case CTLTYPE_S64:   
-		((int64_t *)newval)[i] = (int64_t)strtoimax(start, NULL, 10);  
+		((int64_t *)newval)[i] = (int64_t)strtoimax(start, NULL, 0);  
 		break;
 	    case CTLTYPE_UINT:  
-		((u_int *)newval)[i] = (u_int)strtoull(start, NULL, 10);   
+		((u_int *)newval)[i] = (u_int)strtoull(start, NULL, 0);   
 		break;
 	    case CTLTYPE_ULONG: 
-		((u_long *)newval)[i] = (u_long)strtoull(start, NULL, 10);  
+		((u_long *)newval)[i] = (u_long)strtoull(start, NULL, 0);  
 		break;
 	    case CTLTYPE_U8:    
-		((uint8_t *)newval)[i] = (uint8_t)strtoull(start, NULL, 10); 
+		((uint8_t *)newval)[i] = (uint8_t)strtoull(start, NULL, 0); 
 		break;
 	    case CTLTYPE_U16:   
-		((uint16_t *)newval)[i] = (uint16_t)strtoull(start, NULL, 10);
+		((uint16_t *)newval)[i] = (uint16_t)strtoull(start, NULL, 0);
 		break;
 	    case CTLTYPE_U32:   
-		((uint32_t *)newval)[i] = (uint32_t)strtoull(start, NULL, 10);
+		((uint32_t *)newval)[i] = (uint32_t)strtoull(start, NULL, 0);
 		break;
 	    case CTLTYPE_U64:   
-		((uint64_t *)newval)[i] = (uint64_t)strtoumax(start, NULL, 10);
+		((uint64_t *)newval)[i] = (uint64_t)strtoumax(start, NULL, 0);
 		break;
 	    default:
 		xo_emit("{L:\n}");
