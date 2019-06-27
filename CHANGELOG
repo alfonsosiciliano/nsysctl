@@ -7,9 +7,11 @@ Current
 	* fix: vflag ans Vflag efficiency
 	* fix: do not show <children> of a hidden node
 	* fix: mutually exclusive options [V|v] and [b|o|x]
+	* fix: set value for [u]int64_t
 	* delete: macro to get a value
 	* delete: macro to set a value
 	* add kern.conftxt as special_value
+	* add add input for a numeric value in hex format
 
 2019-6-1 version 1.0
 
