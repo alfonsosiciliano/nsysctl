@@ -666,7 +666,7 @@ int set_basic_value(struct sysctlmif_object *object, char *input)
 	    }// end switch
 	    if(errno == EINVAL || errno == ERANGE) {
 		error++;
-		xo_warn_c(errno, "cannot set new value '%s'", input);
+		xo_warn_c(errno, " cannot set new value '%s'", input);
 		break;
 	    }
 	    i++;
@@ -687,7 +687,7 @@ int set_basic_value(struct sysctlmif_object *object, char *input)
 	} 
 	else {
 	    xo_emit("{L:\n}");
-	    xo_warn_c(errno, "cannot set new value '%s'",input);
+	    xo_warn_c(errno, " cannot set new value '%s'",input);
 	    error++;
 	}
     }
