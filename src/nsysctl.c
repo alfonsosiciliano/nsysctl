@@ -664,6 +664,11 @@ int set_basic_value(struct sysctlmif_object *object, char *input)
 		error++;
 		break;
 	    }// end switch
+	    if(errno == EINVAL || errno == ERANGE) {
+		error++;
+		xo_warn_c(errno, "cannot set new value '%s'", input);
+		break;
+	    }
 	    i++;
 	    start = next;
 	}// end while
