@@ -11,13 +11,13 @@ Current
 	* delete: macro to get a value
 	* delete: macro to set a value
 	* add kern.conftxt as special_value
-	* add add input for a numeric value in hex format
+	* add input for a numeric value in hex format
 
 2019-6-1 version 1.0
 
 	* add: setting a kelvin value
 	* add: setting a numeric value with -B option
-	* fix: delete useless strdup() to parse input
+	* delete: useless strdup() to parse input
 	* change: option -S -> -m
 
 2019-5-21 version 0.9.1
