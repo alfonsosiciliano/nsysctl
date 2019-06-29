@@ -50,27 +50,27 @@ struct ctl_flag {
 #define NUM_CTLFLAGS 21
 
 static const struct ctl_flag ctl_flags[NUM_CTLFLAGS] = {
-    { CTLFLAG_RD, "RD" },
-    { CTLFLAG_WR, "WR" },
-    { CTLFLAG_RW, "RW" },
+    { CTLFLAG_RD,      "RD"      },
+    { CTLFLAG_WR,      "WR"      },
+    { CTLFLAG_RW,      "RW"      },
     { CTLFLAG_DORMANT, "DORMANT" },
     { CTLFLAG_ANYBODY, "ANYBODY" },
-    { CTLFLAG_SECURE, "SECURE" },
-    { CTLFLAG_PRISON, "PRISON" },
-    { CTLFLAG_DYN, "DYN" },
-    { CTLFLAG_SKIP, "SKIP" },
-    { CTLMASK_SECURE, "SECURE" },
-    { CTLFLAG_TUN, "TUN" },
-    { CTLFLAG_RDTUN, "RDTUN" },
-    { CTLFLAG_RWTUN, "RWTUN" },
-    { CTLFLAG_MPSAFE, "MPSAFE" },
-    { CTLFLAG_VNET, "VNET" },
-    { CTLFLAG_DYING, "DYING" },
-    { CTLFLAG_CAPRD, "CAPRD" },
-    { CTLFLAG_CAPWR, "CAPWR" },
-    { CTLFLAG_STATS, "STATS" },
+    { CTLFLAG_SECURE,  "SECURE"  },
+    { CTLFLAG_PRISON,  "PRISON"  },
+    { CTLFLAG_DYN,     "DYN"     },
+    { CTLFLAG_SKIP,    "SKIP"    },
+    { CTLMASK_SECURE,  "SECURE"  },
+    { CTLFLAG_TUN,     "TUN"     },
+    { CTLFLAG_RDTUN,   "RDTUN"   },
+    { CTLFLAG_RWTUN,   "RWTUN"   },
+    { CTLFLAG_MPSAFE,  "MPSAFE"  },
+    { CTLFLAG_VNET,    "VNET"    },
+    { CTLFLAG_DYING,   "DYING"   },
+    { CTLFLAG_CAPRD,   "CAPRD"   },
+    { CTLFLAG_CAPWR,   "CAPWR"   },
+    { CTLFLAG_STATS,   "STATS"   },
     { CTLFLAG_NOFETCH, "NOFETCH" },
-    { CTLFLAG_CAPRW, "CAPRW" }
+    { CTLFLAG_CAPRW,   "CAPRW"   }
 };
 
 struct ctl_type {
@@ -79,22 +79,22 @@ struct ctl_type {
 };
 
 static const struct ctl_type ctl_types[CTLTYPE+1] = {
-    { "ZEROUNUSED", 0 },
-    { "node", 0 },
-    { "integer", sizeof(int) },
-    { "string", 0 },
-    { "int64_t", sizeof(int64_t) },
-    { "opaque", 0 },
-    { "unsigned integer", sizeof(unsigned int) },
-    { "long integer", sizeof(long int) },
-    { "unsigned long", sizeof(unsigned long) },
-    { "uint64_t", sizeof(uint64_t) },
-    { "uint8_t", sizeof(uint8_t) },
-    { "uint16_t", sizeof(uint16_t) },
-    { "int8_t", sizeof(int8_t) },
-    { "int16_t", sizeof(int16_t) },
-    { "int32_t", sizeof(int32_t) },
-    { "uint32_t", sizeof(uint32_t) }
+    { "ZEROUNUSED",       0                     },
+    { "node",             0                     },
+    { "integer",          sizeof(int)           },
+    { "string",           0                     },
+    { "int64_t",          sizeof(int64_t)       },
+    { "opaque",           0                     },
+    { "unsigned integer", sizeof(unsigned int)  },
+    { "long integer",     sizeof(long int)      },
+    { "unsigned long",    sizeof(unsigned long) },
+    { "uint64_t",         sizeof(uint64_t)      },
+    { "uint8_t",          sizeof(uint8_t)       },
+    { "uint16_t",         sizeof(uint16_t)      },
+    { "int8_t",           sizeof(int8_t)        },
+    { "int16_t",          sizeof(int16_t)       },
+    { "int32_t",          sizeof(int32_t)       },
+    { "uint32_t",         sizeof(uint32_t)      }
 };
 
 
