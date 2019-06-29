@@ -163,6 +163,7 @@ int main(int argc, char *argv[argc])
 	case 'l': lflag = true; break;
 	case 'm': mflag = true; break;
 	case 'N': Nflag = true; break;
+	case 'n': /* compatibility, ignored */ break;
 	case 'o': oflag = true; break;
 	case 'p': pflag = true; break;
 	case 'q': qflag = true; break;

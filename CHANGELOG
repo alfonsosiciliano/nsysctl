@@ -7,7 +7,8 @@ Current
 	* fix: vflag ans Vflag efficiency
 	* fix: do not show <children> of a hidden node
 	* fix: mutually exclusive options [V|v] and [b|o|x]
-	* fix: set value for [u]int64_t
+	* fix: set a [u]int64_t value
+	* fix: -n is ignored without error
 	* delete: macro to get a value
 	* delete: macro to set a value
 	* change: -p [FORMAT STRING] -> [FORMAT-STRING]
