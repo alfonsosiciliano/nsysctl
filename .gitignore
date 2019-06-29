@@ -2,3 +2,4 @@ nsysctl
 *.core
 *.o
 *~
+nsysctl.8.gz
