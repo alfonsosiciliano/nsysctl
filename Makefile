@@ -16,7 +16,8 @@ GZIP= gzip -cn
 MANDIR= /usr/local/man/man8
 
 RM= rm -f
-INSTALL= install -o root -g wheel
+INSTALL= install
+SHAREDIR= /usr/local/share
 
 all : ${OUTPUT}
 
@@ -30,10 +31,19 @@ ${OUTPUT}: ${OBJECTS}
 	${CC} ${CCFLAGS} -c ${.IMPSRC} -o ${.TARGET}
 
 install:
-	${INSTALL} -s -m 555 ${OUTPUT} ${SBINDIR}/${OUTPUT}
+	${INSTALL} -s -m 555 ${OUTPUT} ${SBINDIR}
 	${GZIP} ${MAN} > ${MAN}.gz
-	${INSTALL} -m 444 ${MAN}.gz ${MANDIR}/
+	${INSTALL} -m 444 ${MAN}.gz ${MANDIR}
+	mkdir -p ${SHAREDIR}/doc/${OUTPUT}
+	${INSTALL} -m 0644 CHANGELOG ${SHAREDIR}/doc/${OUTPUT}
+	mkdir -p ${SHAREDIR}/examples/${OUTPUT}
+	${INSTALL} -m 0644 file.conf ${SHAREDIR}/examples/${OUTPUT}
 
 unistall:
 	${RM} ${SBINDIR}/${OUTPUT}
 	${RM} ${MANDIR}/${MAN}.gz
+	${RM} ${SHAREDIR}/doc/${OUTPUT}/CHANGELOG
+	rmdir ${SHAREDIR}/doc/${OUTPUT}
+	${RM} ${SHAREDIR}/examples/${OUTPUT}/file.conf
+	rmdir ${SHAREDIR}/examples/${OUTPUT}
+
