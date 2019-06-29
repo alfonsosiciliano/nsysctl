@@ -43,7 +43,7 @@ unistall:
 	${RM} ${SBINDIR}/${OUTPUT}
 	${RM} ${MANDIR}/${MAN}.gz
 	${RM} ${SHAREDIR}/doc/${OUTPUT}/CHANGELOG
-	rm -df ${SHAREDIR}/doc/${OUTPUT}
+	${RM} -d  ${SHAREDIR}/doc/${OUTPUT}
 	${RM} ${SHAREDIR}/examples/${OUTPUT}/file.conf
-	rm -df ${SHAREDIR}/examples/${OUTPUT}
+	${RM} -d ${SHAREDIR}/examples/${OUTPUT}
 
