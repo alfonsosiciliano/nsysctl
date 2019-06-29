@@ -274,8 +274,7 @@ int parse_line_or_argv(char *arg)
     } 
     else { /* nodename=value */
 	/* FALL for fmt 'A' and for display_tree */
-	node = sysctlmif_object(id, idlevel,
-				SYSCTLMIF_FALL/*SYSCTLMIF_FNAME | SYSCTLMIF_FTYPE*/ );
+	node = sysctlmif_object(id, idlevel, SYSCTLMIF_FALL );
 	if(node == NULL)
 	    xo_err(1, "cannot build the node to set '%s'", name);
 	
@@ -380,10 +379,12 @@ int display_tree(struct sysctlmif_object *object, char *newvalue)
 	    XOEMITPROP("NAME","{:name/%s}", object->name);
 	
 	if (lflag) /* entry without label could return "\0" or NULL */
-	    XOEMITPROP("LABEL","{:label/%s}", object->label == NULL ? "" : object->label);
+	    XOEMITPROP("LABEL","{:label/%s}", 
+		       object->label == NULL ? "" : object->label);
 
 	if (dflag) /* entry without descr could return "\0" or NULL */
-	    XOEMITPROP("DESCRIPTION","{:description/%s}", object->desc == NULL ? "" : object->desc);
+	    XOEMITPROP("DESCRIPTION","{:description/%s}", 
+		       object->desc == NULL ? "" : object->desc);
 	
 	if (tflag)
 	    XOEMITPROP("TYPE","{:type/%s}", ctl_types[object->type].name);
@@ -392,7 +393,8 @@ int display_tree(struct sysctlmif_object *object, char *newvalue)
 	    XOEMITPROP("FORMAT STRING","{:format/%s}", object->fmt);
 
 	if (gflag)
-	    XOEMITPROP("FLAGS", xflag ? "{:flags/%x}" : "{:flags/%u}", object->flags);
+	    XOEMITPROP("FLAGS", xflag ? "{:flags/%x}" : "{:flags/%u}", 
+		       object->flags);
 	
 	if (Gflag) {
 	    if(showsep)
@@ -605,7 +607,7 @@ int set_basic_value(struct sysctlmif_object *object, char *input)
 
 	i=0;
 	while(parse_string(start, &next, end, ',')) {
-	    /* some oid (e.g. kern.cp_times) is an array but fmt != A */
+	    /* some oid is an array but fmt != A (e.g. kern.cp_times) */
 	    if(Bflagsize <= 0) {
 		newval_size += ctl_types[object->type].size;
 		newval = realloc(newval, ctl_types[object->type].size);
