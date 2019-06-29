@@ -142,7 +142,7 @@ int main(int argc, char *argv[argc])
     if (argc < 0)
 	exit(EXIT_FAILURE);
 
-    while ((ch = getopt(argc, argv, "AaB:bDde:Ff:GghiIlmNnopqr:TtVvWXxy")) != -1) {
+    while ((ch = getopt(argc, argv, "AaB:bDde:Ff:GghiIlmNnopqr:TtVvWwXxy")) != -1) {
 	switch (ch) {
 	case 'A': aflag = true; oflag = true; Vflag=true; break;
 	case 'a': aflag = true; break;
