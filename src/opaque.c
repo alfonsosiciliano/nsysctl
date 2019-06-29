@@ -87,7 +87,9 @@ bool is_opaque_defined(struct sysctlmif_object *object)
     return false;
 }
 
-int display_opaque_value(struct sysctlmif_object *object, void *value, size_t value_size, bool hflag, bool oflag, bool xflag)
+int 
+display_opaque_value(struct sysctlmif_object *object, void *value,
+		     size_t value_size, bool hflag, bool oflag, bool xflag)
 {
 	int error = 0;
 	int i;
@@ -385,10 +387,10 @@ S_efi_map(void *value, size_t value_size, bool hflag)
 			type = types[map->md_type];
 		if (type == NULL)
 			type = "<INVALID>";
-		xo_emit("{L:\n}{:types/%23s}{L: }{:md_phys/%012jx}{L: }{:md_virt/%12p}{L: }{:md_pages/%08jx}{L: }",
-		    type,
-		    (uintmax_t)map->md_phys, map->md_virt,
-		    (uintmax_t)map->md_pages);
+		xo_emit("{L:\n}{:types/%23s}{L: }{:md_phys/%012jx}\"
+			"{L: }{:md_virt/%12p}{L: }{:md_pages/%08jx}{L: }",
+			type, (uintmax_t)map->md_phys,
+			map->md_virt, (uintmax_t)map->md_pages);
 		xo_open_container("md_attrs");
 		if (map->md_attr & EFI_MD_ATTR_UC)
 			xo_emit("{:md_attr/%s}{L: }","UC");
@@ -422,7 +424,8 @@ S_bios_smap_xattr(void* value, size_t value_size, bool hflag)
 	struct bios_smap_xattr *smap, *end;
 
 	if (value_size % sizeof(*smap) != 0) {
-		xo_warnx("S_bios_smap_xattr %zu is not a multiple of %zu", value_size, sizeof(*smap));
+		xo_warnx("S_bios_smap_xattr %zu is not a multiple of %zu", 
+			 value_size, sizeof(*smap));
 		return (1);
 	}
 
@@ -504,7 +507,9 @@ strIK_to_int(const char *str, int *kelvin, const char *fmt)
 	return (1);
 }
 
-int display_IK_value(struct sysctlmif_object *obj, void *value, size_t value_size, bool hflag)
+int
+display_IK_value(struct sysctlmif_object *obj, void *value, size_t value_size,
+		 bool hflag)
 {
     int i, prec = 1, intvalue = *((int*)value);
     float base;

@@ -104,7 +104,8 @@ bool is_special_value(struct sysctlmif_object *object)
     return special;
 }
 
-int display_special_value(struct sysctlmif_object *object, void* value, size_t value_size)
+int display_special_value(struct sysctlmif_object *object, void* value,
+			  size_t value_size)
 {
     int error = 0;
 
