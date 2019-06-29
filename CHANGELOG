@@ -10,8 +10,9 @@ Current
 	* fix: set value for [u]int64_t
 	* delete: macro to get a value
 	* delete: macro to set a value
-	* add kern.conftxt as special_value
-	* add input for a numeric value in hex format
+	* change: -p [FORMAT STRING] -> [FORMAT-STRING]
+	* add: kern.conftxt as special_value
+	* add: input for a numeric value in hex format
 
 2019-6-1 version 1.0
 

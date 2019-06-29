@@ -390,7 +390,7 @@ int display_tree(struct sysctlmif_object *object, char *newvalue)
 	    XOEMITPROP("TYPE","{:type/%s}", ctl_types[object->type].name);
 	
 	if (Fflag)
-	    XOEMITPROP("FORMAT STRING","{:format/%s}", object->fmt);
+	    XOEMITPROP("FORMAT-STRING","{:format/%s}", object->fmt);
 
 	if (gflag)
 	    XOEMITPROP("FLAGS", xflag ? "{:flags/%x}" : "{:flags/%u}", 
