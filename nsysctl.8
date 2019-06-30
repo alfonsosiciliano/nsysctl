@@ -66,7 +66,7 @@ See xo_parse_args(3)
 Equivalent to
 .Fl a Fl V Fl o .
 .It Fl a
-Display every state.
+Display every object.
 .It Fl b
 Print value in binary format.
 .It Fl B Ar bufsize
@@ -81,7 +81,7 @@ Use <sep> as separator.
 .It Fl F
 Display format string.
 .It Fl f Ar filename
-Load states to get or set from <filename>.
+Load objects to get or set from <filename>.
 .It Fl G
 Show true-flags.
 .It Fl g
@@ -91,11 +91,11 @@ Try to show values in a human-friendly format.
 .It Fl I
 Show Internal nodes, only leaves are printed by default.
 .It Fl i
-Ignore unknown state.
+Ignore unknown objects.
 .It Fl l
 Display label.
 .It Fl m
-Display magical kernel states.
+Display magical objects.
 .It Fl N
 Print name.
 .It Fl o
@@ -113,7 +113,7 @@ Print type.
 .It Fl V
 Show value, if value is not
 .Dq showable
-hidden the state.
+hidden the object.
 .It Fl v
 Display value.
 .It Fl W
@@ -137,11 +137,11 @@ To set the hostname:
 .Pp
 .Dl "nsysctl kern.hostname=myBSD"
 .Pp
-Dump all info about a state:
+Dump all info about an object:
 .Pp
 .Dl "nsysctl -Dp -e ', '  kern.ostype"
 .Pp
-Dump all info about a state in xml format:
+Dump all info about an object in xml format:
 .Pp
 .Dl "nsysctl --libxo=xml,pretty -r 'ROOT-NAME' -D kern.ostype"
 .Sh COMPATIBILITY
