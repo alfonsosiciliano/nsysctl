@@ -1,4 +1,4 @@
-nsysctl 1.0
+nsysctl 1.1
 =============
 
 The **nsysctl** utility is a [/sbin/sysctl](https://man.freebsd.org/sysctl/8) 
@@ -20,13 +20,5 @@ Port: [sysutils/nsysctl](https://www.freshports.org/sysutils/nsysctl) and
 
 **TODO**
 
- * [X] ~~fix: -B~~
- * [X] ~~fix: -h~~
- * [X] ~~fix: -G with "AND" flags~~
- * [X] ~~fix: -x with -y and -g~~
- * [X] ~~fix: vflag ans Vflag efficiency~~
- * [X] ~~fix: do not show \<children\> of a hidden node~~
- * [X] ~~add checking for mutually exclusive options~~
- * [X] ~~delete: macros to get and set a value~~
  * [ ] I can not test opaque S,efi\_map\_header (machdep.efi\_map) on my laptop
  
