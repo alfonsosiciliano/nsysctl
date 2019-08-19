@@ -4,7 +4,7 @@
 	* fix: -h
 	* fix: -G with "AND" flags
 	* fix: -x with -y and -g
-	* fix: vflag ans Vflag efficiency
+	* fix: vflag and Vflag efficiency
 	* fix: do not show <children> of a hidden node
 	* fix: mutually exclusive options [V|v] and [b|o|x]
 	* fix: set a [u]int64_t value
