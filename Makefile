@@ -4,11 +4,11 @@
 # Written by Alfonso S. Siciliano https://alfix.gitlab.io
 
 OUTPUT= nsysctl
-SOURCES= nsysctl.c opaque.c special_value.c
+SOURCES= nsysctl.c opaque.c special_value.c sysctlinfo_helper.c
 .PATH : ./src
 OBJECTS= ${SOURCES:.c=.o}
 CCFLAGS= -I/usr/local/include -Wall -g
-LDFLAGS= -L/usr/local/lib -lsysctlmibinfo -lxo
+LDFLAGS= -L/usr/local/lib -lsysctlmibinfo -lxo -lutil
 SBINDIR= /usr/local/sbin
 
 MAN= ${OUTPUT}.8

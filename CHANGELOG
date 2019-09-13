@@ -1,3 +1,12 @@
+Current
+
+	* add: 'sysctlinfo' kernel interface support:
+	*    add: use sysctlinfo.ko if loaded else use the kernel interface
+	*    fix: show nodes up to CTL_MAXNAME levels
+	*    fix: show the right value of the nodes without the last name
+                  (e.g., "security.jail.param.allow.mount.")
+	*    fix: show subtrees without leaves (all nodes are CTLTYPE_NODE)
+
 2019-7-1 version 1.1
 
 	* fix: -B
