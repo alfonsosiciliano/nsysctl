@@ -292,7 +292,11 @@ int parse_line_or_argv(char *arg)
     } 
     else { /* nodename=value */
 	/* FALL for fmt 'A' and for display_tree */
-	node = sysctlmif_object(id, idlevel, SYSCTLMIF_FALL );
+	if(sysctlinfokmod == true) {
+		node = sysctlinfo_object_allflags(id, idlevel);
+	} else {
+		node = sysctlmif_object(id, idlevel, SYSCTLMIF_FALL);
+	}
 	if(node == NULL)
 	    xo_err(1, "cannot build the node to set '%s'", name);
 	

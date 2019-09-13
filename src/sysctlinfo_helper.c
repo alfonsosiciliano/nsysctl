@@ -34,7 +34,7 @@
 /* Utils */
 
 static struct sysctlmif_object *
-util_sysctlinfo_objectallflags(int *id, size_t idlevel, 
+util_sysctlinfo_object_allflags(int *id, size_t idlevel, 
 	int idnext[CTL_MAXNAME], size_t *idnextlevel)
 {
     struct sysctlmif_object *object = NULL;
@@ -89,7 +89,7 @@ buildTree(int id[CTL_MAXNAME], size_t idlevel, int idnext[CTL_MAXNAME],
     struct sysctlmif_object *node, *last, *child;
     struct sysctlmif_object_list *list = NULL;
     
-    node = util_sysctlinfo_objectallflags(id, idlevel, idnext, idnextlevel);
+    node = util_sysctlinfo_object_allflags(id, idlevel, idnext, idnextlevel);
     if( (list = malloc(sizeof(struct sysctlmif_object_list))) == NULL){
 	return (NULL);
     }
@@ -131,10 +131,10 @@ int sysctlinfo_idbyname(char *name, int *id, size_t *idlevel)
     return 0;
 }
 
-struct sysctlmif_object *sysctlinfo_objectall(int *id, size_t idlevel)
+struct sysctlmif_object *sysctlinfo_object_allflags(int *id, size_t idlevel)
 {
 
-    return util_sysctlinfo_objectallflags(id, idlevel, NULL, 0);
+    return util_sysctlinfo_object_allflags(id, idlevel, NULL, 0);
 }
 
 struct sysctlmif_object *
@@ -154,7 +154,7 @@ sysctlinfo_tree_allflags(int *idroot, size_t idlevelroot)
     	idchild[0] = 0;
     	idchildlevel = 1;
     } else { /* a subtree */
-    	root = util_sysctlinfo_objectallflags(idroot, idlevelroot, 
+    	root = util_sysctlinfo_object_allflags(idroot, idlevelroot, 
     					      idchild, &idchildlevel);
     	if(root == NULL)
     		return NULL;
