@@ -121,6 +121,8 @@ int sysctlinfo_idbyname(char *name, int *id, size_t *idlevel)
 {
     int prop[2] = {CTL_SYSCTLMIB, ENTRYIDBYNAME};
     
+    *idlevel *= sizeof(int);
+    
     if (SYSCTLINFO_BYNAME(name, prop, id, idlevel) != 0)
 	return -1;
     
