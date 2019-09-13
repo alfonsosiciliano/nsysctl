@@ -1,5 +1,7 @@
-/*
- * Copyright (c) 2019 Alfonso Sabato Siciliano https://alfix.gitlab.io
+/*-
+ * SPDX-License-Identifier: BSD-2-Clause
+ *
+ * Copyright (c) 2019 Alfonso Sabato Siciliano
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -53,14 +55,14 @@ util_sysctlinfo_objectallflags(int *id, size_t idlevel,
     
     if(idnext != NULL) {
     	SYSCTLINFO_HELPER_ALLWITHNEXT(buf, idlevel_unused, idp_unused, namep,
-				descp, kind, fmtp, labelp, *idnextlevel, idnextp);
+			descp, kind, fmtp, labelp, *idnextlevel, idnextp);
 	memcpy(idnext, idnextp, *idnextlevel * sizeof(int));
     } else {
     	SYSCTLINFO_HELPER_ALL(buf, idlevel_unused, idp_unused, namep, descp,
     			kind, fmtp, labelp);
     }
     
-    if((object = (struct sysctlmif_object *)malloc(sizeof(struct sysctlmif_object))) == NULL)
+    if((object = malloc(sizeof(struct sysctlmif_object))) == NULL)
     	return NULL;
     memset(object, 0, sizeof(struct sysctlmif_object));
     
@@ -81,13 +83,14 @@ util_sysctlinfo_objectallflags(int *id, size_t idlevel,
 }
 
 static struct sysctlmif_object *
-buildTree(int id[CTL_MAXNAME], size_t idlevel, int idnext[CTL_MAXNAME], size_t *idnextlevel)
+buildTree(int id[CTL_MAXNAME], size_t idlevel, int idnext[CTL_MAXNAME],
+	size_t *idnextlevel)
 {
     struct sysctlmif_object *node, *last, *child;
     struct sysctlmif_object_list *list = NULL;
     
     node = util_sysctlinfo_objectallflags(id, idlevel, idnext, idnextlevel);
-    if( (list = (struct sysctlmif_object_list *)malloc(sizeof(struct sysctlmif_object_list))) == NULL){
+    if( (list = malloc(sizeof(struct sysctlmif_object_list))) == NULL){
 	return (NULL);
     }
     node->children = list;
@@ -98,7 +101,8 @@ buildTree(int id[CTL_MAXNAME], size_t idlevel, int idnext[CTL_MAXNAME], size_t *
     while(*idnextlevel > idlevel) {
         memcpy(childid, idnext, *idnextlevel * sizeof(int));
     	childidlevel = *idnextlevel;
-    	if((child = buildTree(childid, childidlevel, idnext, idnextlevel)) == NULL)
+    	child = buildTree(childid, childidlevel, idnext, idnextlevel);
+    	if(child == NULL)
     		break;
     	if (SLIST_EMPTY(list)) {
 		SLIST_INSERT_HEAD(list, child, object_link);
@@ -131,7 +135,8 @@ struct sysctlmif_object *sysctlinfo_objectall(int *id, size_t idlevel)
     return util_sysctlinfo_objectallflags(id, idlevel, NULL, 0);
 }
 
-struct sysctlmif_object *sysctlinfo_tree_allflags(int *idroot, size_t idlevelroot)
+struct sysctlmif_object *
+sysctlinfo_tree_allflags(int *idroot, size_t idlevelroot)
 {
     struct sysctlmif_object *root, *last, *child;
     struct sysctlmif_object_list *list = NULL;
@@ -139,7 +144,7 @@ struct sysctlmif_object *sysctlinfo_tree_allflags(int *idroot, size_t idlevelroo
     size_t idchildlevel, idnextlevel;
     
     if(idlevelroot == 0) {  /* all the MIB*/    
-    	if((root = (struct sysctlmif_object *)malloc(sizeof(struct sysctlmif_object))) == NULL)
+    	if((root = malloc(sizeof(struct sysctlmif_object))) == NULL)
     		return NULL;
     	memset(root, 0, sizeof(struct sysctlmif_object));
     	root->id = (int*)malloc(sizeof(int));
@@ -147,7 +152,8 @@ struct sysctlmif_object *sysctlinfo_tree_allflags(int *idroot, size_t idlevelroo
     	idchild[0] = 0;
     	idchildlevel = 1;
     } else { /* a subtree */
-    	root = util_sysctlinfo_objectallflags(idroot, idlevelroot, idchild, &idchildlevel);
+    	root = util_sysctlinfo_objectallflags(idroot, idlevelroot, 
+    					      idchild, &idchildlevel);
     	if(root == NULL)
     		return NULL;
     	if(idchildlevel <= idlevelroot)
@@ -156,13 +162,14 @@ struct sysctlmif_object *sysctlinfo_tree_allflags(int *idroot, size_t idlevelroo
     		if(idroot[i] != idchild[i])
     			return root;
     }
-    if( (list = (struct sysctlmif_object_list *)malloc(sizeof(struct sysctlmif_object_list))) == NULL)
+    if( (list = malloc(sizeof(struct sysctlmif_object_list))) == NULL)
 		return NULL;
     SLIST_INIT(list);
     root->children = list;
     
     while(true) {
-    	if ( (child = buildTree(idchild, idchildlevel, idnext, &idnextlevel)) == NULL)
+    	child = buildTree(idchild, idchildlevel, idnext, &idnextlevel);
+    	if(child == NULL)
     		return NULL;
     	
     	if (SLIST_EMPTY(list)) {
