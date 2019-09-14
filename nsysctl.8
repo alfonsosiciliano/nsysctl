@@ -22,7 +22,7 @@
 .\" OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 .\" SUCH DAMAGE.
 .\"
-.Dd June 30, 2019
+.Dd September 14, 2019
 .Dt NSYSCTL 8
 .Os
 .Sh NAME
@@ -30,19 +30,21 @@
 .Nd get or set system state
 .Sh SYNOPSIS
 .Nm
-.Op Fl -libxo Ar opts Op Fl r Ar tagname
-.Op Fl DdFGgIilmNpqTtWy Op V|v Op h Op b|o|x
+.Op Fl -libxo Ar options Op Fl r Ar tagroot
+.Op Fl DdFGgIilmNpqTtWy
+.Op Fl V | v Op Cm h Op Cm b | o | x
 .Op Fl e Ar sep
 .Op Fl B Ar bufsize
 .Op Fl f Ar filename
 .Ar name Ns Op = Ns Ar value Ns Op , Ns Ar value
 .Ar ...
 .Nm
-.Op Fl -libxo Ar opts Op Fl r Ar tagroot
-.Op Fl DdFGgIlmNpqTtWy Op V|v Op h Op b|o|x
+.Op Fl -libxo Ar options Op Fl r Ar tagroot
+.Op Fl DdFGgIlmNpqTtWy
+.Op Fl V | v Op Cm h Op Cm b | o | x
 .Op Fl e Ar sep
 .Op Fl B Ar bufsize
-.Fl A|a|X
+.Fl A | a | X
 .Sh DESCRIPTION
 The system maintains a
 .Dq Management Information Base
@@ -50,7 +52,7 @@ The system maintains a
 where the objects are properties to tuning the system,
 the
 .Nm
-utility can get and set the value of a property.
+utility can get or set the value of a property.
 .Pp
 The output is explicitly indicated by the options,
 see COMPATIBILITY for a comparison with
@@ -69,19 +71,24 @@ Equivalent to
 Display every object.
 .It Fl b
 Print value in binary format.
-.It Fl B Ar bufsize
-use a buffer of <bufsize> bytes.
+.It Fl B Ar <bufsize>
+use a buffer of
+.Ar <bufsize>
+bytes.
 .It Fl D
 Equivalent to
 .Fl d Fl F Fl G Fl g Fl l Fl N Fl t Fl v Fl y .
 .It Fl d
 Show description.
-.It Fl e Ar sep
-Use <sep> as separator.
+.It Fl e Ar <sep>
+Use
+.Ar <sep>
+as separator.
 .It Fl F
 Display format string.
-.It Fl f Ar filename
-Load objects to get or set from <filename>.
+.It Fl f Ar <filename>
+Load objects to get or set from
+.Ar <filename> .
 .It Fl G
 Show true-flags.
 .It Fl g
@@ -89,13 +96,13 @@ Print flags.
 .It Fl h
 Try to show values in a human-friendly format.
 .It Fl I
-Show Internal nodes, only leaves are printed by default.
+Show internal nodes, only leaves are printed by default.
 .It Fl i
 Ignore unknown objects.
 .It Fl l
-Display label.
+Display aggregation label.
 .It Fl m
-Display magical objects.
+Display internal magical objects.
 .It Fl N
 Print name.
 .It Fl o
@@ -104,10 +111,12 @@ Show value in hex format until 16 bytes.
 Display [property-name]: property-value.
 .It Fl q
 Avoid to show some warning.
-.It Fl r Ar tagroot
-Specify a <tagroot> with libxo.
+.It Fl r Ar <tagroot>
+Specify a
+.Ar <tagroot>
+with libxo.
 .It Fl T
-Show only variables that are settable via loader.
+Show only objects that are settable via loader.
 .It Fl t
 Print type.
 .It Fl V
@@ -117,14 +126,14 @@ hidden the object.
 .It Fl v
 Display value.
 .It Fl W
-Display only writable variables that are not statistical.
+Display only writable objects that are not statistical.
 .It Fl X
 Equivalent to
 .Fl a Fl V Fl x .
 .It Fl x
 Print value in hex format.
 .It Fl y
-Show id.
+Show ID.
 .El
 .Sh EXIT STATUS
 .Ex -std
@@ -168,6 +177,7 @@ Dump all info about an object in xml format:
 .Xr sysctl 3 ,
 .Xr sysctlmibinfo 3 ,
 .Xr xo_parse_args 3 ,
+.Xr sysctlinfo 4 ,
 .Xr sysctl 8
 .Sh HISTORY
 The
