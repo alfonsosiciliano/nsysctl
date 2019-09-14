@@ -321,6 +321,9 @@ int display_tree(struct sysctlmif_object *object, char *newvalue)
     char idlevelstr[7];
     size_t value_size = 0;
     void *value;
+    
+    if(sysctlinfokmod == false && (object->idlevel > CTL_MAXNAME - 2))
+    	xo_errx(1, "cannot handle the oid, load \'sysctlinfo\' kmod");
 
     if ((object->id[0] == 0) && !mflag)
 	showable = false;
