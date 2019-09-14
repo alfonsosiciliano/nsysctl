@@ -1,5 +1,5 @@
-nsysctl 1.1
-=============
+nsysctl 1.2
+===========
 
 The **nsysctl** utility is a [/sbin/sysctl](https://man.freebsd.org/sysctl/8) 
 clone to get or set the [FreeBSD](http://www.freebsd.org) kernel state, 
@@ -16,7 +16,8 @@ Port: [sysutils/nsysctl](https://www.freshports.org/sysutils/nsysctl) and
  * the options are not mutually exclusive,
  * output via libxo in human and machine readable formats,
  * isolated code to manage "opaque values" (opaque.c),
- * some string value is parsed to show structured output (special\_value.c).
+ * some string value is parsed to show structured output (special\_value.c),
+ * use sysctlinfo kmod if loaded.
 
 
 **TODO**

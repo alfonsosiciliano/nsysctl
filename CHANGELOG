@@ -1,4 +1,4 @@
-Current
+2019-9-14 version 1.2
 
 	* add: 'sysctlinfo' kernel interface support:
 	*    add: use sysctlinfo.ko if loaded else use the kernel interface
