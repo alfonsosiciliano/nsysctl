@@ -43,7 +43,7 @@ util_sysctlinfo_object_allflags(int *id, size_t idlevel,
     int prop[2], *idp_unused, *idnextp;
     unsigned int kind;
     
-    prop[0] = CTL_SYSCTLMIB;
+    prop[0] = CTL_SYSCTL;
     prop[1] = (idnext != NULL) ? ENTRYALLINFO_WITHNEXTNODE : ENTRYALLINFO;
     
     if(SYSCTLINFO(id, idlevel, prop, NULL, &buflen) != 0)
@@ -119,7 +119,7 @@ buildTree(int id[CTL_MAXNAME], size_t idlevel, int idnext[CTL_MAXNAME],
 
 int sysctlinfo_idbyname(char *name, int *id, size_t *idlevel)
 {
-    int prop[2] = {CTL_SYSCTLMIB, ENTRYIDBYNAME};
+    int prop[2] = {CTL_SYSCTL, ENTRYIDBYNAME};
     
     *idlevel *= sizeof(int);
     
