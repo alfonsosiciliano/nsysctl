@@ -115,11 +115,12 @@ bool sysctlinfokmod;
 
 void usage()
 {
-    printf("usage:\n");
-    printf("\tnsysctl [--libxo=opts [-r tagname]] [-DdFGgIilmNpqTt[V|v[h[b|o|x]]]Wy]\n");
-    printf("\t\t[-e sep] [-B <bufsize>] [-f filename] name[=value[,value]] ...\n");
-    printf("\tnsysctl [--libxo=opts [-r tagname]] [-DdFGgIlmNpqTt[V|v[h[b|o|x]]]Wy]\n");
-    printf("\t\t[-e sep] [-B <bufsize>] -A|a|X\n");
+    printf("usage: nsysctl [--libxo options [-r tagroot]] [-DdFGgIilmNpqTtWy]\n");
+    printf("               [-V | -v [h [b | o | x]]] [-B bufsize] [-e sep] [-f filename]\n");
+    printf("               name[=value[,value]] ...\n");
+    printf("       nsysctl [--libxo options [-r tagroot]] [-DdFGgIlmNpqTtWy]\n");
+    printf("               [-V | -v [h [b | o | x]]] [-B bufsize] [-e sep] -A | -a | -X\n");
+
 }
 
 int main(int argc, char *argv[argc])

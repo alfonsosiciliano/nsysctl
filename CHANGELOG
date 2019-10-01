@@ -1,11 +1,13 @@
 Current
 
-	delete: CTL_SYSCTLMIB, CTL_STSCTL is in sys/sysctl.h
+	* delete: CTL_SYSCTLMIB, CTL_STSCTL is in sys/sysctl.h
+	* fix: man SYNOPSIS and usage() like style(9)
 
 2019-9-14 version 1.2
 
 	* add: 'sysctlinfo' kernel interface support:
 	*    add: use sysctlinfo.ko if loaded else use the kernel interface
+	*    add: xo_errx if OID > CTL_MAXNAME - 2 and sysctlinfo is not loaded
 	*    fix: show nodes up to CTL_MAXNAME levels
 	*    fix: show the right value of the nodes without the last name
                   (e.g., "security.jail.param.allow.mount.")
