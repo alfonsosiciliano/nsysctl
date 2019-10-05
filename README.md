@@ -1,5 +1,5 @@
-nsysctl 1.2
-===========
+nsysctl 1.2.1
+=============
 
 The **nsysctl** utility is a [/sbin/sysctl](https://man.freebsd.org/sysctl/8) 
 clone to get or set the [FreeBSD](http://www.freebsd.org) kernel state, 

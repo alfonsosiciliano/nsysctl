@@ -1,4 +1,4 @@
-Current
+2019-10-5 version 1.2.1
 
 	* delete: CTL_SYSCTLMIB, CTL_STSCTL is in sys/sysctl.h
 	* fix: man SYNOPSIS and usage() like style(9)
