@@ -32,6 +32,7 @@
 /* Original: https://svnweb.freebsd.org/base/head/sbin/sysctl/sysctl.c */
 
 #include <sys/param.h>
+#include <sys/nv.h>
 #include <sys/resource.h>
 #include <sys/time.h>
 #include <sys/vmmeter.h>
@@ -56,6 +57,7 @@
 #include <sysctlmibinfo.h>
 
 /* Func declarations */
+static int NV(void *value, size_t value_size, bool hflag);
 static int S_clockinfo(void *value, size_t value_size, bool hflag);
 static int S_input_id(void *value, size_t value_size, bool hflag);
 static int S_loadavg(void *value, size_t value_size, bool hflag);
@@ -71,7 +73,8 @@ int strIKtoi(const char *str, char **endptrp, const char *fmt);
 
 bool is_opaque_defined(struct sysctlmif_object *object)
 {
-    if ( strcmp(object->fmt, "S,clockinfo") == 0 ||
+    if ( strcmp(object->fmt, "NV") == 0 ||
+	 strcmp(object->fmt, "S,clockinfo") == 0 ||
 #if defined(__amd64__) || defined(__i386__)
 	strcmp(object->fmt, "S,bios_smap_xattr") == 0 ||
 #endif
@@ -96,8 +99,10 @@ display_opaque_value(struct sysctlmif_object *object, void *value,
 	int to = value_size;
 	
 	xo_open_container("value");
-	
-	if (strcmp(object->fmt, "S,clockinfo") == 0) {
+
+	if (strcmp(object->fmt, "NV") == 0) {
+		error += NV(value, value_size, hflag);
+	} else if (strcmp(object->fmt, "S,clockinfo") == 0) {
 		error += S_clockinfo(value, value_size, hflag);
 	} else if (strcmp(object->fmt, "S,timeval") == 0) {
 		error += S_timeval(value, value_size, hflag);
@@ -140,6 +145,54 @@ display_opaque_value(struct sysctlmif_object *object, void *value,
 	xo_close_container("value");
 
 	return error;
+}
+
+static int
+NV(void *value, size_t value_size, bool hflag)
+{
+	nvlist_t *nvl = nvlist_unpack(value, value_size, 0);
+	void *cookie;
+	int type;
+	const char *name;
+	char *hfield = hflag ? "h,hn-decimal" : NULL;
+	
+	xo_open_container("nvlist");
+
+	cookie = NULL;
+	xo_emit("{Lw:name}");
+	while ((name = nvlist_next(nvl, &type, &cookie)) != NULL) {
+		xo_emit("{Lw:name}");
+		/*
+		printf("%s=", name);
+		switch (type) {
+		case NV_TYPE_NUMBER:
+			printf("%ju", (uintmax_t)nvlist_get_number(nvl, name));
+			break;
+		case NV_TYPE_STRING:
+			printf("%s", nvlist_get_string(nvl, name));
+			break;
+		default:
+			printf("N/A");
+			break;
+		}
+		printf("\n");*/
+	}
+	/*
+	xo_emit("{Lw:{ sec =}");
+	xo_emit_field(hfield, "sec", "%jd", NULL, (intmax_t)tv->tv_sec);
+	xo_emit(", {Lw:usec =}");
+	xo_emit_field(hfield, "usec", "%ld", NULL, tv->tv_usec);
+	xo_emit("{Nw:}}");
+
+	tv_sec = tv->tv_sec;
+	p1 = strdup(ctime(&tv_sec));
+	p1[strlen(p1) -1] = '\0';
+	xo_emit("{P: }{:date/%s}", p1);
+	free(p1);
+	*/
+	xo_close_container("nvlist");
+
+	return (0);
 }
 
 

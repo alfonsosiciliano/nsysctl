@@ -8,7 +8,7 @@ SOURCES= nsysctl.c opaque.c special_value.c sysctlinfo_helper.c
 .PATH : ./src
 OBJECTS= ${SOURCES:.c=.o}
 CCFLAGS= -I/usr/local/include -Wall -g
-LDFLAGS= -L/usr/local/lib -lsysctlmibinfo -lxo -lutil
+LDFLAGS= -L/usr/local/lib -lsysctlmibinfo -lxo -lutil -lnv
 SBINDIR= /usr/local/sbin
 
 MAN= ${OUTPUT}.8
