@@ -159,37 +159,25 @@ NV(void *value, size_t value_size, bool hflag)
 	xo_open_container("nvlist");
 
 	cookie = NULL;
-	xo_emit("{Lw:name}");
 	while ((name = nvlist_next(nvl, &type, &cookie)) != NULL) {
-		xo_emit("{Lw:name}");
-		/*
-		printf("%s=", name);
+		xo_open_container("nv");
+		xo_emit("{L:\n}");
+		xo_emit("{:name/%s}", name);
+		xo_emit("{L:=}");
 		switch (type) {
 		case NV_TYPE_NUMBER:
-			printf("%ju", (uintmax_t)nvlist_get_number(nvl, name));
+			xo_emit_field(hfield, "value", "%ju", NULL, (uintmax_t)nvlist_get_number(nvl, name));
 			break;
 		case NV_TYPE_STRING:
-			printf("%s", nvlist_get_string(nvl, name));
+			xo_emit("{:value/%s}", nvlist_get_string(nvl, name));
 			break;
 		default:
-			printf("N/A");
+			xo_emit("{L:N/A}");
 			break;
 		}
-		printf("\n");*/
+		xo_close_container("nv");
 	}
-	/*
-	xo_emit("{Lw:{ sec =}");
-	xo_emit_field(hfield, "sec", "%jd", NULL, (intmax_t)tv->tv_sec);
-	xo_emit(", {Lw:usec =}");
-	xo_emit_field(hfield, "usec", "%ld", NULL, tv->tv_usec);
-	xo_emit("{Nw:}}");
-
-	tv_sec = tv->tv_sec;
-	p1 = strdup(ctime(&tv_sec));
-	p1[strlen(p1) -1] = '\0';
-	xo_emit("{P: }{:date/%s}", p1);
-	free(p1);
-	*/
+	
 	xo_close_container("nvlist");
 
 	return (0);
