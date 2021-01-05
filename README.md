@@ -7,7 +7,7 @@ supporting [libxo](http://juniper.github.io/libxo/libxo-manual.html) and extra
 options; it depends on [sysctlmibinfo](https://gitlab.com/alfix/sysctlmibinfo) 
 and [sysctlinfo](https://gitlab.com/alfix/sysctlinfo). 
 Port: [sysutils/nsysctl](https://www.freshports.org/sysutils/nsysctl) and 
-**[TUTORIAL](https://alfix.gitlab.io/bsd/2019/02/19/nsysctl-tutorial.html)**.  
+**[TUTORIAL](https://alfonsosiciliano.gitlab.io/posts/2019-02-19-nsysctl-tutorial.html)**.  
 
 
 <u>Features:</u>
