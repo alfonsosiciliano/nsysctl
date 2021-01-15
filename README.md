@@ -9,7 +9,8 @@ and [sysctlinfo](https://gitlab.com/alfix/sysctlinfo).
 **[TUTORIAL](https://alfonsosiciliano.gitlab.io/posts/2019-02-19-nsysctl-tutorial.html)**.  
 
 
-<u>Features:</u>
+**Features**
+
  * output is explicitly indicated by the options,
  * new options to show the properties of a state,
  * the options are not mutually exclusive,
