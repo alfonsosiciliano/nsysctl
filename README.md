@@ -5,9 +5,7 @@ The **nsysctl** utility is a [/sbin/sysctl](https://man.freebsd.org/sysctl/8)
 clone to get or set the [FreeBSD](http://www.freebsd.org) kernel state, 
 supporting [libxo](http://juniper.github.io/libxo/libxo-manual.html) and extra 
 options; it depends on [sysctlmibinfo](https://gitlab.com/alfix/sysctlmibinfo) 
-and [sysctlinfo](https://gitlab.com/alfix/sysctlinfo). 
-**[TUTORIAL](https://alfonsosiciliano.gitlab.io/posts/2019-02-19-nsysctl-tutorial.html)**.  
-
+and [sysctlinfo](https://gitlab.com/alfix/sysctlinfo).
 
 **Features**
 
@@ -28,6 +26,11 @@ To install the port [sysutils/nsysctl](https://www.freshports.org/sysutils/nsysc
 To add the package:
 
     # pkg install nsysctl
+
+**Documentation**
+
+ * Manual [nsysctl(8)](https://alfonsosiciliano.gitlab.io/posts/2019-02-23-manual-nsysctl.html)
+ * [Tutorial](https://alfonsosiciliano.gitlab.io/posts/2019-02-19-nsysctl-tutorial.html)
 
 **TODO**
 
