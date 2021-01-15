@@ -25,6 +25,7 @@ Port: [sysutils/nsysctl](https://www.freshports.org/sysutils/nsysctl) and
  * [ ] I can not test opaque S,efi\_map\_header (machdep.efi\_map) on my laptop
  * [ ] Add libnv
  * [ ] Add opt -k (avoid SKIP objects)
+ * [ ] Add NEEDGIANT flag (with -G)
  * [ ] Rename opt: -m -> -0 (zero)
  * [ ] Delete sysctlinfo\_helper.h/c
  * [ ] Complete nsysctl.8
