@@ -27,4 +27,5 @@ Port: [sysutils/nsysctl](https://www.freshports.org/sysutils/nsysctl) and
  * [ ] Add opt -k (avoid SKIP objects)
  * [ ] Rename opt: -m -> -0 (zero)
  * [ ] Delete sysctlinfo\_helper.h/c
+ * [ ] Complete nsysctl.8
  
