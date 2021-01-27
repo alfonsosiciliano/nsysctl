@@ -29,8 +29,11 @@ To add the package:
 
 **Documentation**
 
- * Manual [nsysctl(8)](https://alfonsosiciliano.gitlab.io/posts/2019-02-23-manual-nsysctl.html)
- * [Tutorial](https://alfonsosiciliano.gitlab.io/posts/2019-02-19-nsysctl-tutorial.html)
+ * Manual Page:
+   [manual-nsysctl.html](https://alfonsosiciliano.gitlab.io/posts/2019-02-23-manual-nsysctl.html)
+   or [man.freebsd.org/nsysctl/8](https://man.freebsd.org/nsysctl/8) (could be outdated)
+ * Tutorial:
+   ["Step-by-step Tutorial"](https://alfonsosiciliano.gitlab.io/posts/2019-02-19-nsysctl-tutorial.html)
 
 **TODO**
 
