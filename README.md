@@ -36,8 +36,8 @@ To add the package:
 
  * [ ] I can not test opaque S,efi\_map\_header (machdep.efi\_map) on my laptop
  * [ ] Add libnv
- * [ ] Add opt -k (avoid SKIP objects)
- * [ ] Add NEEDGIANT flag (with -G)
+ * [ ] Add -k opt: show SKIP objects
+ * [ ] Add NEEDGIANT flag for the -G opt
  * [ ] Rename opt: -m -> -0 (zero)
  * [ ] Delete sysctlinfo\_helper.h/c
  * [ ] Complete nsysctl.8
