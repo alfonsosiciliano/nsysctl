@@ -45,5 +45,5 @@ To add the package:
  * [ ] Delete sysctlinfo\_helper.h/c
  * [ ] Delete libsysctlmibinfo
  * [ ] Add libsysctlmibinfo2
- * [ ] Complete nsysctl.8
+ * [ ] Update manual
  
