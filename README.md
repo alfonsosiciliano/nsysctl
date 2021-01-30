@@ -6,7 +6,7 @@ kernel state at runtime, supporting
 [libxo](http://juniper.github.io/libxo/libxo-manual.html) and a lof of options;
 it depends on [sysctlmibinfo](https://gitlab.com/alfix/sysctlmibinfo) and
 [sysctlinfo](https://gitlab.com/alfix/sysctlinfo)
-([sysctmibinfo2](https://gitlab.com/alfix/sysctlmibinfo2) in the future).
+([sysctlmibinfo2](https://gitlab.com/alfix/sysctlmibinfo2) in the future).
 
 **Features**
 
