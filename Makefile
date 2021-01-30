@@ -1,7 +1,7 @@
-# Any copyright is dedicated to the Public Domain.
-# <http://creativecommons.org/publicdomain/zero/1.0/>
+# Any copyright is dedicated to the Public Domain - NO WARRANTY:
+#   <http://creativecommons.org/publicdomain/zero/1.0/>
 #
-# Written by Alfonso S. Siciliano https://alfix.gitlab.io
+# Written by Alfonso Sabato Siciliano
 
 OUTPUT= nsysctl
 SOURCES= nsysctl.c opaque.c special_value.c sysctlinfo_helper.c
