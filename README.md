@@ -10,7 +10,7 @@ and [sysctlinfo](https://gitlab.com/alfix/sysctlinfo).
 **Features**
 
  * output is explicitly indicated by the options,
- * new options to show the properties of a state,
+ * new options to show the properties of a parameter,
  * the options are not mutually exclusive,
  * output via libxo in human and machine readable formats,
  * isolated code to manage "opaque values" (opaque.c),
