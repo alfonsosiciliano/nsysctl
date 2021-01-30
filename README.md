@@ -1,11 +1,12 @@
 nsysctl 1.2.1
 =============
 
-The **nsysctl** utility is a [/sbin/sysctl](https://man.freebsd.org/sysctl/8) 
-clone to get or set the [FreeBSD](http://www.freebsd.org) kernel state, 
-supporting [libxo](http://juniper.github.io/libxo/libxo-manual.html) and extra 
-options; it depends on [sysctlmibinfo](https://gitlab.com/alfix/sysctlmibinfo) 
-and [sysctlinfo](https://gitlab.com/alfix/sysctlinfo).
+The **nsysctl** utility can get and set the [FreeBSD](http://www.freebsd.org)
+kernel state at runtime, supporting
+[libxo](http://juniper.github.io/libxo/libxo-manual.html) and a lof of options;
+it depends on [sysctlmibinfo](https://gitlab.com/alfix/sysctlmibinfo) and
+[sysctlinfo](https://gitlab.com/alfix/sysctlinfo)
+([sysctmibinfo2](https://gitlab.com/alfix/sysctlmibinfo2) in the future).
 
 **Features**
 
