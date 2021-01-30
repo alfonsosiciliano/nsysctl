@@ -110,7 +110,6 @@ bool Iflag, iflag, lflag, Nflag, oflag, pflag, qflag, rflag;
 bool Sflag, Tflag, tflag, Vflag, vflag, Wflag, xflag, yflag;
 char *sep, *rflagstr;
 unsigned int Bflagsize;
-bool sysctlinfokmod;
 
 void usage()
 {
@@ -125,9 +124,8 @@ void usage()
 int main(int argc, char *argv[argc])
 {
     int ch, error;
-    struct sysctlmif_object *root, *nodelevel1;
-    int idroot[1] = {0};
-    size_t idrootlevel = 0;
+    struct sysctlmif_object *topobject;
+    struct sysctlmif_list *mib;
     char *filename, line[MAXSIZELINE];
     FILE *fp;
     
@@ -138,7 +136,8 @@ int main(int argc, char *argv[argc])
     Iflag = iflag = lflag = Nflag = oflag = pflag = qflag = rflag = false;
     Sflag = Tflag = tflag = Vflag = vflag = Wflag = xflag = yflag = false;
 
-    sysctlinfokmod = kld_isloaded("sysctlinfo") == 0 ? false : true;
+    if( kld_isloaded("sysctlinfo") == 0)
+    	xo_errx(1, "cannot handle the oid, load \'sysctlinfo\' kmod");
 
     atexit(xo_finish_atexit);
 
@@ -225,20 +224,14 @@ int main(int argc, char *argv[argc])
     }
     else if (aflag) { /* -a flag (no roots in input) */
 	xo_open_list("tree");
-	if(sysctlinfokmod == true) {
-		root = sysctlinfo_tree_allflags(idroot, idrootlevel);
-	} else {
-		root = sysctlmif_tree(idroot, idrootlevel, SYSCTLMIF_FALL,
-			      SYSCTLMIF_MAXDEPTH);
-	}
-	if(root == NULL)
+	if((mib = sysctlmif_mib()) == NULL)
 	    xo_err(1, "cannot build the MIB-tree");
 
 	/* the roots are objects with level 1 */
-	SLIST_FOREACH(nodelevel1, root->children, object_link)
-	    error += display_tree(nodelevel1, NULL);
+	SLIST_FOREACH(topobject, mib, object_link)
+	    error += display_tree(topobject, NULL);
 
-	sysctlmif_freetree(root);
+	sysctlmif_freemib(mib);
 	xo_close_list("tree");
     }
     else if (!fflag){ /* no roots, no -a and no -f*/
@@ -256,8 +249,8 @@ int main(int argc, char *argv[argc])
 int parse_line_or_argv(char *arg)
 {
     char *name, *valuestr;
-    int error = 0, id[SYSCTLMIF_MAXIDLEVEL];
-    size_t idlevel = SYSCTLMIF_MAXIDLEVEL;
+    int error = 0, id[CTL_MAXNAME];
+    size_t idlevel = CTL_MAXNAME;
     struct sysctlmif_object *node;
     
     name = arg;
@@ -267,10 +260,7 @@ int parse_line_or_argv(char *arg)
 	valuestr++;
     }
     
-    if(sysctlinfokmod == true)
-	error = sysctlinfo_idbyname(name, id, &idlevel);
-    else
-    	error = sysctlmif_nametoid(name, strlen(name) +1, id, &idlevel);
+    error = sysctlmif_oidbyname(name, id, &idlevel);
     
     if(error != 0) { /* nodename doesn't exist */	
 	if (!iflag)
@@ -280,25 +270,14 @@ int parse_line_or_argv(char *arg)
 	    xo_warnx("unknow \'%s\' oid", name);
     }
     else if (valuestr == NULL) { /* only nodename */
-    	if(sysctlinfokmod == true) {
-		node = sysctlinfo_tree_allflags(id, idlevel);
-	} else {
-		node = sysctlmif_tree(id, idlevel, SYSCTLMIF_FALL, SYSCTLMIF_MAXDEPTH);
-	}
-	if(node == NULL)
+	if((node = sysctlmif_tree(id, idlevel)) == NULL)
 	    xo_err(1, "cannot build the tree of '%s'", name);
 	
 	error = display_tree(node, NULL);
 	sysctlmif_freetree(node);
     } 
     else { /* nodename=value */
-	/* FALL for fmt 'A' and for display_tree */
-	if(sysctlinfokmod == true) {
-		node = sysctlinfo_object_allflags(id, idlevel);
-	} else {
-		node = sysctlmif_object(id, idlevel, SYSCTLMIF_FALL);
-	}
-	if(node == NULL)
+	if((node = sysctlmif_object(id, idlevel))== NULL)
 	    xo_err(1, "cannot build the node to set '%s'", name);
 	
 	if(!IS_LEAF(node)) {
@@ -322,9 +301,6 @@ int display_tree(struct sysctlmif_object *object, char *newvalue)
     char idlevelstr[7];
     size_t value_size = 0;
     void *value;
-    
-    if(sysctlinfokmod == false && (object->idlevel > CTL_MAXNAME - 2))
-    	xo_errx(1, "cannot handle the oid, load \'sysctlinfo\' kmod");
 
     if ((object->id[0] == 0) && !Sflag)
 	showable = false;
