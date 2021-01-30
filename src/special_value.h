@@ -1,7 +1,7 @@
 /*-
  * SPDX-License-Identifier: BSD-2-Clause
  *
- * Copyright (c) 2019 Alfonso Sabato Siciliano
+ * Copyright (c) 2019-2021 Alfonso Sabato Siciliano
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,14 +33,13 @@
 #include <stdbool.h>
 #include <sysctlmibinfo.h>
 
-bool
-parse_string(char *start, char **next, char *endbuffer, char sep);
+bool parse_string(char *start, char **next, char *endbuffer, char sep);
 
 bool
 is_special_value(struct sysctlmif_object *object);
 
 int
 display_special_value(struct sysctlmif_object *object, void* value,
-		      size_t value_size);
+    size_t value_size);
 
 #endif /* _SPECIAL_VALUE_H_ */

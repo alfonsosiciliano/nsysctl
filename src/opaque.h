@@ -1,7 +1,7 @@
 /*-
  * SPDX-License-Identifier: BSD-2-Clause
  *
- * Copyright (c) 2018-2019 Alfonso Sabato Siciliano
+ * Copyright (c) 2018-2021 Alfonso Sabato Siciliano
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,7 +32,7 @@
 
 int
 display_opaque_value(struct sysctlmif_object *object, void *value, 
-		     size_t value_size, bool hflag, bool oflag, bool xflag);
+    size_t value_size, bool hflag, bool oflag, bool xflag);
 
 bool
 is_opaque_defined(struct sysctlmif_object *object);
@@ -42,6 +42,6 @@ strIK_to_int(const char *str, int *kelvin, const char *fmt);
 
 int
 display_IK_value(struct sysctlmif_object *obj, void *value, size_t value_size,
-		 bool hflag);
+    bool hflag);
 
 #endif /* _NSYSCTL_OPAQUE_H_ */

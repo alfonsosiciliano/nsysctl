@@ -1,7 +1,7 @@
 /*-
  * SPDX-License-Identifier: BSD-2-Clause
  *
- * Copyright (c) 2019 Alfonso Sabato Siciliano
+ * Copyright (c) 2019-2021 Alfonso Sabato Siciliano
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -78,7 +78,7 @@ static bool find_int(char *start, char **end, int *intvalue)
 	i++;
     }
     *intvalue = (int)strtoll(&start[i], NULL, 10);
-    
+
     e = &start[i];
     while (true) {
 	if(e[j] == '\n' || e[j] == '\0' || e[j] == EOF || e[j] < '0' || e[j] > '9')
@@ -86,7 +86,7 @@ static bool find_int(char *start, char **end, int *intvalue)
 	j++;
     }
     *end = &e[j];
-    
+
     return true;
 }
 
@@ -117,7 +117,7 @@ int display_special_value(struct sysctlmif_object *object, void* value,
 	error += debug_witness_fullgraph(value, value_size);
     else
 	error++;
-    
+
     return error;
 }
 
@@ -125,7 +125,7 @@ static int kern_conftxt(void *value, size_t value_size)
 {
     int error = 0;
     char *line = value, *next, *n, *v;
-    
+
     xo_open_container("value");
     while(parse_string(line, &next, &value[value_size], '\n')) {
 	if(line[0] != '\0') {
@@ -139,7 +139,7 @@ static int kern_conftxt(void *value, size_t value_size)
 	line = next;
     }
     xo_close_container("value");
-    
+
     return  error;
 }
 
@@ -249,7 +249,7 @@ static int debug_witness_fullgraph(void *value, size_t value_size)
 	    xo_emit("{:value/%s}{L:\n}", line);
 	    xo_close_container("property");
 	}
-	
+
 	line = next;
     }
     xo_close_container("value");
