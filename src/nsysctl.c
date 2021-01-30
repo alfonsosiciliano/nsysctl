@@ -136,10 +136,10 @@ int main(int argc, char *argv[argc])
     Iflag = iflag = lflag = Nflag = oflag = pflag = qflag = rflag = false;
     Sflag = Tflag = tflag = Vflag = vflag = Wflag = xflag = yflag = false;
 
-    if( kld_isloaded("sysctlinfo") == 0)
-    	xo_errx(1, "cannot handle the oid, load \'sysctlinfo\' kmod");
-
     atexit(xo_finish_atexit);
+
+    if(kld_isloaded("sysctlinfo") == 0)
+    	xo_errx(1, "\'sysctlinfo\' kmod unloaded");
 
     xo_set_flags(NULL, XOF_UNITS | XOF_FLUSH);
     argc = xo_parse_args(argc, argv);
