@@ -53,6 +53,16 @@ where an object represents a parameter of the system, the
 .Nm
 utility can get or set the value of a parameter.
 .Pp
+.Nm nsysctl
+requires the
+.Xr sysctlinfo 4
+interface.
+To load the required kernel module at boot time, place the following line in
+.Xr loader.conf 5 :
+.Bd -literal -offset indent
+sysctlinfo_load="YES"
+.Ed
+.Pp
 The following options are available:
 .Bl -tag -width indent
 .It Fl -libxo Ar options
