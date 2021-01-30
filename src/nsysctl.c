@@ -34,12 +34,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sysctlmibinfo.h>
+#include <sysctlmibinfo2.h>
 #include <unistd.h>
 
 #include "opaque.h"
 #include "special_value.h"
-#include "sysctlinfo_helper.h"
 
 #define MAXSIZELINE 255
 #define IS_LEAF(node)	(node->children == NULL || SLIST_EMPTY(node->children))
