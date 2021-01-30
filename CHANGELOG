@@ -1,3 +1,7 @@
+version 1.3
+
+	*
+
 2019-10-5 version 1.2.1
 
 	* delete: CTL_SYSCTLMIB, CTL_STSCTL is in sys/sysctl.h
