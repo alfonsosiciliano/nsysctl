@@ -43,5 +43,7 @@ To add the package:
  * [ ] Add NEEDGIANT flag for the -G opt
  * [ ] Rename opt: -m -> -0 (zero)
  * [ ] Delete sysctlinfo\_helper.h/c
+ * [ ] Delete libsysctlmibinfo
+ * [ ] Add libsysctlmibinfo2
  * [ ] Complete nsysctl.8
  
