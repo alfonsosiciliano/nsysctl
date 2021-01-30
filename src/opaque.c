@@ -29,7 +29,7 @@
  * SUCH DAMAGE.
  */
 
-/* Original: https://svnweb.freebsd.org/base/head/sbin/sysctl/sysctl.c */
+/* https://cgit.freebsd.org/src/tree/sys/kern/kern_sysctl.c */
 
 #include <sys/param.h>
 #include <sys/resource.h>
