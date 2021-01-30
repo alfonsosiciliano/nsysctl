@@ -4,11 +4,11 @@
 # Written by Alfonso Sabato Siciliano
 
 OUTPUT= nsysctl
-SOURCES= nsysctl.c opaque.c special_value.c sysctlinfo_helper.c
+SOURCES= nsysctl.c opaque.c special_value.c
 .PATH : ./src
 OBJECTS= ${SOURCES:.c=.o}
 CCFLAGS= -I/usr/local/include -Wall -g
-LDFLAGS= -L/usr/local/lib -lsysctlmibinfo -lxo -lutil
+LDFLAGS= -L/usr/local/lib -lsysctlmibinfo2 -lxo -lutil
 SBINDIR= /usr/local/sbin
 
 MAN= ${OUTPUT}.8
