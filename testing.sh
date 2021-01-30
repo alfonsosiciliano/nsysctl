@@ -5,8 +5,9 @@ for t in -aN -aNT -aNW
 do
     echo "$t"
     sysctl $t >> sysctl.txt
-    ./nsysctl $t > nsysctl.txt
+    ./nsysctl $t -I > nsysctl.txt
     diff sysctl.txt nsysctl.txt | diffstat -m
+    meld sysctl.txt nsysctl.txt
     rm sysctl.txt nsysctl.txt
 done
 
