@@ -107,18 +107,18 @@ int display_basic_value(struct sysctlmif_object *object, void *value, size_t val
 int set_basic_value(struct sysctlmif_object *object, char *input);
 
 bool aflag, bflag, dflag, Fflag, fflag, hflag, Gflag, gflag;
-bool Iflag, iflag, lflag, mflag, Nflag, oflag, pflag, qflag; 
-bool rflag, Tflag, tflag, Vflag, vflag, Wflag, xflag, yflag;
+bool Iflag, iflag, lflag, Nflag, oflag, pflag, qflag, rflag;
+bool Sflag, Tflag, tflag, Vflag, vflag, Wflag, xflag, yflag;
 char *sep, *rflagstr;
 unsigned int Bflagsize;
 bool sysctlinfokmod;
 
 void usage()
 {
-    printf("usage: nsysctl [--libxo options [-r tagroot]] [-DdFGgIilmNpqTtWy]\n");
+    printf("usage: nsysctl [--libxo options [-r tagroot]] [-DdFGgIilNpqSTtWy]\n");
     printf("               [-V | -v [h [b | o | x]]] [-B bufsize] [-e sep] [-f filename]\n");
     printf("               name[=value[,value]] ...\n");
-    printf("       nsysctl [--libxo options [-r tagroot]] [-DdFGgIlmNpqTtWy]\n");
+    printf("       nsysctl [--libxo options [-r tagroot]] [-DdFGgIlNpqSTtWy]\n");
     printf("               [-V | -v [h [b | o | x]]] [-B bufsize] [-e sep] -A | -a | -X\n");
 
 }
@@ -136,8 +136,8 @@ int main(int argc, char *argv[argc])
     error = 0;
     Bflagsize = 0;
     aflag = bflag = dflag = Fflag = fflag = Gflag = gflag = hflag = false;
-    Iflag = iflag = lflag = mflag = Nflag = oflag = pflag = qflag = false;
-    rflag = Tflag = tflag = Vflag = vflag = Wflag = xflag = yflag = false;
+    Iflag = iflag = lflag = Nflag = oflag = pflag = qflag = rflag = false;
+    Sflag = Tflag = tflag = Vflag = vflag = Wflag = xflag = yflag = false;
 
     sysctlinfokmod = kld_isloaded("sysctlinfo") == 0 ? false : true;
 
@@ -148,7 +148,7 @@ int main(int argc, char *argv[argc])
     if (argc < 0)
 	exit(EXIT_FAILURE);
 
-    while ((ch = getopt(argc, argv, "AaB:bDde:Ff:GghiIlmNnopqr:TtVvWwXxy")) != -1) {
+    while ((ch = getopt(argc, argv, "AaB:bDde:Ff:GghiIlNnopqr:STtVvWwXxy")) != -1) {
 	switch (ch) {
 	case 'A': aflag = true; oflag = true; Vflag=true; break;
 	case 'a': aflag = true; break;
@@ -167,13 +167,14 @@ int main(int argc, char *argv[argc])
 	case 'I': Iflag = true; break;
 	case 'i': iflag = true; break;
 	case 'l': lflag = true; break;
-	case 'm': mflag = true; break;
+	case 'm': Sflag = true; break; /* compatibility <= ver. 1.2.1 */
 	case 'N': Nflag = true; break;
 	case 'n': /* compatibility, ignored */ break;
 	case 'o': oflag = true; break;
 	case 'p': pflag = true; break;
 	case 'q': qflag = true; break;
 	case 'r': rflag = true; rflagstr = optarg; break;
+	case 'S': Sflag = true; break;
 	case 'T': Tflag = true; break;
 	case 't': tflag = true; break;
 	case 'V': Vflag = true; break;
@@ -326,7 +327,7 @@ int display_tree(struct sysctlmif_object *object, char *newvalue)
     if(sysctlinfokmod == false && (object->idlevel > CTL_MAXNAME - 2))
     	xo_errx(1, "cannot handle the oid, load \'sysctlinfo\' kmod");
 
-    if ((object->id[0] == 0) && !mflag)
+    if ((object->id[0] == 0) && !Sflag)
 	showable = false;
 
     if (Wflag && !((object->flags & CTLFLAG_WR) && !(object->flags & CTLFLAG_STATS)))

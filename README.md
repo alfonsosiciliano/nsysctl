@@ -42,7 +42,7 @@ To add the package:
  * [ ] Add libnv
  * [ ] Add -k opt: show SKIP objects
  * [ ] Add NEEDGIANT flag for the -G opt
- * [ ] Rename opt: -m -> -0 (zero)
+ * [X] Rename opt: -m -> -S
  * [ ] Delete sysctlinfo\_helper.h/c
  * [ ] Delete libsysctlmibinfo
  * [ ] Add libsysctlmibinfo2

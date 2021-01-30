@@ -31,7 +31,7 @@
 .Sh SYNOPSIS
 .Nm
 .Op Fl -libxo Ar options Op Fl r Ar tagroot
-.Op Fl DdFGgIilmNpqTtWy
+.Op Fl DdFGgIilNpqSTtWy
 .Op Fl V | v Op Cm h Op Cm b | o | x
 .Op Fl B Ar bufsize
 .Op Fl e Ar sep
@@ -40,7 +40,7 @@
 .Ar ...
 .Nm
 .Op Fl -libxo Ar options Op Fl r Ar tagroot
-.Op Fl DdFGgIlmNpqTtWy
+.Op Fl DdFGgIlNpqSTtWy
 .Op Fl V | v Op Cm h Op Cm b | o | x
 .Op Fl B Ar bufsize
 .Op Fl e Ar sep
@@ -96,8 +96,6 @@ Show internal nodes, only leaves are printed by default.
 Ignore unknown objects.
 .It Fl l
 Display aggregation label.
-.It Fl m
-Display internal magical objects.
 .It Fl N
 Print name.
 .It Fl o
@@ -110,6 +108,10 @@ Avoid to show some warning.
 Specify a
 .Ar <tagroot>
 with libxo.
+.It Fl S
+Display also the
+.Dq sysctl.*
+subtree.
 .It Fl T
 Show only objects that are settable via loader.
 .It Fl t
