@@ -1,7 +1,7 @@
 /*-
  * SPDX-License-Identifier: BSD-2-Clause
  *
- * Copyright (c) 2018-2019 Alfonso Sabato Siciliano
+ * Copyright (c) 2018-2021 Alfonso Sabato Siciliano
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -98,7 +98,6 @@ static const struct ctl_type ctl_types[CTLTYPE+1] = {
     { "uint32_t",         sizeof(uint32_t)      }
 };
 
-
 void usage(void);
 int parse_line_or_argv(char *arg);
 int display_tree(struct sysctlmif_object *object, char *newvalue);
@@ -113,12 +112,12 @@ unsigned int Bflagsize;
 
 void usage()
 {
+
     printf("usage: nsysctl [--libxo options [-r tagroot]] [-DdFGgIilNpqSTtWy]\n");
     printf("               [-V | -v [h [b | o | x]]] [-B bufsize] [-e sep] [-f filename]\n");
     printf("               name[=value[,value]] ...\n");
     printf("       nsysctl [--libxo options [-r tagroot]] [-DdFGgIlNpqSTtWy]\n");
     printf("               [-V | -v [h [b | o | x]]] [-B bufsize] [-e sep] -A | -a | -X\n");
-
 }
 
 int main(int argc, char *argv[argc])
@@ -195,8 +194,7 @@ int main(int argc, char *argv[argc])
 
     if( (bflag && oflag) || (bflag && xflag) || (oflag && xflag) )
 	xo_errx(1, "-[b|o|x] are mutually exclusive");
-    
-    
+
     if (rflag)
 	xo_open_container(rflagstr);
 
@@ -242,7 +240,6 @@ int main(int argc, char *argv[argc])
     if (rflag)
 	xo_close_container(rflagstr);
 
-    
     return (error);
 }
 
@@ -252,16 +249,16 @@ int parse_line_or_argv(char *arg)
     int error = 0, id[CTL_MAXNAME];
     size_t idlevel = CTL_MAXNAME;
     struct sysctlmif_object *node;
-    
+
     name = arg;
     valuestr = strchr(arg, '=');
     if(valuestr != NULL) {
 	*valuestr='\0';
 	valuestr++;
     }
-    
+
     error = sysctlmif_oidbyname(name, id, &idlevel);
-    
+
     if(error != 0) { /* nodename doesn't exist */	
 	if (!iflag)
 	    error++;
@@ -318,7 +315,7 @@ int display_tree(struct sysctlmif_object *object, char *newvalue)
        (object->type == CTLTYPE_OPAQUE || object->type == CTLTYPE_NODE) && 
        !xflag && !oflag && !is_opaque_defined(object))
  	showable = false;
-    
+
     if(Vflag && !IS_LEAF(object))
 	showable = false;
 
@@ -332,7 +329,7 @@ int display_tree(struct sysctlmif_object *object, char *newvalue)
 	    // kern.file and hw.dri.0.info.i915_drpc_info) /sbin/sysctl.c solution:
 	    value_size += value_size;
 	}
-	
+
 	if ((value = malloc(value_size)) == NULL) {
 	    xo_err(1, "allocation memory to get the value of '%s'", object->name);
 	    showable = false;
@@ -347,7 +344,7 @@ int display_tree(struct sysctlmif_object *object, char *newvalue)
 	} else
 	    showvalue = true;
     }
-    
+
     if (showable)
     {
 	xo_open_instance("object");
@@ -379,7 +376,7 @@ int display_tree(struct sysctlmif_object *object, char *newvalue)
 
 	if (Nflag)
 	    XOEMITPROP("NAME","{:name/%s}", object->name);
-	
+
 	if (lflag) /* entry without label could return "\0" or NULL */
 	    XOEMITPROP("LABEL","{:label/%s}", 
 		       object->label == NULL ? "" : object->label);
@@ -387,17 +384,17 @@ int display_tree(struct sysctlmif_object *object, char *newvalue)
 	if (dflag) /* entry without descr could return "\0" or NULL */
 	    XOEMITPROP("DESCRIPTION","{:description/%s}", 
 		       object->desc == NULL ? "" : object->desc);
-	
+
 	if (tflag)
 	    XOEMITPROP("TYPE","{:type/%s}", ctl_types[object->type].name);
-	
+
 	if (Fflag)
 	    XOEMITPROP("FORMAT-STRING","{:format/%s}", object->fmt);
 
 	if (gflag)
 	    XOEMITPROP("FLAGS", xflag ? "{:flags/%x}" : "{:flags/%u}", 
 		       object->flags);
-	
+
 	if (Gflag) {
 	    if(showsep)
 		xo_emit("{L:/%s}",sep);
@@ -464,12 +461,12 @@ int display_basic_value(struct sysctlmif_object *object, void *value, size_t val
     unsigned char *hexvalue;
     uintmax_t zero = 0;
     char *hfield = hflag ? "hn" : NULL;
-    
+
     if(object->type == CTLTYPE_NODE) {
 	xo_warnx("'%s' is a node", object->name);
 	return 1;
     }
-    
+
     if (bflag) {
 	for (i = 0; i < value_size; i++) {
 	    xo_emit("{:raw/%c}", ((unsigned char*)(value))[i]);
@@ -498,7 +495,7 @@ int display_basic_value(struct sysctlmif_object *object, void *value, size_t val
 	    
 	    continue;
 	}
-    	
+
 	switch (object->type) {
 	case CTLTYPE_INT:
 	    if (strncmp(object->fmt, "IK", 2) == 0)
@@ -555,7 +552,7 @@ int set_basic_value(struct sysctlmif_object *object, char *input)
     void *newval = NULL;
     size_t newval_size = 0;
     char *start, *next, *input_m, *end;
-    
+
     if (Tflag || Wflag) {
 	xo_emit("{L:\n}");
 	xo_warnx("Can't set variables when using -T or -W");
@@ -580,7 +577,7 @@ int set_basic_value(struct sysctlmif_object *object, char *input)
 	xo_warnx("oid \'%s\' isn't a leaf node",object->name);
 	return 1;
     }
-    
+
     // the state is settable
 
     if(Bflagsize > 0) {
@@ -678,7 +675,7 @@ int set_basic_value(struct sysctlmif_object *object, char *input)
 	}// end while
 	free(input_m);
     } // else numeric value
-    
+
     if(error == 0) {
 	if (newval_size == 0 && object->type != CTLTYPE_STRING) {
 	    xo_emit("{L:\n}");
@@ -695,9 +692,9 @@ int set_basic_value(struct sysctlmif_object *object, char *input)
 	    error++;
 	}
     }
-    
+
     if((object->type != CTLTYPE_STRING || Bflagsize >0) && newval != NULL)
 	free(newval);
-    
+
     return (error);
 }
