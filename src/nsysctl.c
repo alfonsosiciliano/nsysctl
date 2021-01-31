@@ -218,7 +218,7 @@ int main(int argc, char *argv[argc])
 	    argc++;
 	}
     }
-    else if (aflag) { /* -a flag (no object in input) */
+    else if (aflag) { /* -a flag and no object in input */
 	xo_open_list("tree");
 	if((mib = sysctlmif_mib()) == NULL)
 	    xo_err(1, "cannot build the MIB-tree");
@@ -230,7 +230,7 @@ int main(int argc, char *argv[argc])
 	sysctlmif_freemib(mib);
 	xo_close_list("tree");
     }
-    else if (!fflag){ /* no roots, no -a, no -f */
+    else if (!fflag){ /* no object, no -a, no -f */
 	usage();
 	error++;
     }
