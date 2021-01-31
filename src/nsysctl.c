@@ -247,7 +247,7 @@ int parse_line_or_argv(char *arg)
     char *name, *valuestr;
     int error = 0;
     struct sysctlmif_object *node;
-    bool unused;
+    bool printed;
 
     name = arg;
     valuestr = strchr(arg, '=');
@@ -274,8 +274,11 @@ int parse_line_or_argv(char *arg)
 	if(!IS_LEAF(node)) {
 	    xo_warnx("oid \'%s\' isn't a leaf node", node->name);
 	    error++;
-	} else /* here node is a leaf */
-	    error = visit_object(node, valuestr, &unused);
+	} else { /* here node is a leaf */
+	    error = visit_object(node, valuestr, &printed);
+	    if(printed)
+    	        xo_close_instance("object");
+        }
     }
 
     sysctlmif_freetree(node);
@@ -290,7 +293,8 @@ int display_tree(struct sysctlmif_object *root)
     int error = 0;
     bool printed;
     
-    error = visit_object(root, NULL, &printed);
+    if ((error = visit_object(root, NULL, &printed)) == !0)
+    	return error;
 
     if (!IS_LEAF(root)) {
 	if (Iflag && printed)
@@ -302,6 +306,9 @@ int display_tree(struct sysctlmif_object *root)
 	if (Iflag && printed)
 	    xo_close_container("children");
     }
+    
+    if(printed)
+    	xo_close_instance("object");
     
     return error;
 }
@@ -456,7 +463,7 @@ int visit_object(struct sysctlmif_object *object, char *newvalue, bool *printed)
     if(showsep)
 	xo_emit("{L:\n}");
 
-    xo_close_instance("object");
+    /* caller has to call: xo_close_instance("object") */
 
     return error;
 }
