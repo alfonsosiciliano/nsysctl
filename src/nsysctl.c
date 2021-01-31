@@ -136,14 +136,12 @@ int main(int argc, char *argv[argc])
     Sflag = Tflag = tflag = Vflag = vflag = Wflag = xflag = yflag = false;
 
     atexit(xo_finish_atexit);
-
-    if(kld_isloaded("sysctlinfo") == 0)
-    	xo_errx(1, "\'sysctlinfo\' kmod unloaded");
-
     xo_set_flags(NULL, XOF_UNITS | XOF_FLUSH);
-    argc = xo_parse_args(argc, argv);
-    if (argc < 0)
-	exit(EXIT_FAILURE);
+    if ((argc = xo_parse_args(argc, argv)) < 0)
+		exit(EXIT_FAILURE);
+
+	if(kld_isloaded("sysctlinfo") == 0)
+    	xo_errx(1, "\'sysctlinfo\' kmod unloaded");
 
     while ((ch = getopt(argc, argv, "AaB:bDde:Ff:GghiIlNnopqr:STtVvWwXxy")) != -1) {
 	switch (ch) {
