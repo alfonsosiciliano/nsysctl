@@ -46,12 +46,15 @@
 .Op Fl e Ar sep
 .Fl A | a | X
 .Sh DESCRIPTION
-The system maintains a
+The
+.Nm nsysctl
+utility can get or set the state of the System at run time.
+The System exposes the available parameters as objects of a
 .Dq Management Information Base
-.Pq Dq MIB
-where an object represents a parameter of the system, the
-.Nm
-utility can get or set the value of a parameter.
+.Pq MIB ,
+.Nm nsysctl
+can explore the MIB, print the properties of an object, get or set its value and
+show the output in human and machine readable formats.
 .Pp
 .Nm nsysctl
 requires the
