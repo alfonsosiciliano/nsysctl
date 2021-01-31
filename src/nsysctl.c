@@ -382,7 +382,7 @@ int visit_object(struct sysctlmif_object *object, char *newvalue, bool *printed)
     {
 	xo_open_container("id");
 	if (pflag)
-	    xo_emit("{L:[ID]: }");
+	    xo_emit("{L:[OID]: }");
 	for (i = 0; i < object->idlevel; i++)
 	{
 	    if (i > 0)

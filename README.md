@@ -49,7 +49,7 @@ To add the package:
  * [X] Add libsysctlmibinfo2
  * [ ] Rename opt: -y -> -O
  * [ ] Add: opaque S,pagesizes
- * [ ] Rename: -p [ID] -> [OID]
+ * [X] Change: -p output [ID] -> [OID]
  * [ ] Change: xml <id><level1>X</level1><level2>Y</level2></id> -> <OID>X.Y</OID>
  * [ ] Update manual
  

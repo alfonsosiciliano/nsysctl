@@ -5,6 +5,7 @@ version 1.3
 	* delete: sysctlmibinfo
 	* delete: support of the undocumented interface (kern/kern_sysctl.c)
 	* change: opt -m -> -S
+	* change: -p output [ID] -> [OID]
 
 2019-10-5 version 1.2.1
 
