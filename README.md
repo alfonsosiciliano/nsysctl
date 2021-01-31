@@ -48,5 +48,6 @@ To add the package:
  * [X] Delete libsysctlmibinfo
  * [X] Add libsysctlmibinfo2
  * [ ] Rename opt: -y -> -O
+ * [ ] Add: opaque S,pagesizes
  * [ ] Update manual
  
