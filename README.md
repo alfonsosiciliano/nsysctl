@@ -47,5 +47,6 @@ To add the package:
  * [X] Delete sysctlinfo\_helper.h/c
  * [X] Delete libsysctlmibinfo
  * [X] Add libsysctlmibinfo2
+ * [ ] Rename opt: -y -> -O
  * [ ] Update manual
  
