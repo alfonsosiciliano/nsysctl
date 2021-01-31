@@ -31,7 +31,7 @@
 #include <sys/types.h>
 
 #include <stdbool.h>
-#include <sysctlmibinfo.h>
+#include <sysctlmibinfo2.h>
 
 bool parse_string(char *start, char **next, char *endbuffer, char sep);
 

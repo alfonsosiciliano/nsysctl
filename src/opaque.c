@@ -53,7 +53,7 @@
 #include <unistd.h>     //getpagesize
 
 #include <libxo/xo.h>
-#include <sysctlmibinfo.h>
+#include <sysctlmibinfo2.h>
 
 /* Func declarations */
 static int S_clockinfo(void *value, size_t value_size, bool hflag);
