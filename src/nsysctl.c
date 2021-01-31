@@ -284,7 +284,6 @@ int parse_line_or_argv(char *arg)
 }
 
 
-/* Iterative "Depth-first search" */
 int display_tree(struct sysctlmif_object *root)
 {
     struct sysctlmif_object *child, *path[CTL_MAXNAME];
