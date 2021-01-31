@@ -148,19 +148,19 @@ Show OID.
 .Sh EXIT STATUS
 .Ex -std
 .Sh EXAMPLES
-To get the hostname:
+To get the value of hostname:
 .Pp
 .Dl "nsysctl -Nv kern.hostname"
 .Pp
-To set the hostname:
+To set the value of hostname:
 .Pp
 .Dl "nsysctl kern.hostname=myBSD"
 .Pp
-Dump all info about an object:
+Print all info about an object:
 .Pp
 .Dl "nsysctl -Dp -e ', '  kern.ostype"
 .Pp
-Dump all info about an object in xml format:
+Print all info about an object in xml:
 .Pp
 .Dl "nsysctl --libxo=xml,pretty -r 'ROOT-NAME' -D kern.ostype"
 .Sh COMPATIBILITY
