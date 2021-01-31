@@ -140,8 +140,8 @@ int main(int argc, char *argv[argc])
     if ((argc = xo_parse_args(argc, argv)) < 0)
 		exit(EXIT_FAILURE);
 
-	if(kld_isloaded("sysctlinfo") == 0)
-    	xo_errx(1, "\'sysctlinfo\' kmod unloaded");
+    if(kld_isloaded("sysctlinfo") == 0)
+        xo_errx(1, "\'sysctlinfo\' kmod unloaded");
 
     while ((ch = getopt(argc, argv, "AaB:bDde:Ff:GghiIlNnopqr:STtVvWwXxy")) != -1) {
 	switch (ch) {
@@ -210,27 +210,27 @@ int main(int argc, char *argv[argc])
 	}
     }
 
-    if (argc > 0) { /* the roots are given in input */
-	aflag = 0;  /* set to 0 for display_tree() */
+    if (argc > 0) { /* objects in input */
+	aflag = false; /* important for display_tree() */
 	argc = 0;
 	while (argv[argc]) {
 	    error += parse_line_or_argv(argv[argc]);
 	    argc++;
 	}
     }
-    else if (aflag) { /* -a flag (no roots in input) */
+    else if (aflag) { /* -a flag (no object in input) */
 	xo_open_list("tree");
 	if((mib = sysctlmif_mib()) == NULL)
 	    xo_err(1, "cannot build the MIB-tree");
 
-	/* the roots are objects with level 1 */
+	/* objests have level 1 */
 	SLIST_FOREACH(topobject, mib, object_link)
 	    error += display_tree(topobject, NULL);
 
 	sysctlmif_freemib(mib);
 	xo_close_list("tree");
     }
-    else if (!fflag){ /* no roots, no -a and no -f*/
+    else if (!fflag){ /* no roots, no -a, no -f */
 	usage();
 	error++;
     }
