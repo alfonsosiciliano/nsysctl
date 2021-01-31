@@ -255,13 +255,12 @@ int parse_line_or_argv(char *arg)
     }
 
     node = sysctlmif_treebyname(name);
-    if(node == NULL) { /* malloc error or bad nodename */
-    	if (errno == ENOMEM) {
+    if(node == NULL) {
+    	if (errno == ENOMEM) { /* malloc error */
     	    xo_err(1, "cannot build the tree of '%s'", name);
-    	} else {
+    	} else { /* nodename does not exist */
 	if (!iflag)
 	    error++;
-
 	if (!iflag && !qflag)
 	    xo_warnx("unknow \'%s\' oid", name);
 	}
