@@ -246,8 +246,7 @@ int main(int argc, char *argv[argc])
 int parse_line_or_argv(char *arg)
 {
     char *name, *valuestr;
-    int error = 0, id[CTL_MAXNAME];
-    size_t idlevel = CTL_MAXNAME;
+    int error = 0;
     struct sysctlmif_object *node;
 
     name = arg;
@@ -257,34 +256,30 @@ int parse_line_or_argv(char *arg)
 	valuestr++;
     }
 
-    error = sysctlmif_oidbyname(name, id, &idlevel);
-
-    if(error != 0) { /* nodename doesn't exist */	
+    node = sysctlmif_treebyname(name);
+    if(node == NULL) { /* malloc error or bad nodename */
+    	if (errno == ENOMEM) {
+    	    xo_err(1, "cannot build the tree of '%s'", name);
+    	} else {
 	if (!iflag)
 	    error++;
 
 	if (!iflag && !qflag)
 	    xo_warnx("unknow \'%s\' oid", name);
+	}
     }
     else if (valuestr == NULL) { /* only nodename */
-	if((node = sysctlmif_tree(id, idlevel)) == NULL)
-	    xo_err(1, "cannot build the tree of '%s'", name);
-	
 	error = display_tree(node, NULL);
-	sysctlmif_freetree(node);
-    } 
+    }
     else { /* nodename=value */
-	if((node = sysctlmif_object(id, idlevel))== NULL)
-	    xo_err(1, "cannot build the node to set '%s'", name);
-	
 	if(!IS_LEAF(node)) {
-	    xo_warnx("oid \'%s\' isn't a leaf node",node->name);
+	    xo_warnx("oid \'%s\' isn't a leaf node", node->name);
 	    error++;
 	} else /* here node is a leaf */
-	    error += display_tree(node, valuestr);
-	
-	sysctlmif_freeobject(node);
+	    error = display_tree(node, valuestr);
     }
+
+    sysctlmif_freetree(node);
 
     return error;
 }
