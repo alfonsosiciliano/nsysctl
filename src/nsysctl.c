@@ -100,7 +100,8 @@ static const struct ctl_type ctl_types[CTLTYPE+1] = {
 
 void usage(void);
 int parse_line_or_argv(char *arg);
-int display_tree(struct sysctlmif_object *object, char *newvalue);
+int display_tree(struct sysctlmif_object *root);
+int visit_object(struct sysctlmif_object *object, char *newvalue, bool *printed);
 int display_basic_value(struct sysctlmif_object *object, void *value, size_t valuesize);
 int set_basic_value(struct sysctlmif_object *object, char *input);
 
@@ -138,7 +139,7 @@ int main(int argc, char *argv[argc])
     atexit(xo_finish_atexit);
     xo_set_flags(NULL, XOF_UNITS | XOF_FLUSH);
     if ((argc = xo_parse_args(argc, argv)) < 0)
-		exit(EXIT_FAILURE);
+	exit(EXIT_FAILURE);
 
     if(kld_isloaded("sysctlinfo") == 0)
         xo_errx(1, "\'sysctlinfo\' kmod unloaded");
@@ -225,7 +226,7 @@ int main(int argc, char *argv[argc])
 
 	/* objests have level 1 */
 	SLIST_FOREACH(topobject, mib, object_link)
-	    error += display_tree(topobject, NULL);
+	    error += display_tree(topobject);
 
 	sysctlmif_freemib(mib);
 	xo_close_list("tree");
@@ -246,6 +247,7 @@ int parse_line_or_argv(char *arg)
     char *name, *valuestr;
     int error = 0;
     struct sysctlmif_object *node;
+    bool unused;
 
     name = arg;
     valuestr = strchr(arg, '=');
@@ -259,21 +261,21 @@ int parse_line_or_argv(char *arg)
     	if (errno == ENOMEM) { /* malloc error */
     	    xo_err(1, "cannot build the tree of '%s'", name);
     	} else { /* nodename does not exist */
-	if (!iflag)
-	    error++;
-	if (!iflag && !qflag)
-	    xo_warnx("unknow \'%s\' oid", name);
+	    if (!iflag)
+		error++;
+	    if (!iflag && !qflag)
+		xo_warnx("unknow \'%s\' oid", name);
 	}
     }
     else if (valuestr == NULL) { /* only nodename */
-	error = display_tree(node, NULL);
+	error = display_tree(node);
     }
     else { /* nodename=value */
 	if(!IS_LEAF(node)) {
 	    xo_warnx("oid \'%s\' isn't a leaf node", node->name);
 	    error++;
 	} else /* here node is a leaf */
-	    error = display_tree(node, valuestr);
+	    error = visit_object(node, valuestr, &unused);
     }
 
     sysctlmif_freetree(node);
@@ -281,37 +283,64 @@ int parse_line_or_argv(char *arg)
     return error;
 }
 
-/* Preorder visit */
-int display_tree(struct sysctlmif_object *object, char *newvalue)
+
+/* Iterative "Depth-first search" */
+int display_tree(struct sysctlmif_object *root)
+{
+    struct sysctlmif_object *child, *path[CTL_MAXNAME];
+    int error = 0;
+    bool printed;
+    
+    error = visit_object(root, NULL, &printed);
+
+    if (!IS_LEAF(root)) {
+	if (Iflag && printed)
+	    xo_open_container("children");
+
+	SLIST_FOREACH(child, root->children, object_link)
+	    error += display_tree(child);
+	
+	if (Iflag && printed)
+	    xo_close_container("children");
+    }
+    
+    return error;
+}
+
+
+
+int visit_object(struct sysctlmif_object *object, char *newvalue, bool *printed)
 {
     struct sysctlmif_object *child;
-    bool showable = true, showsep = false, showvalue = false;
+    bool showsep = false, showvalue = false;
     int i, error = 0;
     char idlevelstr[7];
     size_t value_size = 0;
     void *value;
+    
+    *printed = false;
 
     if ((object->id[0] == 0) && !Sflag)
-	showable = false;
+	return error;
 
     if (Wflag && !((object->flags & CTLFLAG_WR) && !(object->flags & CTLFLAG_STATS)))
-	showable = false;
+	return error;
 
     if (Tflag && !(object->flags & CTLFLAG_TUN))
-	showable = false;
+	return error;
 
     if (!Iflag && (!IS_LEAF(object)))
-	showable = false;
+	return error;
 
     if(Vflag && aflag && 
        (object->type == CTLTYPE_OPAQUE || object->type == CTLTYPE_NODE) && 
        !xflag && !oflag && !is_opaque_defined(object))
- 	showable = false;
+ 	return error;
 
     if(Vflag && !IS_LEAF(object))
-	showable = false;
+	return error;
 
-    if((vflag || Vflag) && showable && IS_LEAF(object))
+    if((vflag || Vflag) && IS_LEAF(object))
     {
 	if(Bflagsize > 0) {
 	    value_size = Bflagsize;
@@ -324,124 +353,111 @@ int display_tree(struct sysctlmif_object *object, char *newvalue)
 
 	if ((value = malloc(value_size)) == NULL) {
 	    xo_err(1, "allocation memory to get the value of '%s'", object->name);
-	    showable = false;
+	    return error;
 	}
 	memset(value, 0, value_size);
 
 	error =sysctl(object->id, object->idlevel, value, &value_size, NULL, 0);
 	if (error != 0 || value_size == 0) {
-	    if(Vflag)
-		showable = false;
 	    free(value);
+	    if(Vflag)
+		return error;
 	} else
 	    showvalue = true;
     }
 
-    if (showable)
+    /* print object */
+    
+    *printed = true;
+
+    xo_open_instance("object");
+
+    if (yflag)
     {
-	xo_open_instance("object");
-
-	if (yflag)
+	xo_open_container("id");
+	if (pflag)
+	    xo_emit("{L:[ID]: }");
+	for (i = 0; i < object->idlevel; i++)
 	{
-	    xo_open_container("id");
-	    if (pflag)
-		xo_emit("{L:[ID]: }");
-	    for (i = 0; i < object->idlevel; i++)
-	    {
-		if (i > 0)
-		    xo_emit("{L:.}");
-		snprintf(idlevelstr, sizeof(idlevelstr), "level%d", i+1);
-		xo_emit_field(NULL, idlevelstr, xflag ? "%x" : "%d", NULL, object->id[i]);
-	    }
-	    xo_close_container("id");
-	    showsep=true;
+	    if (i > 0)
+		xo_emit("{L:.}");
+	    snprintf(idlevelstr, sizeof(idlevelstr), "level%d", i+1);
+	    xo_emit_field(NULL, idlevelstr, xflag ? "%x" : "%d", NULL, object->id[i]);
 	}
-
-#define XOEMITPROP(propname,content,value) do {		\
-	    if(showsep)					\
-		xo_emit("{L:/%s}",sep);			\
-	    if (pflag)					\
-		xo_emit("{L:[" propname "]: }");	\
-	    xo_emit(content,value);			\
-	    showsep = true;				\
-	} while(0)
-
-	if (Nflag)
-	    XOEMITPROP("NAME","{:name/%s}", object->name);
-
-	if (lflag) /* entry without label could return "\0" or NULL */
-	    XOEMITPROP("LABEL","{:label/%s}", 
-		       object->label == NULL ? "" : object->label);
-
-	if (dflag) /* entry without descr could return "\0" or NULL */
-	    XOEMITPROP("DESCRIPTION","{:description/%s}", 
-		       object->desc == NULL ? "" : object->desc);
-
-	if (tflag)
-	    XOEMITPROP("TYPE","{:type/%s}", ctl_types[object->type].name);
-
-	if (Fflag)
-	    XOEMITPROP("FORMAT-STRING","{:format/%s}", object->fmt);
-
-	if (gflag)
-	    XOEMITPROP("FLAGS", xflag ? "{:flags/%x}" : "{:flags/%u}", 
-		       object->flags);
-
-	if (Gflag) {
-	    if(showsep)
-		xo_emit("{L:/%s}",sep);
-	    if (pflag)
-		xo_emit("{L:[TRUE-FLAGS]:}");
-	    xo_open_container("true-flags");
-	    for(i=0; i < NUM_CTLFLAGS; i++) {
-		if( (object->flags & ctl_flags[i].flag_bit) == ctl_flags[i].flag_bit)
-		    xo_emit("{Lw:}{:flag/%s}",ctl_flags[i].flag_name);
-	    }
-	    xo_close_container("true-flags");
-	    showsep = true;
-	}
-
-	if(showvalue && (vflag || Vflag))
-	{
-	    if(showsep)
-		xo_emit("{L:/%s}",sep);
-	    if (pflag)
-		xo_emit("{L:[VALUE]: }");
-
-	    if (is_special_value(object))
-		error += display_special_value(object,value,value_size);
-	    else if (object->type == CTLTYPE_OPAQUE || object->type == CTLTYPE_NODE)
-		error += display_opaque_value(object, value, value_size, hflag, oflag, xflag);
-	    else if ( object->id[0] != 0)
-		error += display_basic_value(object, value, value_size);
-
-	    free(value);
-	    showsep = true;
-	}
-
-	if(newvalue != NULL)
-	    if(set_basic_value(object, newvalue) != 0)
-		showsep = false;
-
-	if(showsep)
-	    xo_emit("{L:\n}");
-
-    } /* end showable */
-
-    /* visit children */
-    if (!IS_LEAF(object)) {
-	if (Iflag && showable)
-	    xo_open_container("children");
-
-	SLIST_FOREACH(child, object->children, object_link)
-	    error += display_tree(child, NULL);
-	
-	if (Iflag && showable)
-	    xo_close_container("children");
+	xo_close_container("id");
+	showsep=true;
     }
 
-    if(showable)
-	xo_close_instance("object");
+#define XOEMITPROP(propname,content,value) do {	\
+	if(showsep)				\
+	    xo_emit("{L:/%s}",sep);		\
+	if (pflag)				\
+	    xo_emit("{L:[" propname "]: }");	\
+	xo_emit(content,value);			\
+	showsep = true;				\
+    } while(0)
+
+    if (Nflag)
+	XOEMITPROP("NAME","{:name/%s}", object->name);
+
+    if (lflag) /* entry without label could return "\0" or NULL */
+	XOEMITPROP("LABEL","{:label/%s}", 
+		   object->label == NULL ? "" : object->label);
+
+    if (dflag) /* entry without descr could return "\0" or NULL */
+	XOEMITPROP("DESCRIPTION","{:description/%s}", 
+		   object->desc == NULL ? "" : object->desc);
+
+    if (tflag)
+	XOEMITPROP("TYPE","{:type/%s}", ctl_types[object->type].name);
+
+    if (Fflag)
+	XOEMITPROP("FORMAT-STRING","{:format/%s}", object->fmt);
+
+    if (gflag)
+	XOEMITPROP("FLAGS", xflag ? "{:flags/%x}" : "{:flags/%u}", 
+		   object->flags);
+
+    if (Gflag) {
+	if(showsep)
+	    xo_emit("{L:/%s}",sep);
+	if (pflag)
+	    xo_emit("{L:[TRUE-FLAGS]:}");
+	xo_open_container("true-flags");
+	for(i=0; i < NUM_CTLFLAGS; i++) {
+	    if( (object->flags & ctl_flags[i].flag_bit) == ctl_flags[i].flag_bit)
+		xo_emit("{Lw:}{:flag/%s}",ctl_flags[i].flag_name);
+	}
+	xo_close_container("true-flags");
+	showsep = true;
+    }
+
+    if(showvalue && (vflag || Vflag))
+    {
+	if(showsep)
+	    xo_emit("{L:/%s}",sep);
+	if (pflag)
+	    xo_emit("{L:[VALUE]: }");
+
+	if (is_special_value(object))
+	    error += display_special_value(object,value,value_size);
+	else if (object->type == CTLTYPE_OPAQUE || object->type == CTLTYPE_NODE)
+	    error += display_opaque_value(object, value, value_size, hflag, oflag, xflag);
+	else if ( object->id[0] != 0)
+	    error += display_basic_value(object, value, value_size);
+
+	free(value);
+	showsep = true;
+    }
+
+    if(newvalue != NULL)
+	if(set_basic_value(object, newvalue) != 0)
+	    showsep = false;
+
+    if(showsep)
+	xo_emit("{L:\n}");
+
+    xo_close_instance("object");
 
     return error;
 }
@@ -586,8 +602,8 @@ int set_basic_value(struct sysctlmif_object *object, char *input)
 	if(Bflagsize > 0) {
 	    strncpy(newval, input, Bflagsize);
 	} else {
-	newval = input;
-	newval_size = strlen(input) + 1;
+	    newval = input;
+	    newval_size = strlen(input) + 1;
 	}
     }
     else // numeric value
