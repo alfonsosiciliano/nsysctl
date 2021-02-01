@@ -144,7 +144,7 @@ int main(int argc, char *argv[argc])
     if(kld_isloaded("sysctlinfo") == 0)
         xo_errx(1, "\'sysctlinfo\' kmod unloaded");
 
-    while ((ch = getopt(argc, argv, "AaB:bDde:Ff:GghiIlNnOopqr:STtVvWwXxy")) != -1) {
+    while ((ch = getopt(argc, argv, "AaB:bDde:Ff:GghiIlmNnOopqr:STtVvWwXxy")) != -1) {
 	switch (ch) {
 	case 'A': aflag = true; oflag = true; Vflag=true; break;
 	case 'a': aflag = true; break;
