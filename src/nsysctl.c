@@ -320,9 +320,9 @@ int visit_object(struct sysctlmif_object *object, char *newvalue, bool *printed)
     struct sysctlmif_object *child;
     bool showsep = false, showvalue = false;
     int i, error = 0;
-    char idlevelstr[7];
     size_t value_size = 0;
     void *value;
+    char *oid = NULL, oidlevel[100]; /* MAX_INT in char digits */
     
     *printed = false;
 
@@ -378,22 +378,6 @@ int visit_object(struct sysctlmif_object *object, char *newvalue, bool *printed)
 
     xo_open_instance("object");
 
-    if (yflag)
-    {
-	xo_open_container("id");
-	if (pflag)
-	    xo_emit("{L:[OID]: }");
-	for (i = 0; i < object->idlevel; i++)
-	{
-	    if (i > 0)
-		xo_emit("{L:.}");
-	    snprintf(idlevelstr, sizeof(idlevelstr), "level%d", i+1);
-	    xo_emit_field(NULL, idlevelstr, xflag ? "%x" : "%d", NULL, object->id[i]);
-	}
-	xo_close_container("id");
-	showsep=true;
-    }
-
 #define XOEMITPROP(propname,content,value) do {	\
 	if(showsep)				\
 	    xo_emit("{L:/%s}",sep);		\
@@ -402,6 +386,21 @@ int visit_object(struct sysctlmif_object *object, char *newvalue, bool *printed)
 	xo_emit(content,value);			\
 	showsep = true;				\
     } while(0)
+
+    if (yflag)
+    {
+	for (i = 0; i < object->idlevel; i++)
+	{
+	    snprintf(oidlevel, sizeof(oidlevel), xflag ? "%x." : "%d.", object->id[i]);
+	    oid = realloc((void*)oid, strlen(oidlevel) + 2); /* check NULL */
+	    if(i == 0)
+	        (oid[0] = '\0');
+	    memcpy(oid + strlen(oid), &(oidlevel[0]), strlen(oidlevel)+1);
+	}
+	oid[strlen(oid) - 1] = '\0';
+	XOEMITPROP("OID","{:OID/%s}", oid);
+	free(oid);
+    }
 
     if (Nflag)
 	XOEMITPROP("NAME","{:name/%s}", object->name);

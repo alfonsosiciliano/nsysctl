@@ -6,6 +6,8 @@ version 1.3
 	* delete: support of the undocumented interface (kern/kern_sysctl.c)
 	* change: opt -m -> -S
 	* change: -p output [ID] -> [OID]
+	* change: xml <id> <level1>X</level1> <level2>Y</level2> </id> in
+		      <OID>X.Y</OID>
 
 2019-10-5 version 1.2.1
 
