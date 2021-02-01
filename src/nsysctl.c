@@ -106,18 +106,18 @@ int display_basic_value(struct sysctlmif_object *object, void *value, size_t val
 int set_basic_value(struct sysctlmif_object *object, char *input);
 
 bool aflag, bflag, dflag, Fflag, fflag, hflag, Gflag, gflag;
-bool Iflag, iflag, lflag, Nflag, oflag, pflag, qflag, rflag;
-bool Sflag, Tflag, tflag, Vflag, vflag, Wflag, xflag, yflag;
+bool Iflag, iflag, lflag, Nflag, Oflag, oflag, pflag, qflag;
+bool rflag, Sflag, Tflag, tflag, Vflag, vflag, Wflag, xflag;
 char *sep, *rflagstr;
 unsigned int Bflagsize;
 
 void usage()
 {
 
-    printf("usage: nsysctl [--libxo options [-r tagroot]] [-DdFGgIilNpqSTtWy]\n");
+    printf("usage: nsysctl [--libxo options [-r tagroot]] [-DdFGgIilNOpqSTtW]\n");
     printf("               [-V | -v [h [b | o | x]]] [-B bufsize] [-e sep] [-f filename]\n");
     printf("               name[=value[,value]] ...\n");
-    printf("       nsysctl [--libxo options [-r tagroot]] [-DdFGgIlNpqSTtWy]\n");
+    printf("       nsysctl [--libxo options [-r tagroot]] [-DdFGgIlNOpqSTtW]\n");
     printf("               [-V | -v [h [b | o | x]]] [-B bufsize] [-e sep] -A | -a | -X\n");
 }
 
@@ -133,8 +133,8 @@ int main(int argc, char *argv[argc])
     error = 0;
     Bflagsize = 0;
     aflag = bflag = dflag = Fflag = fflag = Gflag = gflag = hflag = false;
-    Iflag = iflag = lflag = Nflag = oflag = pflag = qflag = rflag = false;
-    Sflag = Tflag = tflag = Vflag = vflag = Wflag = xflag = yflag = false;
+    Iflag = iflag = lflag = Nflag = Oflag = oflag = pflag = qflag = false;
+    rflag = Sflag = Tflag = tflag = Vflag = vflag = Wflag = xflag = false;
 
     atexit(xo_finish_atexit);
     xo_set_flags(NULL, XOF_UNITS | XOF_FLUSH);
@@ -144,7 +144,7 @@ int main(int argc, char *argv[argc])
     if(kld_isloaded("sysctlinfo") == 0)
         xo_errx(1, "\'sysctlinfo\' kmod unloaded");
 
-    while ((ch = getopt(argc, argv, "AaB:bDde:Ff:GghiIlNnopqr:STtVvWwXxy")) != -1) {
+    while ((ch = getopt(argc, argv, "AaB:bDde:Ff:GghiIlNnOopqr:STtVvWwXxy")) != -1) {
 	switch (ch) {
 	case 'A': aflag = true; oflag = true; Vflag=true; break;
 	case 'a': aflag = true; break;
@@ -152,7 +152,7 @@ int main(int argc, char *argv[argc])
 	case 'b': bflag = true; break;
 	case 'd': dflag = true; break;
 	case 'D': dflag = Fflag = lflag = Gflag = gflag = true;
-	    Nflag = tflag = vflag = yflag = true;
+	    Nflag = Oflag = tflag = vflag = true;
 	    break;
 	case 'e': sep = optarg; break;
 	case 'F': Fflag = true; break;
@@ -163,9 +163,10 @@ int main(int argc, char *argv[argc])
 	case 'I': Iflag = true; break;
 	case 'i': iflag = true; break;
 	case 'l': lflag = true; break;
-	case 'm': Sflag = true; break; /* compatibility <= ver. 1.2.1 */
+	case 'm': Sflag = true; break; /* compatibility <= 1.2.1 */
 	case 'N': Nflag = true; break;
 	case 'n': /* compatibility, ignored */ break;
+	case 'O': Oflag = true; break;
 	case 'o': oflag = true; break;
 	case 'p': pflag = true; break;
 	case 'q': qflag = true; break;
@@ -179,7 +180,7 @@ int main(int argc, char *argv[argc])
 	case 'w': /* compatibility, ignored */ break;
 	case 'X': aflag = true; xflag = true; Vflag=true; break;
 	case 'x': xflag = true; break;
-	case 'y': yflag = true; break;
+	case 'y': Oflag = true; break;  /* compatibility <= 1.2.1 */
 	default:
 	    usage();
 	    return (1);
@@ -384,7 +385,7 @@ int visit_object(struct sysctlmif_object *object, char *newvalue, bool *printed)
 	showsep = true;				\
     } while(0)
 
-    if (yflag)
+    if (Oflag)
     {
 	for (i = 0; i < object->idlevel; i++)
 	{

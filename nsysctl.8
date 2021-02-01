@@ -31,7 +31,7 @@
 .Sh SYNOPSIS
 .Nm
 .Op Fl -libxo Ar options Op Fl r Ar tagroot
-.Op Fl DdFGgIilNpqSTtWy
+.Op Fl DdFGgIilNOpqSTtW
 .Op Fl V | v Op Cm h Op Cm b | o | x
 .Op Fl B Ar bufsize
 .Op Fl e Ar sep
@@ -40,7 +40,7 @@
 .Ar ...
 .Nm
 .Op Fl -libxo Ar options Op Fl r Ar tagroot
-.Op Fl DdFGgIlNpqSTtWy
+.Op Fl DdFGgIlNOpqSTtW
 .Op Fl V | v Op Cm h Op Cm b | o | x
 .Op Fl B Ar bufsize
 .Op Fl e Ar sep
@@ -85,7 +85,7 @@ use a buffer of
 bytes.
 .It Fl D
 Equivalent to
-.Fl d Fl F Fl G Fl g Fl l Fl N Fl t Fl v Fl y .
+.Fl d Fl F Fl G Fl g Fl l Fl N Fl O Fl t Fl v .
 .It Fl d
 Show description.
 .It Fl e Ar <sep>
@@ -111,6 +111,8 @@ Ignore unknown objects.
 Display aggregation label.
 .It Fl N
 Print name.
+.It Fl N
+Display OID.
 .It Fl o
 Show value in hex format until 16 bytes.
 .It Fl p
@@ -143,7 +145,8 @@ Equivalent to
 .It Fl x
 Print value in hex format.
 .It Fl y
-Show OID.
+Alias for
+Fl O .
 .El
 .Sh EXIT STATUS
 .Ex -std
