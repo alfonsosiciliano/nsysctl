@@ -373,9 +373,7 @@ int visit_object(struct sysctlmif_object *object, char *newvalue, bool *printed)
     }
 
     /* print object */
-    
     *printed = true;
-
     xo_open_instance("object");
 
 #define XOEMITPROP(propname,content,value) do {	\
