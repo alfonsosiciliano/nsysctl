@@ -48,7 +48,7 @@ To add the package:
  * [X] Delete libsysctlmibinfo
  * [X] Add libsysctlmibinfo2
  * [ ] Rename opt: -y -> -O
- * [ ] Add: opaque S,pagesizes
+ * [ ] Add: opaque S,pagesizes (hw.pagesizes)
  * [X] Change: -p output [ID] -> [OID]
  * [X] Change: xml \<id\>\<level1\>X\</level1\>\<level2\>Y\</level2\>\</id\> -> \<OID\>X.Y\</OID\>
  * [ ] Update manual
