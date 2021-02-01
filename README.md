@@ -51,5 +51,7 @@ To add the package:
  * [ ] Add: opaque S,pagesizes (hw.pagesizes)
  * [X] Change: -p output [ID] -> [OID]
  * [X] Change: xml \<id\>\<level1\>X\</level1\>\<level2\>Y\</level2\>\</id\> -> \<OID\>X.Y\</OID\>
+ * [ ] Rename: opt -e \<sep\> -> -s \<sep\>
+ * [ ] Add: opt -e (like sysctl)
  * [ ] Update manual
  
