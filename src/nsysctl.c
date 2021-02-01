@@ -289,7 +289,7 @@ int parse_line_or_argv(char *arg)
 
 int display_tree(struct sysctlmif_object *root)
 {
-    struct sysctlmif_object *child, *path[CTL_MAXNAME];
+    struct sysctlmif_object *child;
     int error = 0;
     bool printed;
     
@@ -317,7 +317,6 @@ int display_tree(struct sysctlmif_object *root)
 
 int visit_object(struct sysctlmif_object *object, char *newvalue, bool *printed)
 {
-    struct sysctlmif_object *child;
     bool showsep = false, showvalue = false;
     int i, error = 0;
     size_t value_size = 0;
