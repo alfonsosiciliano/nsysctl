@@ -25,7 +25,9 @@
  * SUCH DAMAGE.
  */
 
+#include <sys/types.h>
 #include <sys/queue.h>
+#include <sys/sysctl.h>
 
 #include <inttypes.h>
 #include <libutil.h>
