@@ -42,16 +42,27 @@ To add the package:
  * [ ] I cannot test opaque S,efi\_map\_header (machdep.efi\_map) on my laptop
  * [ ] Add libnv
  * [ ] Add -k opt: show SKIP objects
- * [ ] Add NEEDGIANT flag for the -G opt
+ * [ ] Add -H opt: has handler? [un]defined
+ * [ ] Delete: -g opt
+ * [ ] Rename: -G -> -g
+ * [ ] Add NEEDGIANT flag to -G
  * [X] Rename opt: -m -> -S
+ * [ ] Rename opt: -S only with -a
  * [X] Delete sysctlinfo\_helper.h/c
  * [X] Delete libsysctlmibinfo
  * [X] Add libsysctlmibinfo2
  * [X] Rename opt: -y -> -O
  * [ ] Add: opaque S,pagesizes (hw.pagesizes)
- * [X] Change: -p output [ID] -> [OID]
  * [X] Change: xml \<id\>\<level1\>X\</level1\>\<level2\>Y\</level2\>\</id\> -> \<OID\>X.Y\</OID\>
  * [ ] Rename: opt -e \<sep\> -> -s \<sep\>
  * [ ] Add: opt -e (like sysctl)
  * [ ] Update manual
+ * [X] Change: -p [ID] -> [OID]
+ * [ ] Change: -p [FORMAT-STRING] -> [FORMAT]
+ * [ ] Change: -p [TRUE-FLAGS] -> [FLAGS]
+ * [ ] Change: default show name
+ * [ ] Add: -n hide name
+ * [ ] Change: default show value
+ * [ ] Change: -N hide value (like sysctl)
+ * [ ] Change: -v show version (show value default like hide name)
  
