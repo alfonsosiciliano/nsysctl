@@ -3,8 +3,9 @@
  *
  * Copyright (c) 1993
  *      The Regents of the University of California.  All rights reserved.
- * Copyright (c) 2019-2021 Alfonso Sabato Siciliano
- *      (isolated opaque values, added sysctlmibinfo2 and libxo features).
+ *
+ *  Alfonso Sabato Siciliano added sysctlmibinfo2 and libxo features,
+ *      Original: https://cgit.freebsd.org/src/tree/sbin/sysctl/sysctl.c
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions

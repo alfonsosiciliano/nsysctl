@@ -39,7 +39,7 @@ To add the package:
 
 **TODO**
 
- * [ ] I can not test opaque S,efi\_map\_header (machdep.efi\_map) on my laptop
+ * [ ] I cannot test opaque S,efi\_map\_header (machdep.efi\_map) on my laptop
  * [ ] Add libnv
  * [ ] Add -k opt: show SKIP objects
  * [ ] Add NEEDGIANT flag for the -G opt
