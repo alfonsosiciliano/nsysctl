@@ -16,7 +16,7 @@ it depends on [sysctlmibinfo](https://gitlab.com/alfix/sysctlmibinfo) and
  * output via libxo in human and machine readable formats,
  * isolated code to manage "opaque values" (opaque.c),
  * some string value is parsed to show structured output (special\_value.c),
- * handle an OID up to CTL\_MAXNAME (via sysctlinfo)
+ * handle an OID up to CTL\_MAXNAME
  * print the right object also with a NULL-level name
 
 **Installation**
@@ -43,9 +43,10 @@ To add the package:
  * [ ] Add libnv
  * [ ] Add -k opt: show SKIP objects
  * [ ] Add -H opt: has handler? [un]defined
+ * [ ] Add NEEDGIANT flag to -G
+ * [ ] -G delete \*RW\*
  * [ ] Delete: -g opt
  * [ ] Rename: -G -> -g
- * [ ] Add NEEDGIANT flag to -G
  * [X] Rename opt: -m -> -S
  * [ ] Rename opt: -S only with -a
  * [X] Delete sysctlinfo\_helper.h/c
