@@ -366,7 +366,8 @@ int visit_object(struct sysctlmif_object *object, char *newvalue, bool *printed)
 	memset(value, 0, value_size);
 
 	error =sysctl(object->id, object->idlevel, value, &value_size, NULL, 0);
-	if (error != 0 || value_size == 0) {
+	//if (error != 0 || value_size == 0) {
+	if (error != 0) {
 	    free(value);
 	    if(Vflag)
 		return error;
