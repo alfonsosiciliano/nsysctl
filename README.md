@@ -10,14 +10,15 @@ it depends on [sysctlmibinfo](https://gitlab.com/alfix/sysctlmibinfo) and
 
 **Features**
 
+ * get or set the system (kernel) state at runtime,
  * output is explicitly indicated by the options,
  * new options to show the properties of a parameter,
  * the options are not mutually exclusive,
  * output via libxo in human and machine readable formats,
  * isolated code to manage "opaque values" (opaque.c),
  * some string value is parsed to show structured output (special\_value.c),
- * handle an OID up to CTL\_MAXNAME
- * print the right object also with a NULL-level name
+ * handle an OID up to CTL\_MAXNAME levels,
+ * print the right object also with a NULL-level name.
 
 **Installation**
 
