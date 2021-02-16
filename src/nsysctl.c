@@ -107,7 +107,7 @@ int visit_object(struct sysctlmif_object *object, char *newvalue, bool *printed)
 int display_basic_value(struct sysctlmif_object *object, void *value, size_t valuesize);
 int set_basic_value(struct sysctlmif_object *object, char *input);
 
-bool aflag, bflag, dflag, Fflag, fflag, hflag, Gflag, gflag;
+bool aflag, bflag, dflag, Fflag, fflag, hflag, Gflag, gflag, Hflag;
 bool Iflag, iflag, lflag, Nflag, Oflag, oflag, pflag, qflag;
 bool rflag, Sflag, Tflag, tflag, Vflag, vflag, Wflag, xflag;
 char *sep, *rflagstr;
@@ -116,10 +116,10 @@ unsigned int Bflagsize;
 void usage()
 {
 
-    printf("usage: nsysctl [--libxo options [-r tagroot]] [-DdFGgIilNOpqTtW]\n");
+    printf("usage: nsysctl [--libxo options [-r tagroot]] [-DdFGgHIilNOpqTtW]\n");
     printf("               [-V | -v [h [b | o | x]]] [-B bufsize] [-e sep] [-f filename]\n");
     printf("               name[=value[,value]] ...\n");
-    printf("       nsysctl [--libxo options [-r tagroot]] [-DdFGgIlNOpqSTtW]\n");
+    printf("       nsysctl [--libxo options [-r tagroot]] [-DdFGgHIlNOpqSTtW]\n");
     printf("               [-V | -v [h [b | o | x]]] [-B bufsize] [-e sep] -A | -a | -X\n");
 }
 
@@ -134,7 +134,7 @@ int main(int argc, char *argv[argc])
     sep = ": ";
     error = 0;
     Bflagsize = 0;
-    aflag = bflag = dflag = Fflag = fflag = Gflag = gflag = hflag = false;
+    aflag = bflag = dflag = Fflag = fflag = Gflag = gflag = Hflag = hflag = false;
     Iflag = iflag = lflag = Nflag = Oflag = oflag = pflag = qflag = false;
     rflag = Sflag = Tflag = tflag = Vflag = vflag = Wflag = xflag = false;
 
@@ -146,7 +146,7 @@ int main(int argc, char *argv[argc])
     if(kld_isloaded("sysctlinfo") == 0)
         xo_errx(1, "\'sysctlinfo\' kmod unloaded");
 
-    while ((ch = getopt(argc, argv, "AaB:bDde:Ff:GghiIlmNnOopqr:STtVvWwXxy")) != -1) {
+    while ((ch = getopt(argc, argv, "AaB:bDde:Ff:GgHhiIlmNnOopqr:STtVvWwXxy")) != -1) {
 	switch (ch) {
 	case 'A': aflag = true; oflag = true; Vflag=true; break;
 	case 'a': aflag = true; break;
@@ -161,6 +161,7 @@ int main(int argc, char *argv[argc])
 	case 'f': fflag = true; filename = optarg; break;
 	case 'G': Gflag = true; break;
 	case 'g': gflag = true; break;
+	case 'H': Hflag = true; break;
 	case 'h': hflag = true; break;
 	case 'I': Iflag = true; break;
 	case 'i': iflag = true; break;
@@ -324,7 +325,7 @@ int display_tree(struct sysctlmif_object *root)
 
 int visit_object(struct sysctlmif_object *object, char *newvalue, bool *printed)
 {
-    bool showsep = false, showvalue = false;
+    bool showsep = false, showvalue = false, hashandler;
     int i, error = 0;
     size_t value_size = 0;
     void *value;
@@ -437,6 +438,12 @@ int visit_object(struct sysctlmif_object *object, char *newvalue, bool *printed)
 	}
 	xo_close_container("true-flags");
 	showsep = true;
+    }
+
+    if (Hflag) {
+	if (sysctlmif_hashandler(object->id, object->idlevel, &hashandler) !=0)
+		xo_err(1, "cannot get handler %s", object->name);
+	XOEMITPROP("HANDLER","{:handler/%s}", hashandler ? "Defined" : "Undefined");
     }
 
     if(showvalue && (vflag || Vflag))

@@ -31,7 +31,7 @@
 .Sh SYNOPSIS
 .Nm
 .Op Fl -libxo Ar options Op Fl r Ar tagroot
-.Op Fl DdFGgIilNOpqTtW
+.Op Fl DdFGgHIilNOpqTtW
 .Op Fl V | v Op Cm h Op Cm b | o | x
 .Op Fl B Ar bufsize
 .Op Fl e Ar sep
@@ -40,7 +40,7 @@
 .Ar ...
 .Nm
 .Op Fl -libxo Ar options Op Fl r Ar tagroot
-.Op Fl DdFGgIlNOpqSTtW
+.Op Fl DdFGgHIlNOpqSTtW
 .Op Fl V | v Op Cm h Op Cm b | o | x
 .Op Fl B Ar bufsize
 .Op Fl e Ar sep
@@ -101,6 +101,8 @@ Load objects to get or set from
 Show true-flags.
 .It Fl g
 Print flags.
+.It Fl H
+Show if the object has a handler.
 .It Fl h
 Try to show values in a human-friendly format.
 .It Fl I

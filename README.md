@@ -43,7 +43,7 @@ To add the package:
  * [ ] Add: opaque S,pagesizes (hw.pagesizes)
  * [ ] Add: libnv
  * [ ] Add: -k opt: show SKIP objects with -a
- * [ ] Add: -H opt: has handler? [un]defined
+ * [X] Add: -H opt: has handler? [un]defined
  * [ ] Add: NEEDGIANT flag to -G
  * [ ] Delete: \*RW\* flags with -G
  * [ ] Delete: -g opt
