@@ -28,10 +28,6 @@
 #ifndef _SPECIAL_VALUE_H_
 #define _SPECIAL_VALUE_H_
 
-#include <sys/types.h>
-#include <sys/queue.h>
-
-#include <stdbool.h>
 #include <sysctlmibinfo2.h>
 
 bool parse_string(char *start, char **next, char *endbuffer, char sep);

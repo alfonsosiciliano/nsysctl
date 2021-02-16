@@ -28,8 +28,6 @@
 #ifndef _NSYSCTL_OPAQUE_H_
 #define _NSYSCTL_OPAQUE_H_
 
-#include <stdbool.h>
-
 int
 display_opaque_value(struct sysctlmif_object *object, void *value, 
     size_t value_size, bool hflag, bool oflag, bool xflag);
