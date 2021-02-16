@@ -59,7 +59,7 @@ To add the package:
  * [ ] Add: opt -e (like sysctl)
  * [ ] Update manual
  * [X] Change: -p [ID] -> [OID]
- * [ ] Change: -p [FORMAT-STRING] -> [FORMAT]
+ * [X] Change: -p [FORMAT-STRING] -> [FORMAT]
  * [ ] Change: -p [TRUE-FLAGS] -> [FLAGS]
  * [ ] Change: default show name (like sysctl)
  * [ ] Change: -N hide value (show name default like sysctl)

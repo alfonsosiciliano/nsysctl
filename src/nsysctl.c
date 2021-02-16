@@ -418,7 +418,7 @@ int visit_object(struct sysctlmif_object *object, char *newvalue, bool *printed)
 	XOEMITPROP("TYPE","{:type/%s}", ctl_types[object->type].name);
 
     if (Fflag)
-	XOEMITPROP("FORMAT-STRING","{:format/%s}", object->fmt);
+	XOEMITPROP("FORMAT","{:format/%s}", object->fmt);
 
     if (gflag)
 	XOEMITPROP("FLAGS", xflag ? "{:flags/%x}" : "{:flags/%u}", 
