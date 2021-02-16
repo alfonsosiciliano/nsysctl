@@ -42,7 +42,7 @@ To add the package:
  * [ ] Test: opaque machdep.efi\_map (S,efi\_map\_header)
  * [ ] Add: opaque S,pagesizes (hw.pagesizes)
  * [ ] Add: libnv
- * [ ] Add: -k opt: show SKIP objects with -a
+ * [X] Add: -k opt: show SKIP objects with -a
  * [X] Add: -H opt: has handler? [un]defined
  * [ ] Add: NEEDGIANT flag to -G
  * [ ] Delete: \*RW\* flags with -G

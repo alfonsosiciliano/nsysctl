@@ -40,7 +40,7 @@
 .Ar ...
 .Nm
 .Op Fl -libxo Ar options Op Fl r Ar tagroot
-.Op Fl DdFGgHIlNnOpqSTtW
+.Op Fl DdFGgHIklNnOpqSTtW
 .Op Fl V | v Op Cm h Op Cm b | o | x
 .Op Fl B Ar bufsize
 .Op Fl e Ar sep
@@ -109,6 +109,11 @@ Try to show values in a human-friendly format.
 Show internal nodes, only leaves are printed by default.
 .It Fl i
 Ignore unknown objects.
+.It Fl k
+Show object with
+.Dv SKIP
+flag with
+.Fl a .
 .It Fl l
 Display aggregation label.
 .It Fl m
