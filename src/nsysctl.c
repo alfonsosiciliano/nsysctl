@@ -116,11 +116,11 @@ unsigned int Bflagsize;
 void usage()
 {
 
-    printf("usage: nsysctl [--libxo options [-r tagroot]] [-DdFGgHIilNnOpqTtW]\n");
-    printf("               [-V | -v [h [b | o | x]]] [-B bufsize] [-e sep] [-f filename]\n");
+    printf("usage: nsysctl [--libxo options [-r tagroot]] [-DdeFGgHIilNnOpqTtW]\n");
+    printf("               [-V | -v [h [b | o | x]]] [-B bufsize] [-s sep] [-f filename]\n");
     printf("               name[=value[,value]] ...\n");
-    printf("       nsysctl [--libxo options [-r tagroot]] [-DdFGgHIklNnOpqSTtW]\n");
-    printf("               [-V | -v [h [b | o | x]]] [-B bufsize] [-e sep] -A | -a | -X\n");
+    printf("       nsysctl [--libxo options [-r tagroot]] [-DdeFGgHIklNnOpqSTtW]\n");
+    printf("               [-V | -v [h [b | o | x]]] [-B bufsize] [-s sep] -A | -a | -X\n");
 }
 
 int main(int argc, char *argv[argc])
@@ -146,7 +146,7 @@ int main(int argc, char *argv[argc])
     if(kld_isloaded("sysctlinfo") == 0)
         xo_errx(1, "\'sysctlinfo\' kmod unloaded");
 
-    while ((ch = getopt(argc, argv, "AaB:bDde:Ff:GgHhiIklmNnOopqr:STtVvWwXxy")) != -1) {
+    while ((ch = getopt(argc, argv, "AaB:bDdeFf:GgHhiIklmNnOopqr:Ss:TtVvWwXxy")) != -1) {
 	switch (ch) {
 	case 'A': aflag = true; oflag = true; Vflag=true; break;
 	case 'a': aflag = true; break;
@@ -156,7 +156,7 @@ int main(int argc, char *argv[argc])
 	case 'D': dflag = Fflag = lflag = Gflag = gflag = true;
 	    Nflag = Oflag = tflag = vflag = true;
 	    break;
-	case 'e': sep = optarg; break;
+	case 'e': sep = "="; break;
 	case 'F': Fflag = true; break;
 	case 'f': fflag = true; filename = optarg; break;
 	case 'G': Gflag = true; break;
@@ -176,6 +176,7 @@ int main(int argc, char *argv[argc])
 	case 'q': qflag = true; break;
 	case 'r': rflag = true; rflagstr = optarg; break;
 	case 'S': Sflag = true; break;
+	case 's': sep = optarg; break;
 	case 'T': Tflag = true; break;
 	case 't': tflag = true; break;
 	case 'V': Vflag = true; break;

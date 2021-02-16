@@ -57,8 +57,8 @@ To add the package:
  * [X] Rename: opt: -y -> -O
  * [X] Change: -pO [ID] -> [OID]
  * [X] Change: xml \<id\>\<level1\>X\</level1\>\<level2\>Y\</level2\>\</id\> -> \<OID\>X.Y\</OID\>
- * [ ] Rename: opt -e \<sep\> -> -s \<sep\>
- * [ ] Add: opt -e (like sysctl)
+ * [X] Rename: opt -e \<sep\> -> -s \<sep\>
+ * [X] Add: opt -e (like sysctl)
  * [ ] Update manual
  * [X] Change: -pF [FORMAT-STRING] -> [FORMAT]
  * [X] Change: default show name (like sysctl)

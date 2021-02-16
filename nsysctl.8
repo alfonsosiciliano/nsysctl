@@ -31,19 +31,19 @@
 .Sh SYNOPSIS
 .Nm
 .Op Fl -libxo Ar options Op Fl r Ar tagroot
-.Op Fl DdFGgHIilNnOpqTtW
+.Op Fl DdeFGgHIilNnOpqTtW
 .Op Fl V | v Op Cm h Op Cm b | o | x
 .Op Fl B Ar bufsize
-.Op Fl e Ar sep
+.Op Fl s Ar sep
 .Op Fl f Ar filename
 .Ar name Ns Op = Ns Ar value Ns Op , Ns Ar value
 .Ar ...
 .Nm
 .Op Fl -libxo Ar options Op Fl r Ar tagroot
-.Op Fl DdFGgHIklNnOpqSTtW
+.Op Fl DdeFGgHIklNnOpqSTtW
 .Op Fl V | v Op Cm h Op Cm b | o | x
 .Op Fl B Ar bufsize
-.Op Fl e Ar sep
+.Op Fl s Ar sep
 .Fl A | a | X
 .Sh DESCRIPTION
 The
@@ -88,9 +88,9 @@ Equivalent to
 .Fl d Fl F Fl G Fl g Fl l Fl N Fl O Fl t Fl v .
 .It Fl d
 Show description.
-.It Fl e Ar <sep>
+.It Fl e
 Use
-.Ar <sep>
+.Dq =
 as separator.
 .It Fl F
 Display format string.
@@ -140,6 +140,10 @@ Display also the
 .Dq sysctl.*
 subtree with
 .Fl a .
+.It Fl s Ar <sep>
+Use
+.Ar <sep>
+as separator.
 .It Fl T
 Show only objects that are settable via loader.
 .It Fl t
