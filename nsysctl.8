@@ -186,22 +186,22 @@ Print all info about an object in xml:
 .Sh COMPATIBILITY
 .Bd -literal -offset indent -compact
 /sbin/sysctl             /usr/local/sbin/nsysctl
-% sysctl    name=value   % nsysctl -Nv name=value
-% sysctl    name         % nsysctl -Nv name
-% sysctl -d name         % nsysctl -Nd name
-% sysctl -e name         % nsysctl -Nv -e ‘=’ name
-% sysctl -N name         % nsysctl -N name
+% sysctl    name=value   % nsysctl -v name=value
+% sysctl    name         % nsysctl -v name
+% sysctl -d name         % nsysctl -d name
+% sysctl -e name         % nsysctl -ev name
+% sysctl -N name         % nsysctl    name
 % sysctl -n name         % nsysctl -v name
-% sysctl -t name         % nsysctl -Nt name
-% sysctl -a              % nsysctl -aNV
-% sysctl -aN             % nsysctl -aIKN
+% sysctl -t name         % nsysctl -t name
+% sysctl -a              % nsysctl -aV
+% sysctl -aN             % nsysctl -aIK
 % sysctl -an             % nsysctl -aV
-% sysctl -ad             % nsysctl -aIKNd
-% sysctl -at             % nsysctl -aIKNt
-% sysctl -ao             % nsysctl -aNVo
-% sysctl -ax             % nsysctl -aNVx
-% sysctl -A              % nsysctl -AN
-% sysctl -X              % nsysctl -XN
+% sysctl -ad             % nsysctl -aIKd
+% sysctl -at             % nsysctl -aIKt
+% sysctl -ao             % nsysctl -aVo
+% sysctl -ax             % nsysctl -aVx
+% sysctl -A              % nsysctl -A
+% sysctl -X              % nsysctl -X
 .Ed
 .Sh SEE ALSO
 .Xr sysctl 3 ,
