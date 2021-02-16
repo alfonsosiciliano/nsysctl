@@ -5,7 +5,7 @@ for t in -aN -aNT -aNW
 do
     echo "$t"
     sysctl $t >> sysctl.txt
-    ./nsysctl $t -I > nsysctl.txt
+    ./nsysctl ${t}kI >> nsysctl.txt
     diff sysctl.txt nsysctl.txt | diffstat -m
     rm sysctl.txt nsysctl.txt
 done
@@ -15,7 +15,7 @@ for t in -ad -adT -adW
 do
     echo "$t"
     sysctl $t >> sysctl.txt
-    ./nsysctl ${t}NI  >> nsysctl.txt
+    ./nsysctl ${t}kI  >> nsysctl.txt
     diff sysctl.txt nsysctl.txt | diffstat -m
     rm sysctl.txt nsysctl.txt
 done
@@ -25,7 +25,7 @@ for t in -at
 do
     echo "$t"
     sysctl $t >> sysctl.txt
-    ./nsysctl ${t}NI  >> nsysctl.txt
+    ./nsysctl ${t}kI  >> nsysctl.txt
     diff sysctl.txt nsysctl.txt | diffstat -m
     rm sysctl.txt nsysctl.txt
 done
@@ -35,14 +35,14 @@ for t in -aT -aTo -aWo -aWx -aW -ao
 do
     echo "$t"
     sysctl $t >> sysctl.txt
-    ./nsysctl ${t}NV  >> nsysctl.txt
+    ./nsysctl ${t}V  >> nsysctl.txt
     diff sysctl.txt nsysctl.txt | diffstat -m
     rm sysctl.txt nsysctl.txt
 done
 
 echo "sysctl -a"
 sysctl -a >> sysctl.txt
-./nsysctl -aNV >> nsysctl.txt
+./nsysctl -aV >> nsysctl.txt
 diff sysctl.txt nsysctl.txt | diffstat -m
 #diff -y -W 120 sysctl.txt nsysctl.txt 
 #meld sysctl.txt nsysctl.txt

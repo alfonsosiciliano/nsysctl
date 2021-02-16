@@ -126,7 +126,7 @@ void usage()
 int main(int argc, char *argv[argc])
 {
     int ch, error;
-    struct sysctlmif_object *topobject;
+    struct sysctlmif_object *topobject = NULL;
     struct sysctlmif_list *mib;
     char *filename, line[MAXSIZELINE];
     FILE *fp;
@@ -235,7 +235,7 @@ int main(int argc, char *argv[argc])
 		topobject = SLIST_NEXT(topobject, object_link);
 	}
 	/* objests have level 1 */
-	SLIST_FOREACH(topobject, mib, object_link)
+	SLIST_FOREACH_FROM(topobject, mib, object_link)
 	    error += display_tree(topobject);
 
 	sysctlmif_freemib(mib);
