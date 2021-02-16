@@ -61,9 +61,9 @@ To add the package:
  * [ ] Add: opt -e (like sysctl)
  * [ ] Update manual
  * [X] Change: -pF [FORMAT-STRING] -> [FORMAT]
- * [ ] Change: default show name (like sysctl)
- * [ ] Change: -N hide value (show name default like sysctl)
- * [ ] Add: -n hide name
+ * [X] Change: default show name (like sysctl)
+ * [X] Add: -n hide name
  * [ ] Change: default show value (like sysctl)
+ * [ ] Change: -N hide value (show name default like sysctl)
  * [ ] Change: -v show value -> show version (show value default)
  

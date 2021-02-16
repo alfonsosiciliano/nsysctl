@@ -108,7 +108,7 @@ int display_basic_value(struct sysctlmif_object *object, void *value, size_t val
 int set_basic_value(struct sysctlmif_object *object, char *input);
 
 bool aflag, bflag, dflag, Fflag, fflag, hflag, Gflag, gflag, Hflag;
-bool Iflag, iflag, lflag, Nflag, Oflag, oflag, pflag, qflag;
+bool Iflag, iflag, lflag, Nflag, nflag, Oflag, oflag, pflag, qflag;
 bool rflag, Sflag, Tflag, tflag, Vflag, vflag, Wflag, xflag;
 char *sep, *rflagstr;
 unsigned int Bflagsize;
@@ -116,10 +116,10 @@ unsigned int Bflagsize;
 void usage()
 {
 
-    printf("usage: nsysctl [--libxo options [-r tagroot]] [-DdFGgHIilNOpqTtW]\n");
+    printf("usage: nsysctl [--libxo options [-r tagroot]] [-DdFGgHIilNnOpqTtW]\n");
     printf("               [-V | -v [h [b | o | x]]] [-B bufsize] [-e sep] [-f filename]\n");
     printf("               name[=value[,value]] ...\n");
-    printf("       nsysctl [--libxo options [-r tagroot]] [-DdFGgHIlNOpqSTtW]\n");
+    printf("       nsysctl [--libxo options [-r tagroot]] [-DdFGgHIlNnOpqSTtW]\n");
     printf("               [-V | -v [h [b | o | x]]] [-B bufsize] [-e sep] -A | -a | -X\n");
 }
 
@@ -135,7 +135,7 @@ int main(int argc, char *argv[argc])
     error = 0;
     Bflagsize = 0;
     aflag = bflag = dflag = Fflag = fflag = Gflag = gflag = Hflag = hflag = false;
-    Iflag = iflag = lflag = Nflag = Oflag = oflag = pflag = qflag = false;
+    Iflag = iflag = lflag = Nflag = nflag = Oflag = oflag = pflag = qflag = false;
     rflag = Sflag = Tflag = tflag = Vflag = vflag = Wflag = xflag = false;
 
     atexit(xo_finish_atexit);
@@ -168,7 +168,7 @@ int main(int argc, char *argv[argc])
 	case 'l': lflag = true; break;
 	case 'm': Sflag = true; break; /* compatibility <= 1.2.1 */
 	case 'N': Nflag = true; break;
-	case 'n': /* compatibility, ignored */ break;
+	case 'n': nflag = true; break;
 	case 'O': Oflag = true; break;
 	case 'o': oflag = true; break;
 	case 'p': pflag = true; break;
@@ -405,7 +405,8 @@ int visit_object(struct sysctlmif_object *object, char *newvalue, bool *printed)
 	free(oid);
     }
 
-    if (Nflag)
+    //if (Nflag)
+    if (!nflag)
 	XOEMITPROP("NAME","{:name/%s}", object->name);
 
     if (lflag) /* entry without label could return "\0" or NULL */
