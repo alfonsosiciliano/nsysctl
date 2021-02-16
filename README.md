@@ -10,7 +10,7 @@ it depends on [sysctlmibinfo](https://gitlab.com/alfix/sysctlmibinfo) and
 
 **Features**
 
- * get or set the system (kernel) state at runtime,
+ * get or set the system state at runtime,
  * output is explicitly indicated by the options,
  * new options to show the properties of a parameter,
  * the options are not mutually exclusive,
@@ -24,7 +24,7 @@ it depends on [sysctlmibinfo](https://gitlab.com/alfix/sysctlmibinfo) and
 
 To install the port [sysutils/nsysctl](https://www.freshports.org/sysutils/nsysctl)
 
-    # cd /usr/ports/deskutils/nsysctl/ && make install clean
+    # cd /usr/ports/sysutils/nsysctl/ && make install clean
 
 To add the package:
 
