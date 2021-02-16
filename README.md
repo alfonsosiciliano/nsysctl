@@ -48,19 +48,19 @@ To add the package:
  * [ ] Delete: \*RW\* flags with -G
  * [ ] Delete: -g opt
  * [ ] Rename: -G -> -g
+ * [ ] Change: -pg [TRUE-FLAGS] -> [FLAGS]
  * [X] Rename: opt: -m -> -S
  * [ ] Fix: -S only with -a
  * [X] Delete: sysctlinfo\_helper.h/c
  * [X] Delete: libsysctlmibinfo
  * [X] Add: libsysctlmibinfo2
  * [X] Rename: opt: -y -> -O
+ * [X] Change: -pO [ID] -> [OID]
  * [X] Change: xml \<id\>\<level1\>X\</level1\>\<level2\>Y\</level2\>\</id\> -> \<OID\>X.Y\</OID\>
  * [ ] Rename: opt -e \<sep\> -> -s \<sep\>
  * [ ] Add: opt -e (like sysctl)
  * [ ] Update manual
- * [X] Change: -p [ID] -> [OID]
- * [X] Change: -p [FORMAT-STRING] -> [FORMAT]
- * [ ] Change: -p [TRUE-FLAGS] -> [FLAGS]
+ * [X] Change: -pF [FORMAT-STRING] -> [FORMAT]
  * [ ] Change: default show name (like sysctl)
  * [ ] Change: -N hide value (show name default like sysctl)
  * [ ] Add: -n hide name
