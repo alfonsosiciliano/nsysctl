@@ -707,7 +707,7 @@ int set_basic_value(struct sysctlmif_object *object, char *input)
 	}
     }
 
-    if((object->type != CTLTYPE_STRING || Bflagsize >0) && newval != NULL)
+    if((object->type != CTLTYPE_STRING || Bflagsize > 0) && newval != NULL)
 	free(newval);
 
     return (error);
