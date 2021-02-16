@@ -116,7 +116,7 @@ unsigned int Bflagsize;
 void usage()
 {
 
-    printf("usage: nsysctl [--libxo options [-r tagroot]] [-DdFGgIilNOpqSTtW]\n");
+    printf("usage: nsysctl [--libxo options [-r tagroot]] [-DdFGgIilNOpqTtW]\n");
     printf("               [-V | -v [h [b | o | x]]] [-B bufsize] [-e sep] [-f filename]\n");
     printf("               name[=value[,value]] ...\n");
     printf("       nsysctl [--libxo options [-r tagroot]] [-DdFGgIlNOpqSTtW]\n");
@@ -227,6 +227,10 @@ int main(int argc, char *argv[argc])
 	if((mib = sysctlmif_mib()) == NULL)
 	    xo_err(1, "cannot build the MIB-tree");
 
+	if (!Sflag) {
+		topobject = SLIST_FIRST(mib);
+		topobject = SLIST_NEXT(topobject, object_link);
+	}
 	/* objests have level 1 */
 	SLIST_FOREACH(topobject, mib, object_link)
 	    error += display_tree(topobject);
@@ -327,9 +331,6 @@ int visit_object(struct sysctlmif_object *object, char *newvalue, bool *printed)
     char *oid = NULL, oidlevel[100]; /* MAX_INT in char digits */
     
     *printed = false;
-
-    if ((object->id[0] == 0) && !Sflag)
-	return error;
 
     if (Wflag && !((object->flags & CTLFLAG_WR) && !(object->flags & CTLFLAG_STATS)))
 	return error;

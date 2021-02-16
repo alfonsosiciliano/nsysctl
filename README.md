@@ -50,7 +50,7 @@ To add the package:
  * [ ] Rename: -G -> -g
  * [ ] Change: -pg [TRUE-FLAGS] -> [FLAGS]
  * [X] Rename: opt: -m -> -S
- * [ ] Fix: -S only with -a
+ * [X] Fix: -S only with -a
  * [X] Delete: sysctlinfo\_helper.h/c
  * [X] Delete: libsysctlmibinfo
  * [X] Add: libsysctlmibinfo2
