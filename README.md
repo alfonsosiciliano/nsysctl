@@ -39,21 +39,21 @@ To add the package:
 
 **TODO**
 
- * [ ] I cannot test opaque S,efi\_map\_header (machdep.efi\_map) on my laptop
- * [ ] Add libnv
- * [ ] Add -k opt: show SKIP objects
- * [ ] Add -H opt: has handler? [un]defined
- * [ ] Add NEEDGIANT flag to -G
- * [ ] -G delete \*RW\*
+ * [ ] Test: opaque machdep.efi\_map (S,efi\_map\_header)
+ * [ ] Add: opaque S,pagesizes (hw.pagesizes)
+ * [ ] Add: libnv
+ * [ ] Add: -k opt: show SKIP objects
+ * [ ] Add: -H opt: has handler? [un]defined
+ * [ ] Add: NEEDGIANT flag to -G
+ * [ ] Delete: \*RW\* flags with -G
  * [ ] Delete: -g opt
  * [ ] Rename: -G -> -g
- * [X] Rename opt: -m -> -S
- * [ ] Rename opt: -S only with -a
- * [X] Delete sysctlinfo\_helper.h/c
- * [X] Delete libsysctlmibinfo
- * [X] Add libsysctlmibinfo2
- * [X] Rename opt: -y -> -O
- * [ ] Add: opaque S,pagesizes (hw.pagesizes)
+ * [X] Rename: opt: -m -> -S
+ * [ ] Fix: -S only with -a
+ * [X] Delete: sysctlinfo\_helper.h/c
+ * [X] Delete: libsysctlmibinfo
+ * [X] Add: libsysctlmibinfo2
+ * [X] Rename: opt: -y -> -O
  * [X] Change: xml \<id\>\<level1\>X\</level1\>\<level2\>Y\</level2\>\</id\> -> \<OID\>X.Y\</OID\>
  * [ ] Rename: opt -e \<sep\> -> -s \<sep\>
  * [ ] Add: opt -e (like sysctl)
@@ -61,9 +61,9 @@ To add the package:
  * [X] Change: -p [ID] -> [OID]
  * [ ] Change: -p [FORMAT-STRING] -> [FORMAT]
  * [ ] Change: -p [TRUE-FLAGS] -> [FLAGS]
- * [ ] Change: default show name
+ * [ ] Change: default show name (like sysctl)
+ * [ ] Change: -N hide value (show name default like sysctl)
  * [ ] Add: -n hide name
- * [ ] Change: default show value
- * [ ] Change: -N hide value (like sysctl)
- * [ ] Change: -v show version (show value default like hide name)
+ * [ ] Change: default show value (like sysctl)
+ * [ ] Change: -v show value -> show version (show value default)
  
