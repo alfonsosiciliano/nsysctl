@@ -70,12 +70,12 @@ The following options are available:
 .Bl -tag -width indent
 .It Fl -libxo Ar options
 Generate output via libxo(3) in a selection of different human
-and machine readable formats.
-See xo_parse_args(3)
+and machine readable formats, see
+.Xr xo_parse_args(3) .
 .It Fl A
 Equivalent to
-.Fl a Fl V Fl o
-(obsolete).
+.Fl a Fl o ,
+obsolete.
 .It Fl a
 Display every object.
 .It Fl b
@@ -86,7 +86,7 @@ use a buffer of
 bytes.
 .It Fl D
 Equivalent to
-.Fl d Fl F Fl G Fl g Fl l Fl N Fl O Fl t Fl v .
+.Fl d Fl F Fl G Fl g Fl H Fl l Fl O Fl t .
 .It Fl d
 Show description.
 .It Fl e
@@ -121,7 +121,7 @@ Display aggregation label.
 Alias for
 .Fl S .
 .It Fl N
-Print name.
+Hide value.
 .It Fl n
 Hide name.
 .It Fl O
@@ -129,7 +129,10 @@ Display OID.
 .It Fl o
 Show value in hex format until 16 bytes.
 .It Fl p
-Display [property-name]: property-value.
+Display [
+.Dq PROPERTY-NAME
+]:
+.Dq property-value .
 .It Fl q
 Avoid to show some warning.
 .It Fl r Ar <tagroot>
@@ -150,16 +153,16 @@ Show only objects that are settable via loader.
 .It Fl t
 Print type.
 .It Fl V
-Show value, if value is not
-.Dq showable
-hidden the object.
+By default
+.Fl a
+hides an object without a value, this option disable this feature.
 .It Fl v
-Display value.
+Show version and quit.
 .It Fl W
 Display only writable objects that are not statistical.
 .It Fl X
 Equivalent to
-.Fl a Fl V Fl x
+.Fl a Fl x
 (obsolete).
 .It Fl x
 Print value in hex format.
@@ -170,19 +173,20 @@ Alias for
 .Sh EXIT STATUS
 .Ex -std
 .Sh EXAMPLES
-To get the value of hostname:
+To get an object value, i.g.,
+.Dq hostname :
 .Pp
-.Dl "nsysctl -Nv kern.hostname"
+.Dl "nsysctl kern.hostname"
 .Pp
-To set the value of hostname:
+To set an object value:
 .Pp
 .Dl "nsysctl kern.hostname=myBSD"
 .Pp
-Print all info about an object:
+Print object info:
 .Pp
-.Dl "nsysctl -Dp -e ', '  kern.ostype"
+.Dl "nsysctl -pD kern.ostype"
 .Pp
-Print all info about an object in xml:
+Print object info in xml:
 .Pp
 .Dl "nsysctl --libxo=xml,pretty -r 'ROOT-NAME' -D kern.ostype"
 .Sh COMPATIBILITY
