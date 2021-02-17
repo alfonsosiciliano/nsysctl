@@ -32,7 +32,7 @@
 .Nm
 .Op Fl -libxo Ar options Op Fl r Ar tagroot
 .Op Fl DdeFGgHIilnOpqTtW
-.Op Fl N | Vh Op Cm b | o | x
+.Op Fl N | h Op Cm b | o | x
 .Op Fl B Ar bufsize
 .Op Fl s Ar sep
 .Op Fl f Ar filename
@@ -195,13 +195,13 @@ Print all info about an object in xml:
 % sysctl -N name         % nsysctl -N name
 % sysctl -n name         % nsysctl -n name
 % sysctl -t name         % nsysctl -t name
-% sysctl -a              % nsysctl -aV
 % sysctl -aN             % nsysctl -aNIk
 % sysctl -ad             % nsysctl -adIk
 % sysctl -at             % nsysctl -atIk
-% sysctl -an             % nsysctl -anV
-% sysctl -ao             % nsysctl -aoV
-% sysctl -ax             % nsysctl -axV
+% sysctl -a              % nsysctl -a
+% sysctl -an             % nsysctl -an
+% sysctl -ao             % nsysctl -ao
+% sysctl -ax             % nsysctl -ax
 % sysctl -A              % nsysctl -A
 % sysctl -X              % nsysctl -X
 .Ed
