@@ -47,7 +47,7 @@ To add the package:
  * [X] Add: -H opt: has handler? [un]defined
  * [X] Add: NEEDGIANT flag to -G
  * [X] Change: -pg [FLAGS] -> [FLAGS-RAW]
- * [X] Change: xml -g \<flags\> -> \<flagsraw\>
+ * [X] Change: xml -g \<flags\> -> \<flags-raw\>
  * [X] Change: -pG [TRUE-FLAGS] -> [FLAGS]
  * [X] Change: xml -G \<flags-true\> -> \<flags\>
  * [X] Rename: opt: -m -> -S
