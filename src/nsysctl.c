@@ -155,8 +155,7 @@ int main(int argc, char *argv[argc])
 	case 'B': Bflagsize = (unsigned int) strtoull(optarg, NULL, 10); break;
 	case 'b': bflag = true; break;
 	case 'd': dflag = true; break;
-	case 'D': dflag = Fflag = lflag = Gflag = gflag = true;
-	    Nflag = Oflag = tflag = true;
+	case 'D': dflag = Fflag = lflag = Gflag = gflag = Oflag = tflag = true;
 	    break;
 	case 'e': sep = "="; break;
 	case 'F': Fflag = true; break;
