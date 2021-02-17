@@ -353,7 +353,7 @@ int visit_object(struct sysctlmif_object *object, char *newvalue, bool *printed)
     if(Vflag && !IS_LEAF(object))
 	return error;
 
-    if((vflag || Vflag) && IS_LEAF(object))
+    if((!Nflag || Vflag) && IS_LEAF(object))
     {
 	if(Bflagsize > 0) {
 	    value_size = Bflagsize;
@@ -371,8 +371,7 @@ int visit_object(struct sysctlmif_object *object, char *newvalue, bool *printed)
 	memset(value, 0, value_size);
 
 	error =sysctl(object->id, object->idlevel, value, &value_size, NULL, 0);
-	//if (error != 0 || value_size == 0) {
-	if (error != 0) {
+	if (error != 0 || (value_size == 0 && object->type == CTLTYPE_OPAQUE)) {
 	    free(value);
 	    if(Vflag)
 		return error;
@@ -450,7 +449,7 @@ int visit_object(struct sysctlmif_object *object, char *newvalue, bool *printed)
 	XOEMITPROP("HANDLER","{:handler/%s}", hashandler ? "Defined" : "Undefined");
     }
 
-    if(showvalue && (vflag || Vflag))
+    if(showvalue && (!Nflag|| Vflag))
     {
 	if(showsep)
 	    xo_emit("{L:/%s}",sep);
@@ -709,7 +708,7 @@ int set_basic_value(struct sysctlmif_object *object, char *input)
 	    error++;
 	} 
 	else if(sysctl(object->id, object->idlevel, NULL, 0, newval, newval_size)==0) {
-	    if(vflag || Vflag)
+	    if(!Nflag || Vflag)
 		xo_emit("{L: -> }{:newvalue/%s}",input);
 	} 
 	else {
