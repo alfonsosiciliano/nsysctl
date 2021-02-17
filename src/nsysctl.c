@@ -114,11 +114,11 @@ unsigned int Bflagsize;
 void usage()
 {
 
-    printf("usage: nsysctl [--libxo options [-r tagroot]] [-DdeFGgHIilNnOpqTtW]\n");
-    printf("               [-V | -v [h [b | o | x]]] [-B bufsize] [-s sep] [-f filename]\n");
+    printf("usage: nsysctl [--libxo options [-r tagroot]] [-DdeFGgHIilnOpqTtW]\n");
+    printf("               [-N | -Vh [b | o | x]] [-B bufsize] [-f filename] [-s sep]\n");
     printf("               name[=value[,value]] ...\n");
-    printf("       nsysctl [--libxo options [-r tagroot]] [-DdeFGgHIklNnOpqSTtW]\n");
-    printf("               [-V | -v [h [b | o | x]]] [-B bufsize] [-s sep] -A | -a | -X\n");
+    printf("       nsysctl [--libxo options [-r tagroot]] [-DdeFGgHIklnOpqSTtW]\n");
+    printf("               [-N | -Vh [b | o | x]] [-B bufsize] [-s sep] -A | -a | -X\n");
 }
 
 int main(int argc, char *argv[argc])
@@ -192,10 +192,13 @@ int main(int argc, char *argv[argc])
     argc -= optind;
     argv += optind;
     
-    if(Vflag && vflag)
-	xo_errx(1, "-V and -[v|D] are mutually exclusive");
+    if(Nflag && Vflag)
+	xo_errx(1, "-N and -V are mutually exclusive");
 
-    if( (bflag && oflag) || (bflag && xflag) || (oflag && xflag) )
+    if( Nflag && (bflag || xflag || oflag || Vflag || hflag))
+	xo_errx(1, "-N and [-Vhbox] are mutually exclusive");
+
+    if((bflag && oflag) || (bflag && xflag) || (oflag && xflag))
 	xo_errx(1, "-[b|o|x] are mutually exclusive");
 
     if (rflag)
