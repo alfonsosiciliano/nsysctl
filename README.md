@@ -64,8 +64,8 @@ To add the package:
  * [X] Change: -pF [FORMAT-STRING] -> [FORMAT]
  * [X] Change: default show name (like sysctl)
  * [X] Add: -n hide name
- * [ ] Change: default show value (like sysctl)
- * [ ] Change: -N hide value (show name default like sysctl)
+ * [X] Change: default show value (like sysctl)
+ * [X] Change: -N hide value (show name default like sysctl)
  * [ ] Change: -v show value -> show version (show value default)
  * [X] Delete: -A (obsolete, compatibility like sysctl)
  * [X] Delete: -X (obsolete, compatibility like sysctl)
