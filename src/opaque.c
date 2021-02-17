@@ -33,11 +33,8 @@
  */
 
 #include <sys/param.h>
-<<<<<<< HEAD
-#include <sys/queue.h>
-=======
 #include <sys/nv.h>
->>>>>>> libnv
+#include <sys/queue.h>
 #include <sys/resource.h>
 #include <sys/time.h>
 #include <sys/vmmeter.h>
