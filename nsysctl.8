@@ -184,25 +184,47 @@ Print all info about an object in xml:
 .Pp
 .Dl "nsysctl --libxo=xml,pretty -r 'ROOT-NAME' -D kern.ostype"
 .Sh COMPATIBILITY
+The features of
+.Nm
+are a superset of
+.Xr sysctll 8 ,
+the utilities are almost equivalent.
+.Pp
 .Bd -literal -offset indent -compact
 /sbin/sysctl             /usr/local/sbin/nsysctl
-% sysctl    name=value   % nsysctl -v name=value
-% sysctl    name         % nsysctl -v name
+% sysctl    name=value   % nsysctl    name=value
+% sysctl    name         % nsysctl    name
 % sysctl -d name         % nsysctl -d name
-% sysctl -e name         % nsysctl -ev name
-% sysctl -N name         % nsysctl    name
-% sysctl -n name         % nsysctl -v name
+% sysctl -e name         % nsysctl -e name
+% sysctl -N name         % nsysctl -N name
+% sysctl -n name         % nsysctl -n name
 % sysctl -t name         % nsysctl -t name
 % sysctl -a              % nsysctl -aV
-% sysctl -aN             % nsysctl -aIk
-% sysctl -an             % nsysctl -aV
-% sysctl -ad             % nsysctl -aIkd
-% sysctl -at             % nsysctl -aIkt
-% sysctl -ao             % nsysctl -aVo
-% sysctl -ax             % nsysctl -aVx
-% sysctl -A              % nsysctl -A
-% sysctl -X              % nsysctl -X
+% sysctl -aN             % nsysctl -aNIk
+% sysctl -ad             % nsysctl -adIk
+% sysctl -at             % nsysctl -atIk
+% sysctl -an             % nsysctl -anV
+% sysctl -ao             % nsysctl -aoV
+% sysctl -ax             % nsysctl -axV
+% sysctl -A              % nsysctl -AV
+% sysctl -X              % nsysctl -XV
 .Ed
+.Pp
+.Xr sysctl 8
+prints internal and
+.Dv SKIP
+nodes with
+.Fl aN ,
+.Fl at ,
+and
+.Fl ad,
+and hides the with
+.Fl a ,
+.Nm nsysctl
+allow to choose esplicitally to show them with
+.Fl I
+and
+.Fl k .
 .Sh SEE ALSO
 .Xr sysctl 3 ,
 .Xr sysctlmibinfo2 3 ,
