@@ -44,7 +44,7 @@
 .Op Fl V | v Op Cm h Op Cm b | o | x
 .Op Fl B Ar bufsize
 .Op Fl s Ar sep
-.Fl A | a | X
+.Fl a
 .Sh DESCRIPTION
 The
 .Nm nsysctl
@@ -74,7 +74,8 @@ and machine readable formats.
 See xo_parse_args(3)
 .It Fl A
 Equivalent to
-.Fl a Fl V Fl o .
+.Fl a Fl V Fl o
+(obsolete).
 .It Fl a
 Display every object.
 .It Fl b
@@ -158,7 +159,8 @@ Display value.
 Display only writable objects that are not statistical.
 .It Fl X
 Equivalent to
-.Fl a Fl V Fl x .
+.Fl a Fl V Fl x
+(obsolete).
 .It Fl x
 Print value in hex format.
 .It Fl y

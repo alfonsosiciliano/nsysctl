@@ -118,7 +118,7 @@ void usage()
     printf("               [-N | -Vh [b | o | x]] [-B bufsize] [-f filename] [-s sep]\n");
     printf("               name[=value[,value]] ...\n");
     printf("       nsysctl [--libxo options [-r tagroot]] [-DdeFGgHIklnOpqSTtW]\n");
-    printf("               [-N | -Vh [b | o | x]] [-B bufsize] [-s sep] -A | -a | -X\n");
+    printf("               [-N | -Vh [b | o | x]] [-B bufsize] [-s sep] -a\n");
 }
 
 int main(int argc, char *argv[argc])
