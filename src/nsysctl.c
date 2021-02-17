@@ -383,6 +383,8 @@ int visit_object(struct sysctlmif_object *object, char *newvalue, bool *printed)
 	    free(value);
 	    if(!Vflag && aflag)
 		return error;
+	    else
+	    	showvalue = false;
 	}
     }
 
