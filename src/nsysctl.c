@@ -411,7 +411,6 @@ int visit_object(struct sysctlmif_object *object, char *newvalue, bool *printed)
 	free(oid);
     }
 
-    //if (Nflag)
     if (!nflag)
 	XOEMITPROP("NAME","{:name/%s}", object->name);
 
