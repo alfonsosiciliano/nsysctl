@@ -4,7 +4,7 @@
  * Copyright (c) 1993
  *      The Regents of the University of California.  All rights reserved.
  *
- *  Alfonso Sabato Siciliano added sysctlmibinfo2 and libxo features,
+ *  Alfonso Sabato Siciliano added sysctlmibinfo2, libnv and libxo features,
  *      Original: https://cgit.freebsd.org/src/tree/sbin/sysctl/sysctl.c
  *
  * Redistribution and use in source and binary forms, with or without
@@ -168,9 +168,11 @@ NV(void *value, size_t value_size, bool hflag)
 		switch (type) {
 		case NV_TYPE_NUMBER:
 			xo_emit_field(hfield, "value", "%ju", NULL, (uintmax_t)nvlist_get_number(nvl, name));
+			xo_emit("{Lw:}{L:(}{:nvtype/number}{Lw:)}");
 			break;
 		case NV_TYPE_STRING:
 			xo_emit("{:value/%s}", nvlist_get_string(nvl, name));
+			xo_emit("{Lw:}{L:(}{:nvtype/string}{Lw:)}");
 			break;
 		default:
 			xo_emit("{L:N/A}");
