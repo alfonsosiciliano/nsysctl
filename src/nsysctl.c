@@ -442,7 +442,7 @@ int visit_object(struct sysctlmif_object *object, char *newvalue, bool *printed)
 	xo_open_container("true-flags");
 	for(i=0; i < NUM_CTLFLAGS; i++) {
 	    if( (object->flags & ctl_flags[i].flag_bit) == ctl_flags[i].flag_bit)
-		xo_emit("{:flag/%s}{Lw:}",ctl_flags[i].flag_name);
+		xo_emit("{Lw:}{:flag/%s}",ctl_flags[i].flag_name);
 	}
 	xo_close_container("true-flags");
 	showsep = true;
