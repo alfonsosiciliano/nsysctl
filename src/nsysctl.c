@@ -150,7 +150,7 @@ int main(int argc, char *argv[argc])
 
     while ((ch = getopt(argc, argv, "AaB:bDdeFf:GgHhiIklmNnOopqr:Ss:TtVvWwXxy")) != -1) {
 	switch (ch) {
-	case 'A': aflag = true; oflag = true; Vflag=true; break;
+	case 'A': aflag = true; oflag = true; break;
 	case 'a': aflag = true; break;
 	case 'B': Bflagsize = (unsigned int) strtoull(optarg, NULL, 10); break;
 	case 'b': bflag = true; break;
@@ -184,7 +184,7 @@ int main(int argc, char *argv[argc])
 	case 'v': printf("nsysctl %s\n", VERSION); return(0);
 	case 'W': Wflag = true; break;
 	case 'w': /* compatibility, ignored */ break;
-	case 'X': aflag = true; xflag = true; Vflag=true; break;
+	case 'X': aflag = true; xflag = true; break;
 	case 'x': xflag = true; break;
 	case 'y': Oflag = true; break;  /* compatibility <= 1.2.1 */
 	default:
