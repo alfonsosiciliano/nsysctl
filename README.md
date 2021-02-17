@@ -66,7 +66,7 @@ To add the package:
  * [X] Add: -n hide name
  * [X] Change: default show value (like sysctl)
  * [X] Change: -N hide value (show name default like sysctl)
- * [ ] Change: -v show value -> show version (show value default)
+ * [X] Change: -v show value -> show version (show value default)
  * [X] Delete: -A (obsolete, compatibility like sysctl)
  * [X] Delete: -X (obsolete, compatibility like sysctl)
  

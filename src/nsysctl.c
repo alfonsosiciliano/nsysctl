@@ -40,6 +40,7 @@
 #include "opaque.h"
 #include "special_value.h"
 
+#define VERSION "1.2.1"
 #define MAXSIZELINE 255
 #define IS_LEAF(node)	(node->children == NULL || SLIST_EMPTY(node->children))
 
@@ -107,17 +108,17 @@ int set_basic_value(struct sysctlmif_object *object, char *input);
 
 bool aflag, bflag, dflag, Fflag, fflag, hflag, Gflag, gflag, Hflag;
 bool Iflag, iflag, kflag, lflag, Nflag, nflag, Oflag, oflag, pflag, qflag;
-bool rflag, Sflag, Tflag, tflag, Vflag, vflag, Wflag, xflag;
+bool rflag, Sflag, Tflag, tflag, Vflag, Wflag, xflag;
 char *sep, *rflagstr;
 unsigned int Bflagsize;
 
 void usage()
 {
 
-    printf("usage: nsysctl [--libxo options [-r tagroot]] [-DdeFGgHIilnOpqTtW]\n");
+    printf("usage: nsysctl [--libxo options [-r tagroot]] [-DdeFGgHIilnOpqTtvW]\n");
     printf("               [-N | -Vh [b | o | x]] [-B bufsize] [-f filename] [-s sep]\n");
     printf("               name[=value[,value]] ...\n");
-    printf("       nsysctl [--libxo options [-r tagroot]] [-DdeFGgHIklnOpqSTtW]\n");
+    printf("       nsysctl [--libxo options [-r tagroot]] [-DdeFGgHIklnOpqSTtvW]\n");
     printf("               [-N | -Vh [b | o | x]] [-B bufsize] [-s sep] -a\n");
 }
 
@@ -134,7 +135,7 @@ int main(int argc, char *argv[argc])
     Bflagsize = 0;
     aflag = bflag = dflag = Fflag = fflag = Gflag = gflag = Hflag = hflag = false;
     Iflag = iflag = kflag = lflag = Nflag = nflag = Oflag = oflag = pflag = qflag = false;
-    rflag = Sflag = Tflag = tflag = Vflag = vflag = Wflag = xflag = false;
+    rflag = Sflag = Tflag = tflag = Vflag = Wflag = xflag = false;
 
     atexit(xo_finish_atexit);
     xo_set_flags(NULL, XOF_UNITS | XOF_FLUSH);
@@ -152,7 +153,7 @@ int main(int argc, char *argv[argc])
 	case 'b': bflag = true; break;
 	case 'd': dflag = true; break;
 	case 'D': dflag = Fflag = lflag = Gflag = gflag = true;
-	    Nflag = Oflag = tflag = vflag = true;
+	    Nflag = Oflag = tflag = true;
 	    break;
 	case 'e': sep = "="; break;
 	case 'F': Fflag = true; break;
@@ -178,7 +179,7 @@ int main(int argc, char *argv[argc])
 	case 'T': Tflag = true; break;
 	case 't': tflag = true; break;
 	case 'V': Vflag = true; break;
-	case 'v': vflag = true; break;
+	case 'v': printf("nsysctl %s\n", VERSION); return(0);
 	case 'W': Wflag = true; break;
 	case 'w': /* compatibility, ignored */ break;
 	case 'X': aflag = true; xflag = true; Vflag=true; break;
