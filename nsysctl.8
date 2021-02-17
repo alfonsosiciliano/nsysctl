@@ -162,8 +162,8 @@ Show version and quit.
 Display only writable objects that are not statistical.
 .It Fl X
 Equivalent to
-.Fl a Fl x
-(obsolete).
+.Fl a Fl xa,
+obsolete.
 .It Fl x
 Print value in hex format.
 .It Fl y
@@ -188,7 +188,7 @@ Print object info:
 .Pp
 Print object info in xml:
 .Pp
-.Dl "nsysctl --libxo=xml,pretty -r 'ROOT-NAME' -D kern.ostype"
+.Dl "nsysctl --libxo=xml,pretty -r 'ROOTNAME' -D kern.ostype"
 .Sh COMPATIBILITY
 .Bd -literal -offset indent -compact
 /sbin/sysctl             /usr/local/sbin/nsysctl
