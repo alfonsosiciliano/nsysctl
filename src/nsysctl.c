@@ -119,7 +119,7 @@ void usage()
 {
 
     printf("usage: nsysctl [--libxo options [-r tagroot]] [-DdeFGgHIilnOpqTtvW]\n");
-    printf("               [-N | -Vh [b | o | x]] [-B bufsize] [-f filename] [-s sep]\n");
+    printf("               [-N | -h [b | o | x]] [-B bufsize] [-f filename] [-s sep]\n");
     printf("               name[=value[,value]] ...\n");
     printf("       nsysctl [--libxo options [-r tagroot]] [-DdeFGgHIklnOpqSTtvW]\n");
     printf("               [-N | -Vh [b | o | x]] [-B bufsize] [-s sep] -a\n");
