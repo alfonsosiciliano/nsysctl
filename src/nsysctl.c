@@ -155,7 +155,7 @@ int main(int argc, char *argv[argc])
 	case 'B': Bflagsize = (unsigned int) strtoull(optarg, NULL, 10); break;
 	case 'b': bflag = true; break;
 	case 'd': dflag = true; break;
-	case 'D': dflag = Fflag = Gflag = gflag = Hflag = lflag = Oflag = tflag = true;
+	case 'D': dflag = Fflag = Gflag = Hflag = lflag = Oflag = tflag = true;
 	    break;
 	case 'e': sep = "="; break;
 	case 'F': Fflag = true; break;
@@ -434,20 +434,20 @@ int visit_object(struct sysctlmif_object *object, char *newvalue, bool *printed)
 	XOEMITPROP("FORMAT","{:format/%s}", object->fmt);
 
     if (gflag)
-	XOEMITPROP("FLAGS", xflag ? "{:flags/%x}" : "{:flags/%u}", 
+	XOEMITPROP("FLAGS-RAW", xflag ? "{:flags-raw/%x}" : "{:flags-raw/%u}", 
 		   object->flags);
 
     if (Gflag) {
 	if(showsep)
 	    xo_emit("{L:/%s}",sep);
 	if (pflag)
-	    xo_emit("{L:[TRUE-FLAGS]:}");
-	xo_open_container("true-flags");
+	    xo_emit("{L:[FLAGS]:}");
+	xo_open_container("flags");
 	for(i=0; i < NUM_CTLFLAGS; i++) {
 	    if( (object->flags & ctl_flags[i].flag_bit) == ctl_flags[i].flag_bit)
 		xo_emit("{Lw:}{:flag/%s}",ctl_flags[i].flag_name);
 	}
-	xo_close_container("true-flags");
+	xo_close_container("flags");
 	showsep = true;
     }
 

@@ -46,9 +46,10 @@ To add the package:
  * [X] Add: -k opt: show SKIP objects with -a
  * [X] Add: -H opt: has handler? [un]defined
  * [X] Add: NEEDGIANT flag to -G
- * [ ] Delete: -g opt
- * [ ] Rename: -G -> -g
- * [ ] Change: -pg [TRUE-FLAGS] -> [FLAGS]
+ * [X] Change: -pg [FLAGS] -> [FLAGS-RAW]
+ * [X] Change: xml -g \<flags\> -> \<flagsraw\>
+ * [X] Change: -pG [TRUE-FLAGS] -> [FLAGS]
+ * [X] Change: xml -G \<flags-true\> -> \<flags\>
  * [X] Rename: opt: -m -> -S
  * [X] Fix: -S only with -a
  * [X] Delete: sysctlinfo\_helper.h/c
@@ -69,4 +70,5 @@ To add the package:
  * [X] Change: -V with -a show object with/without a readable value
  * [X] Delete: -A (obsolete, compatibility like sysctl)
  * [X] Delete: -X (obsolete, compatibility like sysctl)
- 
+ * [ ] Fix: ./nsysctl -pDI kern | less
+ * [X] Change: -D = -dFGHlOt (human output)
