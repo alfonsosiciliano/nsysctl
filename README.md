@@ -70,5 +70,6 @@ To add the package:
  * [X] Change: -V with -a show object with/without a readable value
  * [X] Delete: -A (obsolete, compatibility like sysctl)
  * [X] Delete: -X (obsolete, compatibility like sysctl)
- * [ ] Fix: ./nsysctl -pDI kern | less
  * [X] Change: -D = -dFGHlOt (human output)
+ * [X] Fix: ./nsysctl -pDI kern | less
+ * [X] Fix: ./nsysctl -pDIkVgSa (-V!)

@@ -351,7 +351,7 @@ int visit_object(struct sysctlmif_object *object, char *newvalue, bool *printed)
     if (aflag && !kflag && (object->flags & CTLFLAG_SKIP))
 	return error;
 
-    showvalue = !Nflag || Vflag;
+    showvalue = (!Nflag || Vflag) && IS_LEAF(object);
 
     if (showvalue && !Vflag && aflag && 
       (object->type == CTLTYPE_OPAQUE || object->type == CTLTYPE_NODE) &&
@@ -361,7 +361,7 @@ int visit_object(struct sysctlmif_object *object, char *newvalue, bool *printed)
     if(showvalue && !Vflag && aflag && !IS_LEAF(object))
 	return error;
 
-    if (showvalue && IS_LEAF(object))
+    if (showvalue)
     {
 	if (Bflagsize > 0) {
 	    value_size = Bflagsize;
