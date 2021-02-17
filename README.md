@@ -45,8 +45,7 @@ To add the package:
  * [ ] Add: libnv
  * [X] Add: -k opt: show SKIP objects with -a
  * [X] Add: -H opt: has handler? [un]defined
- * [ ] Add: NEEDGIANT flag to -G
- * [ ] Delete: \*RW\* flags with -G
+ * [X] Add: NEEDGIANT flag to -G
  * [ ] Delete: -g opt
  * [ ] Rename: -G -> -g
  * [ ] Change: -pg [TRUE-FLAGS] -> [FLAGS]

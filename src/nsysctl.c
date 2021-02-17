@@ -49,30 +49,33 @@ struct ctl_flag {
     const char *flag_name;
 };
 
-#define NUM_CTLFLAGS 21
-
+#define NUM_CTLFLAGS 22
+#ifndef CTLFLAG_NEEDGIANT
+#define CTLFLAG_NEEDGIANT 0x00000800
+#endif
 static const struct ctl_flag ctl_flags[NUM_CTLFLAGS] = {
-    { CTLFLAG_RD,      "RD"      },
-    { CTLFLAG_WR,      "WR"      },
-    { CTLFLAG_RW,      "RW"      },
-    { CTLFLAG_DORMANT, "DORMANT" },
-    { CTLFLAG_ANYBODY, "ANYBODY" },
-    { CTLFLAG_SECURE,  "SECURE"  },
-    { CTLFLAG_PRISON,  "PRISON"  },
-    { CTLFLAG_DYN,     "DYN"     },
-    { CTLFLAG_SKIP,    "SKIP"    },
-    { CTLMASK_SECURE,  "SECURE"  },
-    { CTLFLAG_TUN,     "TUN"     },
-    { CTLFLAG_RDTUN,   "RDTUN"   },
-    { CTLFLAG_RWTUN,   "RWTUN"   },
-    { CTLFLAG_MPSAFE,  "MPSAFE"  },
-    { CTLFLAG_VNET,    "VNET"    },
-    { CTLFLAG_DYING,   "DYING"   },
-    { CTLFLAG_CAPRD,   "CAPRD"   },
-    { CTLFLAG_CAPWR,   "CAPWR"   },
-    { CTLFLAG_STATS,   "STATS"   },
-    { CTLFLAG_NOFETCH, "NOFETCH" },
-    { CTLFLAG_CAPRW,   "CAPRW"   }
+    { CTLFLAG_RD,        "RD"       },
+    { CTLFLAG_WR,        "WR"       },
+    { CTLFLAG_RW,        "RW"       },
+    { CTLFLAG_DORMANT,   "DORMANT"  },
+    { CTLFLAG_ANYBODY,   "ANYBODY"  },
+    { CTLFLAG_SECURE,    "SECURE"   },
+    { CTLFLAG_PRISON,    "PRISON"   },
+    { CTLFLAG_DYN,       "DYN"      },
+    { CTLFLAG_SKIP,      "SKIP"     },
+    { CTLMASK_SECURE,    "SECURE"   },
+    { CTLFLAG_TUN,       "TUN"      },
+    { CTLFLAG_RDTUN,     "RDTUN"    },
+    { CTLFLAG_RWTUN,     "RWTUN"    },
+    { CTLFLAG_MPSAFE,    "MPSAFE"   },
+    { CTLFLAG_VNET,      "VNET"     },
+    { CTLFLAG_DYING,     "DYING"    },
+    { CTLFLAG_CAPRD,     "CAPRD"    },
+    { CTLFLAG_CAPWR,     "CAPWR"    },
+    { CTLFLAG_STATS,     "STATS"    },
+    { CTLFLAG_NOFETCH,   "NOFETCH"  },
+    { CTLFLAG_CAPRW,     "CAPRW"    },
+    { CTLFLAG_NEEDGIANT, "NEEDGIANT"}
 };
 
 struct ctl_type {
@@ -440,7 +443,7 @@ int visit_object(struct sysctlmif_object *object, char *newvalue, bool *printed)
 	xo_open_container("true-flags");
 	for(i=0; i < NUM_CTLFLAGS; i++) {
 	    if( (object->flags & ctl_flags[i].flag_bit) == ctl_flags[i].flag_bit)
-		xo_emit("{Lw:}{:flag/%s}",ctl_flags[i].flag_name);
+		xo_emit("{:flag/%s}{Lw:}",ctl_flags[i].flag_name);
 	}
 	xo_close_container("true-flags");
 	showsep = true;
