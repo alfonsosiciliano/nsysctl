@@ -33,7 +33,11 @@
  */
 
 #include <sys/param.h>
+<<<<<<< HEAD
 #include <sys/queue.h>
+=======
+#include <sys/nv.h>
+>>>>>>> libnv
 #include <sys/resource.h>
 #include <sys/time.h>
 #include <sys/vmmeter.h>
@@ -57,6 +61,7 @@
 #include <sysctlmibinfo2.h>
 
 /* Func declarations */
+static int NV(void *value, size_t value_size, bool hflag);
 static int S_clockinfo(void *value, size_t value_size, bool hflag);
 static int S_input_id(void *value, size_t value_size, bool hflag);
 static int S_loadavg(void *value, size_t value_size, bool hflag);
@@ -72,7 +77,8 @@ int strIKtoi(const char *str, char **endptrp, const char *fmt);
 
 bool is_opaque_defined(struct sysctlmif_object *object)
 {
-    if ( strcmp(object->fmt, "S,clockinfo") == 0 ||
+    if ( strcmp(object->fmt, "NV") == 0 ||
+	 strcmp(object->fmt, "S,clockinfo") == 0 ||
 #if defined(__amd64__) || defined(__i386__)
 	strcmp(object->fmt, "S,bios_smap_xattr") == 0 ||
 #endif
@@ -97,8 +103,10 @@ display_opaque_value(struct sysctlmif_object *object, void *value,
 	int to = value_size;
 	
 	xo_open_container("value");
-	
-	if (strcmp(object->fmt, "S,clockinfo") == 0) {
+
+	if (strcmp(object->fmt, "NV") == 0) {
+		error += NV(value, value_size, hflag);
+	} else if (strcmp(object->fmt, "S,clockinfo") == 0) {
 		error += S_clockinfo(value, value_size, hflag);
 	} else if (strcmp(object->fmt, "S,timeval") == 0) {
 		error += S_timeval(value, value_size, hflag);
@@ -141,6 +149,42 @@ display_opaque_value(struct sysctlmif_object *object, void *value,
 	xo_close_container("value");
 
 	return error;
+}
+
+static int
+NV(void *value, size_t value_size, bool hflag)
+{
+	nvlist_t *nvl = nvlist_unpack(value, value_size, 0);
+	void *cookie;
+	int type;
+	const char *name;
+	char *hfield = hflag ? "h,hn-decimal" : NULL;
+	
+	xo_open_container("nvlist");
+
+	cookie = NULL;
+	while ((name = nvlist_next(nvl, &type, &cookie)) != NULL) {
+		xo_open_container("nv");
+		xo_emit("{L:\n}");
+		xo_emit("{:name/%s}", name);
+		xo_emit("{L:=}");
+		switch (type) {
+		case NV_TYPE_NUMBER:
+			xo_emit_field(hfield, "value", "%ju", NULL, (uintmax_t)nvlist_get_number(nvl, name));
+			break;
+		case NV_TYPE_STRING:
+			xo_emit("{:value/%s}", nvlist_get_string(nvl, name));
+			break;
+		default:
+			xo_emit("{L:N/A}");
+			break;
+		}
+		xo_close_container("nv");
+	}
+	
+	xo_close_container("nvlist");
+
+	return (0);
 }
 
 
