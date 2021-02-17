@@ -186,12 +186,6 @@ Print all info about an object in xml:
 .Pp
 .Dl "nsysctl --libxo=xml,pretty -r 'ROOT-NAME' -D kern.ostype"
 .Sh COMPATIBILITY
-The features of
-.Nm
-are a superset of
-.Xr sysctll 8 ,
-the utilities are almost equivalent.
-.Pp
 .Bd -literal -offset indent -compact
 /sbin/sysctl             /usr/local/sbin/nsysctl
 % sysctl    name=value   % nsysctl    name=value
@@ -208,25 +202,9 @@ the utilities are almost equivalent.
 % sysctl -an             % nsysctl -anV
 % sysctl -ao             % nsysctl -aoV
 % sysctl -ax             % nsysctl -axV
-% sysctl -A              % nsysctl -AV
-% sysctl -X              % nsysctl -XV
+% sysctl -A              % nsysctl -A
+% sysctl -X              % nsysctl -X
 .Ed
-.Pp
-.Xr sysctl 8
-prints internal and
-.Dv SKIP
-nodes with
-.Fl aN ,
-.Fl at ,
-and
-.Fl ad,
-and hides the with
-.Fl a ,
-.Nm nsysctl
-allow to choose esplicitally to show them with
-.Fl I
-and
-.Fl k .
 .Sh SEE ALSO
 .Xr sysctl 3 ,
 .Xr sysctlmibinfo2 3 ,
