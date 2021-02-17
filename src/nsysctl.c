@@ -110,8 +110,8 @@ int display_basic_value(struct sysctlmif_object *object, void *value, size_t val
 int set_basic_value(struct sysctlmif_object *object, char *input);
 
 bool aflag, bflag, dflag, Fflag, fflag, hflag, Gflag, gflag, Hflag;
-bool Iflag, iflag, kflag, lflag, Nflag, nflag, Oflag, oflag, pflag, qflag;
-bool rflag, Sflag, Tflag, tflag, Vflag, Wflag, xflag;
+bool Iflag, iflag, kflag, lflag, Nflag, nflag, Oflag, oflag, pflag;
+bool qflag, rflag, Sflag, Tflag, tflag, Vflag, Wflag, xflag;
 char *sep, *rflagstr;
 unsigned int Bflagsize;
 
@@ -137,8 +137,8 @@ int main(int argc, char *argv[argc])
     error = 0;
     Bflagsize = 0;
     aflag = bflag = dflag = Fflag = fflag = Gflag = gflag = Hflag = hflag = false;
-    Iflag = iflag = kflag = lflag = Nflag = nflag = Oflag = oflag = pflag = qflag = false;
-    rflag = Sflag = Tflag = tflag = Vflag = Wflag = xflag = false;
+    Iflag = iflag = kflag = lflag = Nflag = nflag = Oflag = oflag = pflag = false;
+    qflag = rflag = Sflag = Tflag = tflag = Vflag = Wflag = xflag = false;
 
     atexit(xo_finish_atexit);
     xo_set_flags(NULL, XOF_UNITS | XOF_FLUSH);
@@ -155,7 +155,7 @@ int main(int argc, char *argv[argc])
 	case 'B': Bflagsize = (unsigned int) strtoull(optarg, NULL, 10); break;
 	case 'b': bflag = true; break;
 	case 'd': dflag = true; break;
-	case 'D': dflag = Fflag = lflag = Gflag = gflag = Hflag = Oflag = tflag = true;
+	case 'D': dflag = Fflag = Gflag = gflag = Hflag = lflag = Oflag = tflag = true;
 	    break;
 	case 'e': sep = "="; break;
 	case 'F': Fflag = true; break;
@@ -271,10 +271,10 @@ int parse_line_or_argv(char *arg)
     }
 
     node = sysctlmif_treebyname(name);
-    if(node == NULL) {
-    	if (errno == ENOMEM) { /* malloc error */
-    	    xo_err(1, "cannot build the tree of '%s'", name);
-    	} else { /* nodename does not exist */
+    if (node == NULL) {
+	if (errno == ENOMEM) { /* malloc error */
+	    xo_err(1, "cannot build the tree of '%s'", name);
+	} else { /* nodename does not exist */
 	    if (!iflag)
 		error++;
 	    if (!iflag && !qflag)
@@ -285,13 +285,13 @@ int parse_line_or_argv(char *arg)
 	error = display_tree(node);
     }
     else { /* nodename=value */
-	if(!IS_LEAF(node)) {
+	if (!IS_LEAF(node)) {
 	    xo_warnx("oid \'%s\' isn't a leaf node", node->name);
 	    error++;
 	} else { /* here node is a leaf */
 	    error = visit_object(node, valuestr, &printed);
-	    if(printed)
-    	        xo_close_instance("object");
+	    if (printed)
+	        xo_close_instance("object");
         }
     }
 
@@ -321,7 +321,7 @@ int display_tree(struct sysctlmif_object *root)
 	    xo_close_container("children");
     }
     
-    if(printed)
+    if (printed)
     	xo_close_instance("object");
     
     return error;
@@ -353,17 +353,17 @@ int visit_object(struct sysctlmif_object *object, char *newvalue, bool *printed)
 
     showvalue = !Nflag || Vflag;
 
-    if(showvalue && !Vflag && aflag && 
-       (object->type == CTLTYPE_OPAQUE || object->type == CTLTYPE_NODE) && 
+    if (showvalue && !Vflag && aflag && 
+      (object->type == CTLTYPE_OPAQUE || object->type == CTLTYPE_NODE) &&
        !xflag && !oflag && !is_opaque_defined(object))
- 	return error;
+	  return error;
 
     if(showvalue && !Vflag && aflag && !IS_LEAF(object))
 	return error;
 
-    if(showvalue && IS_LEAF(object))
+    if (showvalue && IS_LEAF(object))
     {
-	if(Bflagsize > 0) {
+	if (Bflagsize > 0) {
 	    value_size = Bflagsize;
 	} else {
 	    sysctl(object->id, object->idlevel, NULL, &value_size, NULL, 0);
@@ -381,7 +381,7 @@ int visit_object(struct sysctlmif_object *object, char *newvalue, bool *printed)
 	error =sysctl(object->id, object->idlevel, value, &value_size, NULL, 0);
 	if (error != 0 || (value_size == 0 && object->type == CTLTYPE_OPAQUE)) {
 	    free(value);
-	    if(!Vflag && aflag)
+	    if (!Vflag && aflag)
 		return error;
 	    else
 	    	showvalue = false;
@@ -407,7 +407,7 @@ int visit_object(struct sysctlmif_object *object, char *newvalue, bool *printed)
 	{
 	    snprintf(oidlevel, sizeof(oidlevel), xflag ? "%x." : "%d.", object->id[i]);
 	    oid = realloc((void*)oid, strlen(oidlevel) + 2); /* check NULL */
-	    if(i == 0)
+	    if (i == 0)
 	        (oid[0] = '\0');
 	    memcpy(oid + strlen(oid), &(oidlevel[0]), strlen(oidlevel)+1);
 	}
@@ -457,7 +457,7 @@ int visit_object(struct sysctlmif_object *object, char *newvalue, bool *printed)
 	XOEMITPROP("HANDLER","{:handler/%s}", hashandler ? "Defined" : "Undefined");
     }
 
-    if(showvalue && (!Nflag|| Vflag))
+    if (showvalue && (!Nflag|| Vflag))
     {
 	if(showsep)
 	    xo_emit("{L:/%s}",sep);
@@ -495,7 +495,7 @@ int display_basic_value(struct sysctlmif_object *object, void *value, size_t val
     uintmax_t zero = 0;
     char *hfield = hflag ? "hn" : NULL;
 
-    if(object->type == CTLTYPE_NODE) {
+    if (object->type == CTLTYPE_NODE) {
 	xo_warnx("'%s' is a node", object->name);
 	return 1;
     }
@@ -507,7 +507,7 @@ int display_basic_value(struct sysctlmif_object *object, void *value, size_t val
 	return 0;
     }
     
-    if(object->type == CTLTYPE_STRING) {
+    if (object->type == CTLTYPE_STRING) {
 	if( ((char*)value)[value_size]!='\0')
 	    ((char*)value)[value_size]='\0';
 	xo_emit("{:value/%s}", (char *)value);
@@ -611,7 +611,7 @@ int set_basic_value(struct sysctlmif_object *object, char *input)
 	return 1;
     }
 
-    // the state is settable
+    /* the object is settable */
 
     if(Bflagsize > 0) {
 	newval_size = Bflagsize;
@@ -639,7 +639,7 @@ int set_basic_value(struct sysctlmif_object *object, char *input)
 
 	i=0;
 	while(parse_string(start, &next, end, ',')) {
-	    /* some oid is an array but fmt != A (e.g. kern.cp_times) */
+	    // some value is an array but fmt != A (e.g. kern.cp_times)
 	    if(Bflagsize <= 0) {
 		newval_size += ctl_types[object->type].size;
 		newval = realloc(newval, ctl_types[object->type].size);
@@ -709,14 +709,14 @@ int set_basic_value(struct sysctlmif_object *object, char *input)
 	free(input_m);
     } // else numeric value
 
-    if(error == 0) {
+    if (error == 0) {
 	if (newval_size == 0 && object->type != CTLTYPE_STRING) {
 	    xo_emit("{L:\n}");
 	    xo_warnx("empty numeric value");
 	    error++;
 	} 
 	else if(sysctl(object->id, object->idlevel, NULL, 0, newval, newval_size)==0) {
-	    if(!Nflag || Vflag)
+	    if (!Nflag || Vflag)
 		xo_emit("{L: -> }{:newvalue/%s}",input);
 	} 
 	else {
@@ -726,7 +726,7 @@ int set_basic_value(struct sysctlmif_object *object, char *input)
 	}
     }
 
-    if((object->type != CTLTYPE_STRING || Bflagsize > 0) && newval != NULL)
+    if ((object->type != CTLTYPE_STRING || Bflagsize > 0) && newval != NULL)
 	free(newval);
 
     return (error);
