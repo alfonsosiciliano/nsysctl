@@ -331,7 +331,7 @@ int display_tree(struct sysctlmif_object *root)
 
 int visit_object(struct sysctlmif_object *object, char *newvalue, bool *printed)
 {
-    bool showsep = false, showvalue = false, hashandler;
+    bool showsep = false, showvalue, hashandler;
     int i, error = 0;
     size_t value_size = 0;
     void *value;
@@ -351,15 +351,17 @@ int visit_object(struct sysctlmif_object *object, char *newvalue, bool *printed)
     if (aflag && !kflag && (object->flags & CTLFLAG_SKIP))
 	return error;
 
-    if(Vflag && aflag && 
+    showvalue = !Nflag || Vflag;
+
+    if(showvalue && !Vflag && aflag && 
        (object->type == CTLTYPE_OPAQUE || object->type == CTLTYPE_NODE) && 
        !xflag && !oflag && !is_opaque_defined(object))
  	return error;
 
-    if(Vflag && !IS_LEAF(object))
+    if(showvalue && !Vflag && aflag && !IS_LEAF(object))
 	return error;
 
-    if((!Nflag || Vflag) && IS_LEAF(object))
+    if(showvalue && IS_LEAF(object))
     {
 	if(Bflagsize > 0) {
 	    value_size = Bflagsize;
@@ -379,10 +381,9 @@ int visit_object(struct sysctlmif_object *object, char *newvalue, bool *printed)
 	error =sysctl(object->id, object->idlevel, value, &value_size, NULL, 0);
 	if (error != 0 || (value_size == 0 && object->type == CTLTYPE_OPAQUE)) {
 	    free(value);
-	    if(Vflag)
+	    if(!Vflag && aflag)
 		return error;
-	} else
-	    showvalue = true;
+	}
     }
 
     /* print object */
