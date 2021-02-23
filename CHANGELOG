@@ -1,7 +1,6 @@
 version 2.0
 
-	* refactoring:
-		* change: sysctl library sysctlmibinfo -> sysctlmibinfo2, so:
+	* change: sysctl library sysctlmibinfo -> sysctlmibinfo2, so:
 		* delete: undocumented interface (kern/kern_sysctl.c) support
 		* delete: sysctlinfo_helpers.h/c
 		* change: use sysctlinfo via sysctlmibinfo2
