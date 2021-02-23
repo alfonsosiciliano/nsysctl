@@ -14,7 +14,7 @@ version 2.0
 	* change: opt -m -> -S
 	* fix: opt -S only with -a
 	* change: opt -y -> -O
-	* change: opt -pO output [ID] -> [OID]
+	* change: opt -pO [ID] -> [OID]
 	* change: opt -O xml
 		<id> <level1>X</level1> <level2>Y</level2> </id> ->
 		<OID>X.Y</OID>
