@@ -56,6 +56,20 @@ The System exposes the available parameters as objects of a
 can explore the MIB, print the properties of an object, get or set its value and
 show the output in human and machine readable formats.
 .Pp
+An object is identified by an Object Identifier
+.Pq OID ,
+a series of numbers, it is possible to replace a number with a string to obtain
+an object name, e.g., [1.1] \(->
+.Dq kern.ostype ,
+.Nm
+can receive in input one or more
+.Ar name ,
+eventually with a new
+.Ar value ,
+or
+.Fl a
+for all objects.
+.Pp
 .Nm nsysctl
 requires the
 .Xr sysctlinfo 4
