@@ -14,9 +14,10 @@ version 2.0
 	* change: opt -m -> -S
 	* fix: opt -S only with -a
 	* change: opt -y -> -O
-	* change: ot -pO output [ID] -> [OID]
-	* change: xml -O <id> <level1>X</level1> <level2>Y</level2> </id> in
-		         <OID>X.Y</OID>
+	* change: opt -pO output [ID] -> [OID]
+	* change: opt -O xml
+		<id> <level1>X</level1> <level2>Y</level2> </id> ->
+		<OID>X.Y</OID>
 	* change: opt -e <sep> -> -s <sep>
 	* add: opt -e, like sysctl
 	* improve: manual DESCRIPTION
