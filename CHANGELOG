@@ -1,14 +1,34 @@
-version 1.3
+version 2.0
 
-	* add: sysctlmibinfo2
-	* delete: sysctlinfo_helpers.h/c, use sysctlinfo via sysctlmibinfo2
 	* delete: sysctlmibinfo
 	* delete: support of the undocumented interface (kern/kern_sysctl.c)
+	* add: sysctlmibinfo2
+	* delete: sysctlinfo_helpers.h/c, use sysctlinfo via sysctlmibinfo2
+	* add: opt -k, print SKIP with -a
+	* add: opt -H, print object handler "Defined/Undefined"
+	* change: opt -pg [FLAGS] -> [FLAGS-RAW]
+	* change: opt -g with xml <flags> -> <flags-raw>
+	* change: opt -pG [TRUE-FLAGS] -> [FLAGS]
+	* change: opt -G with xml <flags-true> -> <flags>
 	* change: opt -m -> -S
+	* fix: opt -S only with -a
 	* change: opt -y -> -O
-	* change: -p output [ID] -> [OID]
-	* change: xml -O/-y <id> <level1>X</level1> <level2>Y</level2> </id> in
-		            <OID>X.Y</OID>
+	* change: ot -pO output [ID] -> [OID]
+	* change: xml -O <id> <level1>X</level1> <level2>Y</level2> </id> in
+		         <OID>X.Y</OID>
+	* change: opt -e <sep> -> -s <sep>
+	* add: opt -e, like sysctl
+	* improve: manual DESCRIPTION
+	* change: opt -pF [FORMAT-STRING] -> [FORMAT]
+	* change: opt -v |show value| -> |show version|, show value default
+	* change: default show value (like sysctl)
+	* change: opt -V with -a, show object with/without a value
+	* add: -n hide name, like sysctl
+	* change: -N |show value| -> |hide value|
+	* change: show name by default like sysctl
+	* delete: -A, in compatibility like sysctl
+	* delete: -X, in compatibility like sysctl
+ 	* change: opt -D, -dFGHlOt (human output)
 
 2019-10-5 version 1.2.1
 

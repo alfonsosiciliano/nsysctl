@@ -43,33 +43,6 @@ To add the package:
  * [ ] Test: opaque S,efi\_map\_header (machdep.efi\_map)
  * [ ] Add: opaque S,pagesizes (hw.pagesizes)
  * [ ] Add: libnv
- * [X] Add: -k opt: show SKIP objects with -a
- * [X] Add: -H opt: has handler? [un]defined
- * [X] Add: NEEDGIANT flag to -G
- * [X] Change: -pg [FLAGS] -> [FLAGS-RAW]
- * [X] Change: xml -g \<flags\> -> \<flags-raw\>
- * [X] Change: -pG [TRUE-FLAGS] -> [FLAGS]
- * [X] Change: xml -G \<flags-true\> -> \<flags\>
- * [X] Rename: opt: -m -> -S
- * [X] Fix: -S only with -a
- * [X] Delete: sysctlinfo\_helper.h/c
- * [X] Delete: libsysctlmibinfo
- * [X] Add: libsysctlmibinfo2
- * [X] Rename: opt: -y -> -O
- * [X] Change: -pO [ID] -> [OID]
- * [X] Change: xml \<id\>\<level1\>X\</level1\>\<level2\>Y\</level2\>\</id\> -> \<OID\>X.Y\</OID\>
- * [X] Rename: opt -e \<sep\> -> -s \<sep\>
- * [X] Add: opt -e (like sysctl)
- * [X] Improve manual DESCRIPTION
- * [X] Change: -pF [FORMAT-STRING] -> [FORMAT]
- * [X] Change: default show name (like sysctl)
- * [X] Add: -n hide name
- * [X] Change: default show value (like sysctl)
- * [X] Change: -N hide value (show name default like sysctl)
- * [X] Change: -v show value -> show version (show value default)
- * [X] Change: -V with -a show object with/without a readable value
- * [X] Delete: -A (obsolete, compatibility like sysctl)
- * [X] Delete: -X (obsolete, compatibility like sysctl)
- * [X] Change: -D = -dFGHlOt (human output)
  * [X] Fix: ./nsysctl -pDI kern | less
  * [X] Fix: ./nsysctl -pDIkVgSa (-V!)
+
