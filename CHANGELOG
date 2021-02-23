@@ -1,9 +1,10 @@
 version 2.0
 
-	* delete: sysctlmibinfo
-	* delete: support of the undocumented interface (kern/kern_sysctl.c)
-	* add: sysctlmibinfo2
-	* delete: sysctlinfo_helpers.h/c, use sysctlinfo via sysctlmibinfo2
+	* refactoring:
+		* change: sysctl library sysctlmibinfo -> sysctlmibinfo2, so:
+		* delete: undocumented interface (kern/kern_sysctl.c) support
+		* delete: sysctlinfo_helpers.h/c
+		* change: use sysctlinfo via sysctlmibinfo2
 	* add: opt -k, print SKIP with -a
 	* add: opt -H, print object handler "Defined/Undefined"
 	* change: opt -pg [FLAGS] -> [FLAGS-RAW]
@@ -20,15 +21,15 @@ version 2.0
 	* add: opt -e, like sysctl
 	* improve: manual DESCRIPTION
 	* change: opt -pF [FORMAT-STRING] -> [FORMAT]
-	* change: opt -v |show value| -> |show version|, show value default
-	* change: default show value (like sysctl)
+	* change: opt -v (show value) -> (show version), show value default
+	* change: show value by default like sysctl
 	* change: opt -V with -a, show object with/without a value
 	* add: -n hide name, like sysctl
-	* change: -N |show value| -> |hide value|
+	* change: -N (show value) -> (hide value)
 	* change: show name by default like sysctl
 	* delete: -A, in compatibility like sysctl
 	* delete: -X, in compatibility like sysctl
- 	* change: opt -D, -dFGHlOt (human output)
+ 	* change: opt -D like -dFGHlOt, human output
 
 2019-10-5 version 1.2.1
 
