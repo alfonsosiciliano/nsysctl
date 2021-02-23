@@ -40,7 +40,7 @@ To add the package:
 
 **TODO**
 
- * [ ] Test: opaque machdep.efi\_map (S,efi\_map\_header)
+ * [ ] Test: opaque S,efi\_map\_header (machdep.efi\_map)
  * [ ] Add: opaque S,pagesizes (hw.pagesizes)
  * [ ] Add: libnv
  * [X] Add: -k opt: show SKIP objects with -a
@@ -60,7 +60,7 @@ To add the package:
  * [X] Change: xml \<id\>\<level1\>X\</level1\>\<level2\>Y\</level2\>\</id\> -> \<OID\>X.Y\</OID\>
  * [X] Rename: opt -e \<sep\> -> -s \<sep\>
  * [X] Add: opt -e (like sysctl)
- * [ ] Update manual
+ * [X] Improve manual DESCRIPTION
  * [X] Change: -pF [FORMAT-STRING] -> [FORMAT]
  * [X] Change: default show name (like sysctl)
  * [X] Add: -n hide name
