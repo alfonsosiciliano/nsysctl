@@ -40,7 +40,7 @@
 #include "opaque.h"
 #include "special_value.h"
 
-#define VERSION "1.2.1"
+#define VERSION "2.0-DEVEL"
 #define MAXSIZELINE 255
 #define IS_LEAF(node)	(node->children == NULL || SLIST_EMPTY(node->children))
 
