@@ -37,14 +37,15 @@ do
     sysctl $t >> sysctl.txt
     ./nsysctl ${t}  >> nsysctl.txt
     diff sysctl.txt nsysctl.txt | diffstat -m
+    #meld sysctl.txt nsysctl.txt
     rm sysctl.txt nsysctl.txt
 done
 
 echo "sysctl -a"
-sysctl -a >> sysctl.txt
-./nsysctl -a >> nsysctl.txt
-diff sysctl.txt nsysctl.txt | diffstat -m
-#diff -y -W 120 sysctl.txt nsysctl.txt 
-#meld sysctl.txt nsysctl.txt
+    sysctl -a >> sysctl.txt
+    ./nsysctl -a >> nsysctl.txt
+    diff sysctl.txt nsysctl.txt | diffstat -m
+    #diff -y -W 120 sysctl.txt nsysctl.txt 
+    #meld sysctl.txt nsysctl.txt
 rm sysctl.txt nsysctl.txt
 
