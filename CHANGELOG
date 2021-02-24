@@ -6,6 +6,7 @@ version 2.0
 		* change: use sysctlinfo via sysctlmibinfo2
 	* add: opt -k, print SKIP with -a
 	* add: opt -H, print object handler "Defined/Undefined"
+	* add: opaque S,pagesizes for hw.pagesizes
 	* change: opt -pg [FLAGS] -> [FLAGS-RAW]
 	* change: opt -g with xml <flags> -> <flags-raw>
 	* change: opt -pG [TRUE-FLAGS] -> [FLAGS]

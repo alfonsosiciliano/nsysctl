@@ -41,7 +41,6 @@ To add the package:
 **TODO**
 
  * [ ] Test: opaque S,efi\_map\_header (machdep.efi\_map)
- * [ ] Add: opaque S,pagesizes (hw.pagesizes)
  * [ ] Add: libnv
  * [X] Fix: ./nsysctl -pDI kern | less
  * [X] Fix: ./nsysctl -pDIkVgSa (-V!)
