@@ -64,6 +64,7 @@ static int S_input_id(void *value, size_t value_size, bool hflag);
 static int S_loadavg(void *value, size_t value_size, bool hflag);
 static int S_timeval(void *value, size_t value_size, bool hflag);
 static int S_vmtotal(void *value, size_t value_size, bool hflag);
+static int S_pagesizes(void *value, size_t value_size, bool hflag);
 #ifdef __amd64__
 static int S_efi_map(void *value, size_t value_size, bool hflag);
 #endif
@@ -85,6 +86,7 @@ bool is_opaque_defined(struct sysctlmif_object *object)
 	 strcmp(object->fmt, "S,loadavg") == 0  ||
 	 strcmp(object->fmt, "S,timeval") == 0  ||
 	 strcmp(object->fmt, "S,input_id") == 0 ||
+	 strcmp(object->fmt, "S,pagesizes") == 0 ||
 	 strcmp(object->fmt, "S,vmtotal") == 0)
 	return true;
 
@@ -111,6 +113,8 @@ display_opaque_value(struct sysctlmif_object *object, void *value,
 		error += S_loadavg(value, value_size, hflag);
 	} else if (strcmp(object->fmt, "S,vmtotal") == 0) {
 		error += S_vmtotal(value, value_size, hflag);
+	} else if (strcmp(object->fmt, "S,pagesizes") == 0) {
+		error += S_pagesizes(value, value_size, hflag);
 	} else if (strcmp(object->fmt, "S,input_id") == 0) {
 		error += S_input_id(value, value_size, hflag);
 	}
@@ -186,6 +190,31 @@ NV(void *value, size_t value_size, bool hflag)
 	return (0);
 }
 
+static int
+S_pagesizes(void *value, size_t value_size, bool hflag)
+{
+	int i;
+	u_long *ps;
+	char *hfield = hflag ? "h" : NULL;
+
+	if ((value_size % sizeof(u_long)) != 0 ) {
+		xo_warnx("S_pagesize %zu / size(u_long) != 0", value_size);
+		return (1);
+	}
+
+	xo_open_container("pagesizes");
+	xo_emit("{L:{ }");
+	ps = value;
+	for (i = 0; i * sizeof(*ps) < value_size && ps[i] != 0; i++) {
+		if(i > 0)
+			xo_emit("{L:, }");
+		xo_emit_field(hfield, "pagesize", "%lu", NULL, ps[i]);
+	}
+	xo_emit("{L: }}");
+	xo_close_container("pagesizes");
+
+	return (0);
+}
 
 static int
 S_clockinfo(void *value, size_t value_size, bool hflag)
