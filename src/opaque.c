@@ -38,24 +38,21 @@
 #include <sys/resource.h>
 #include <sys/time.h>
 #include <sys/vmmeter.h>
-#include <dev/evdev/input.h>
-
 #ifdef __amd64__
 #include <sys/efi.h>
 #include <x86/metadata.h>
 #endif
 
+#include <assert.h>
+#include <dev/evdev/input.h>
+#include <libxo/xo.h>
 #if defined(__amd64__) || defined(__i386__)
 #include <machine/pc/bios.h>
 #endif
-
-#include <assert.h>     //assert
-#include <stdlib.h>     //free
-#include <string.h>     //strdup
-#include <unistd.h>     //getpagesize
-
-#include <libxo/xo.h>
 #include <sysctlmibinfo2.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
 
 /* Func declarations */
 static int NV(void *value, size_t value_size, bool hflag);
@@ -77,11 +74,11 @@ bool is_opaque_defined(struct sysctlmif_object *object)
 {
     if ( strcmp(object->fmt, "NV") == 0 ||
 	 strcmp(object->fmt, "S,clockinfo") == 0 ||
-#if defined(__amd64__) || defined(__i386__)
-	strcmp(object->fmt, "S,bios_smap_xattr") == 0 ||
-#endif
 #ifdef __amd64__
 	strcmp(object->fmt, "S,efi_map_header") == 0 ||
+#endif
+#if defined(__amd64__) || defined(__i386__)
+	strcmp(object->fmt, "S,bios_smap_xattr") == 0 ||
 #endif
 	 strcmp(object->fmt, "S,loadavg") == 0  ||
 	 strcmp(object->fmt, "S,timeval") == 0  ||
