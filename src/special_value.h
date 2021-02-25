@@ -30,13 +30,10 @@
 
 #include <sysctlmibinfo2.h>
 
-bool parse_string(char *start, char **next, char *endbuffer, char sep);
-
-bool
-is_special_value(struct sysctlmif_object *object);
-
+bool is_special_value(struct sysctlmif_object *object);
 int
 display_special_value(struct sysctlmif_object *object, void* value,
     size_t value_size);
+bool parse_string(char *start, char **next, char *endbuffer, char sep);
 
 #endif /* _SPECIAL_VALUE_H_ */
