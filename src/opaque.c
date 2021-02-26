@@ -68,7 +68,6 @@ static int S_efi_map(void *value, size_t value_size, bool hflag);
 #if defined(__amd64__) || defined(__i386__)
 static int S_bios_smap_xattr(void *value, size_t value_size, bool hflag);
 #endif
-int strIKtoi(const char *str, char **endptrp, const char *fmt);
 
 bool is_opaque_defined(struct sysctlmif_object *object)
 {
