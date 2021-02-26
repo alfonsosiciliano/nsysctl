@@ -42,6 +42,4 @@ To add the package:
 
  * [ ] Test: opaque S,efi\_map\_header (machdep.efi\_map)
  * [ ] Add: libnv
- * [X] Fix: ./nsysctl -pDI kern | less
- * [X] Fix: ./nsysctl -pDIkVgSa (-V!)
 
