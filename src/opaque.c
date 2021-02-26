@@ -92,7 +92,7 @@ bool is_opaque_defined(struct sysctlmif_object *object)
 
 int 
 display_opaque_value(struct sysctlmif_object *object, void *value,
-		     size_t value_size, bool hflag, bool oflag, bool xflag)
+    size_t value_size, bool hflag, bool oflag, bool xflag)
 {
 	int error = 0;
 	int i;
@@ -149,8 +149,7 @@ display_opaque_value(struct sysctlmif_object *object, void *value,
 	return error;
 }
 
-static int
-NV(void *value, size_t value_size, bool hflag)
+static int NV(void *value, size_t value_size, bool hflag)
 {
 	nvlist_t *nvl = nvlist_unpack(value, value_size, 0);
 	void *cookie;
@@ -187,8 +186,7 @@ NV(void *value, size_t value_size, bool hflag)
 	return (0);
 }
 
-static int
-S_pagesizes(void *value, size_t value_size, bool hflag)
+static int S_pagesizes(void *value, size_t value_size, bool hflag)
 {
 	int i;
 	u_long *ps;
@@ -213,8 +211,7 @@ S_pagesizes(void *value, size_t value_size, bool hflag)
 	return (0);
 }
 
-static int
-S_clockinfo(void *value, size_t value_size, bool hflag)
+static int S_clockinfo(void *value, size_t value_size, bool hflag)
 {
 	struct clockinfo *ci = (struct clockinfo*)value;
 	char *hfield = hflag ? "h" : NULL;
@@ -243,12 +240,11 @@ S_clockinfo(void *value, size_t value_size, bool hflag)
 }
 
 
-static int
-S_loadavg(void *value, size_t value_size, bool hflag)
+static int S_loadavg(void *value, size_t value_size, bool hflag)
 {
 	struct loadavg *tv = (struct loadavg*)value;
-	char *hfield = /*hflag ? "h" :*/ NULL;
 	/* libxo 'h' modifier does not affect the size and treatment of %f */
+	char *hfield = /*hflag ? "h" :*/ NULL;
 
 	if (value_size != sizeof(*tv)) {
 		xo_warnx("S_loadavg %zu != %zu", value_size, sizeof(*tv));
@@ -256,7 +252,6 @@ S_loadavg(void *value, size_t value_size, bool hflag)
 	}
 
 #define TV_FSCALE(idx)    ((double)tv->ldavg[idx]/(double)tv->fscale)
-
 	xo_open_container("loadavg");
 	xo_emit("{L:{ }");
 	xo_emit_field(hfield, "ldavg0", "%.2f", NULL, TV_FSCALE(0));
@@ -270,8 +265,7 @@ S_loadavg(void *value, size_t value_size, bool hflag)
 	return (0);
 }
 
-static int
-S_input_id(void *value, size_t value_size, bool hflag)
+static int S_input_id(void *value, size_t value_size, bool hflag)
 {
     struct input_id *id = (struct input_id *)value;
     /*libxo 'h' modifier does not affect the size and treatment of %f */
@@ -297,8 +291,7 @@ S_input_id(void *value, size_t value_size, bool hflag)
     return (0);
 }
 
-static int
-S_timeval(void *value, size_t value_size, bool hflag)
+static int S_timeval(void *value, size_t value_size, bool hflag)
 {
 	struct timeval *tv = (struct timeval*)value;
 	time_t tv_sec;
@@ -329,8 +322,7 @@ S_timeval(void *value, size_t value_size, bool hflag)
 }
 
 
-static int
-S_vmtotal(void *value, size_t value_size, bool hflag)
+static int S_vmtotal(void *value, size_t value_size, bool hflag)
 {
 	struct vmtotal *v = (struct vmtotal*)value;
 	int pageKilo;
@@ -398,8 +390,7 @@ S_vmtotal(void *value, size_t value_size, bool hflag)
 
 
 #ifdef __amd64__
-static int
-S_efi_map(void *value, size_t value_size, bool hflag)
+static int S_efi_map(void *value, size_t value_size, bool hflag)
 {
 	struct efi_map_header *efihdr;
 	struct efi_md *map;
@@ -488,8 +479,7 @@ S_efi_map(void *value, size_t value_size, bool hflag)
 #endif
 
 #if defined(__amd64__) || defined(__i386__)
-static int
-S_bios_smap_xattr(void* value, size_t value_size, bool hflag)
+static int S_bios_smap_xattr(void* value, size_t value_size, bool hflag)
 {
 	struct bios_smap_xattr *smap, *end;
 
@@ -517,8 +507,7 @@ S_bios_smap_xattr(void* value, size_t value_size, bool hflag)
 
 
 /* strIK_to_int() and display_IK_value() could be in kelvin.c */
-int
-strIK_to_int(const char *str, int *kelvin, const char *fmt)
+int strIK_to_int(const char *str, int *kelvin, const char *fmt)
 {
 	float temp;
 	size_t len;
