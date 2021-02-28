@@ -148,23 +148,38 @@ display_opaque_value(struct sysctlmif_object *object, void *value,
 	return error;
 }
 
-static int NV(void *value, size_t value_size, bool hflag)
+static int NV(void *value, size_t value_size,  bool hflag)
 {
-	nvlist_t *nvl = nvlist_unpack(value, value_size, 0);
+	const nvlist_t *nvl = nvlist_unpack(value, value_size, 0);
 	void *cookie;
 	const void *binary;
-	int type, i;
+	int type, i, innerlist = 0;
 	size_t to;
 	const char *name;
 	const char *const *strings;
 	char *hfield = hflag ? "h,hn-decimal" : NULL;
+	bool boolvalue, *boolarray;
 	
 	xo_open_container("nvlist");
 
 	cookie = NULL;
+	do {
 	while ((name = nvlist_next(nvl, &type, &cookie)) != NULL) {
+		if (type == NV_TYPE_NVLIST) {
+			nvl = nvlist_get_nvlist(nvl, name);
+			cookie = NULL;
+			xo_open_container("nvlist");
+			innerlist++;
+			continue;
+		} else if (type == NV_TYPE_NVLIST_ARRAY) {
+			nvl = nvlist_get_nvlist_array(nvl, name, NULL)[0];
+			cookie = NULL;
+			continue;
+		}
 		xo_open_container("nv");
 		xo_emit("{L:\n}");
+		for (i=0; i< innerlist; i++)
+			xo_emit("{Lw:}");
 		xo_emit("{:name/%s}", name);
 		if(type != NV_TYPE_NULL)
 			xo_emit("{L:=}");
@@ -180,17 +195,11 @@ static int NV(void *value, size_t value_size, bool hflag)
 		case NV_TYPE_NUMBER:
 			xo_emit_field(hfield, "value", "%ju", NULL,
 			    (uintmax_t)nvlist_get_number(nvl, name));
-			xo_emit("{Lw:}{L:(}{:nvtype/number}{Lw:)}");
+			xo_emit("{Lw:}{:nvtype/%s}", hflag ? "(number)" : "");
 			break;
 		case NV_TYPE_STRING:
 			xo_emit("{:value/%s}", nvlist_get_string(nvl, name));
 			xo_emit("{Lw:}{L:(}{:nvtype/string}{Lw:)}");
-			break;
-		case NV_TYPE_NVLIST:
-			xo_open_container("nvlist");
-			xo_emit("{:value/%s}", "UNSUPPORTED");
-			xo_emit("{Lw:}{L:(}{:nvtype/string}{Lw:)}");
-			xo_close_container("nvlist");
 			break;
 		case NV_TYPE_DESCRIPTOR:
 			/* useless: ifndef _KERNEL in sys/nv.h */
@@ -230,18 +239,17 @@ static int NV(void *value, size_t value_size, bool hflag)
 			}
 			xo_emit("{Lw:}{L:(}{:nvtype/string-array}{Lw:)}");
 			break;
-		case NV_TYPE_NVLIST_ARRAY:
-			xo_open_container("nvlist");
-			xo_emit("{:value/%s}", "UNSUPPORTED");
-			xo_emit("{Lw:}{L:(}{:nvtype/string}{Lw:)}");
-			xo_close_container("nvlist");
-			break;
 		case NV_TYPE_DESCRIPTOR_ARRAY:
 			/* useless: ifndef _KERNEL in sys/nv.h */
 			break;
 		}
 		xo_close_container("nv");
 	}
+	if(innerlist > 0) {
+		xo_close_container("nvlist");
+		innerlist--;
+	}
+	} while ((nvl = nvlist_get_pararr(nvl, &cookie)) != NULL);
 	
 	xo_close_container("nvlist");
 
