@@ -226,7 +226,6 @@ static int NV(void *value, size_t value_size, bool hflag)
 			for (i = 0; i < to; i++) {
 				if(i>0)
 					xo_emit("{Lw:}");
-				//printf("name: %s\n", names[i]);
 				xo_emit("{:value/%s}", strings[i]);
 			}
 			xo_emit("{Lw:}{L:(}{:nvtype/string-array}{Lw:)}");
