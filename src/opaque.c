@@ -159,7 +159,7 @@ static int NV(void *value, size_t value_size, bool hflag)
 	const char *const *strings;
 	char *hfield = hflag ? "h,hn-decimal" : NULL;
 	
-	xo_open_container("nv");
+	xo_open_container("nvlist");
 
 	cookie = NULL;
 	while ((name = nvlist_next(nvl, &type, &cookie)) != NULL) {
