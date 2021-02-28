@@ -11,18 +11,20 @@ it depends on [sysctlmibinfo](https://gitlab.com/alfix/sysctlmibinfo) and
 **Features**
 
  * get or set the system state at runtime,
- * output is explicitly indicated by the options,
- * new options to show the properties of a parameter,
- * the options are not mutually exclusive,
+ * handle an object up to CTL\_MAXNAME levels,
+ * print the right object also with an empty level name,
+ * options to show the properties of a parameter,
+ * output explicitly indicated by the options,
+ * options not mutually exclusive,
  * output via libxo in human and machine readable formats,
- * isolated code to manage "opaque values" (opaque.c),
- * some string value is parsed to show structured output (special\_value.c),
- * handle an OID up to CTL\_MAXNAME levels,
- * print the right object also with a NULL-level name.
+ * isolated code to manage opaque values,
+ * some string value is parsed to show structured output,
+ * avoid non-primitive data types hardcode via libnv,
+ * debug without recompiling the kernel with SYSCTL\_DEBUG.
 
 **Installation**
 
-To install the port [sysutils/nsysctl](https://www.freshports.org/sysutils/nsysctl)
+To install the port [sysutils/nsysctl](https://www.freshports.org/sysutils/nsysctl):
 
     # cd /usr/ports/sysutils/nsysctl/ && make install clean
 
@@ -33,7 +35,7 @@ To add the package:
 **Documentation**
 
  * Manual Page:
-   [manual-nsysctl.html](https://alfonsosiciliano.gitlab.io/posts/2019-02-23-manual-nsysctl.html)
+   [manual nsysctl](https://alfonsosiciliano.gitlab.io/posts/2019-02-23-manual-nsysctl.html)
    or [man.freebsd.org/nsysctl/8](https://man.freebsd.org/nsysctl/8) (could be outdated)
  * Tutorial:
    ["Step-by-step Tutorial"](https://alfonsosiciliano.gitlab.io/posts/2019-02-19-nsysctl-tutorial.html)
