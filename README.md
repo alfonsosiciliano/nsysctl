@@ -41,5 +41,4 @@ To add the package:
 **TODO**
 
  * [ ] Test: opaque S,efi\_map\_header (machdep.efi\_map)
- * [ ] Add: libnv
 
