@@ -55,7 +55,7 @@
 #include <unistd.h>
 
 /* Func declarations */
-static int NV(void *value, size_t value_size, bool hflag);
+static int NV(void *value, size_t value_size, bool tflag, bool hflag);
 static int S_clockinfo(void *value, size_t value_size, bool hflag);
 static int S_input_id(void *value, size_t value_size, bool hflag);
 static int S_loadavg(void *value, size_t value_size, bool hflag);
@@ -91,7 +91,7 @@ bool is_opaque_defined(struct sysctlmif_object *object)
 
 int 
 display_opaque_value(struct sysctlmif_object *object, void *value,
-    size_t value_size, bool hflag, bool oflag, bool xflag)
+    size_t value_size, bool tflag, bool hflag, bool oflag, bool xflag)
 {
 	int error = 0;
 	int i;
@@ -100,7 +100,7 @@ display_opaque_value(struct sysctlmif_object *object, void *value,
 	xo_open_container("value");
 
 	if (strcmp(object->fmt, "NV") == 0) {
-		error += NV(value, value_size, hflag);
+		error += NV(value, value_size, tflag, hflag);
 	} else if (strcmp(object->fmt, "S,clockinfo") == 0) {
 		error += S_clockinfo(value, value_size, hflag);
 	} else if (strcmp(object->fmt, "S,timeval") == 0) {
@@ -148,7 +148,7 @@ display_opaque_value(struct sysctlmif_object *object, void *value,
 	return error;
 }
 
-static int NV(void *value, size_t value_size,  bool hflag)
+static int NV(void *value, size_t value_size, bool tflag, bool hflag)
 {
 	const nvlist_t *nvl = nvlist_unpack(value, value_size, 0);
 	void *cookie;
@@ -158,7 +158,6 @@ static int NV(void *value, size_t value_size,  bool hflag)
 	const char *name;
 	const char *const *strings;
 	char *hfield = hflag ? "h,hn-decimal" : NULL;
-	bool boolvalue, *boolarray;
 	
 	xo_open_container("nvlist");
 
@@ -185,21 +184,21 @@ static int NV(void *value, size_t value_size,  bool hflag)
 			xo_emit("{L:=}");
 		switch (type) {
 		case NV_TYPE_NULL:
-			xo_emit("{Lw:}{L:(}{:nvtype/null}{Lw:)}");
+			xo_emit( tflag ? "{Lw:}{:nvtype/NV_TYPE_NULL}" : "");
 			break;
 		case NV_TYPE_BOOL:
 			xo_emit_field(hfield, "value", "%s", NULL,
 			    nvlist_get_bool(nvl, name) ? "true" : "false");
-			xo_emit("{Lw:}{L:(}{:nvtype/number}{Lw:)}");
+			xo_emit( tflag ? "{Lw:}{:nvtype/NV_TYPE_BOOL}" : "");
 			break;
 		case NV_TYPE_NUMBER:
 			xo_emit_field(hfield, "value", "%ju", NULL,
 			    (uintmax_t)nvlist_get_number(nvl, name));
-			xo_emit("{Lw:}{:nvtype/%s}", hflag ? "(number)" : "");
+			xo_emit( tflag ? "{Lw:}{:nvtype/NV_TYPE_NUMBER}" : "");
 			break;
 		case NV_TYPE_STRING:
 			xo_emit("{:value/%s}", nvlist_get_string(nvl, name));
-			xo_emit("{Lw:}{L:(}{:nvtype/string}{Lw:)}");
+			xo_emit( tflag ? "{Lw:}{:nvtype/NV_TYPE_STRING}" : "");
 			break;
 		case NV_TYPE_DESCRIPTOR:
 			/* useless: ifndef _KERNEL in sys/nv.h */
@@ -209,7 +208,7 @@ static int NV(void *value, size_t value_size,  bool hflag)
 				for (i = 0; i < to; i++) {
 				xo_emit("{:value/%02x}", ((unsigned char*)binary)[i]);
 			}
-			xo_emit("{Lw:}{L:(}{:nvtype/binary}{Lw:)}");
+			xo_emit( tflag ? "{Lw:}{:nvtype/NV_TYPE_BINARY}" : "");
 			break;
 		case NV_TYPE_BOOL_ARRAY:
 			binary = nvlist_get_bool_array(nvl, name, &to);
@@ -219,7 +218,7 @@ static int NV(void *value, size_t value_size,  bool hflag)
 				xo_emit("{:value/%s}",
 				    ((bool*)binary)[i] ? "true" : "false");
 			}
-			xo_emit("{Lw:}{L:(}{:nvtype/bool-array}{Lw:)}");
+			xo_emit( tflag ? "{Lw:}{:nvtype/NV_TYPE_BOOL_ARRAY}" : "");
 			break;
 		case NV_TYPE_NUMBER_ARRAY:
 			binary = nvlist_get_number_array(nvl, name, &to);
@@ -228,7 +227,7 @@ static int NV(void *value, size_t value_size,  bool hflag)
 					xo_emit("{Lw:}");
 				xo_emit("{:value/%ju}", ((uintmax_t*)binary)[i]);
 			}
-			xo_emit("{Lw:}{L:(}{:nvtype/number-array}{Lw:)}");
+			xo_emit( tflag ? "{Lw:}{:nvtype/NV_TYPE_NUMBER_ARRAY}" : "");
 			break;
 		case NV_TYPE_STRING_ARRAY:
 			strings = nvlist_get_string_array(nvl, name, &to);
@@ -237,7 +236,7 @@ static int NV(void *value, size_t value_size,  bool hflag)
 					xo_emit("{Lw:}");
 				xo_emit("{:value/%s}", strings[i]);
 			}
-			xo_emit("{Lw:}{L:(}{:nvtype/string-array}{Lw:)}");
+			xo_emit( tflag ? "{Lw:}{:nvtype/NV_TYPE_STRING_ARRAY}" : "");
 			break;
 		case NV_TYPE_DESCRIPTOR_ARRAY:
 			/* useless: ifndef _KERNEL in sys/nv.h */

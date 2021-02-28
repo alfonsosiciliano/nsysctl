@@ -30,7 +30,7 @@
 
 int
 display_opaque_value(struct sysctlmif_object *object, void *value, 
-    size_t value_size, bool hflag, bool oflag, bool xflag);
+    size_t value_size, bool tflag, bool hflag, bool oflag, bool xflag);
 
 bool is_opaque_defined(struct sysctlmif_object *object);
 

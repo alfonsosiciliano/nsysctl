@@ -467,7 +467,8 @@ int visit_object(struct sysctlmif_object *object, char *newvalue, bool *printed)
 	if (is_special_value(object))
 	    error += display_special_value(object,value,value_size);
 	else if (object->type == CTLTYPE_OPAQUE || object->type == CTLTYPE_NODE)
-	    error += display_opaque_value(object, value, value_size, hflag, oflag, xflag);
+	    error += display_opaque_value(object, value, value_size, tflag,
+	        hflag, oflag, xflag);
 	else if ( object->id[0] != 0)
 	    error += display_basic_value(object, value, value_size);
 
