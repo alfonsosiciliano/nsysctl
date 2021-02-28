@@ -152,29 +152,93 @@ static int NV(void *value, size_t value_size, bool hflag)
 {
 	nvlist_t *nvl = nvlist_unpack(value, value_size, 0);
 	void *cookie;
-	int type;
+	const void *binary;
+	int type, i;
+	size_t to;
 	const char *name;
+	const char *const *strings;
 	char *hfield = hflag ? "h,hn-decimal" : NULL;
 	
-	xo_open_container("nvlist");
+	xo_open_container("nv");
 
 	cookie = NULL;
 	while ((name = nvlist_next(nvl, &type, &cookie)) != NULL) {
 		xo_open_container("nv");
 		xo_emit("{L:\n}");
 		xo_emit("{:name/%s}", name);
-		xo_emit("{L:=}");
+		if(type != NV_TYPE_NULL)
+			xo_emit("{L:=}");
 		switch (type) {
+		case NV_TYPE_NULL:
+			xo_emit("{Lw:}{L:(}{:nvtype/null}{Lw:)}");
+			break;
+		case NV_TYPE_BOOL:
+			xo_emit_field(hfield, "value", "%s", NULL,
+			    nvlist_get_bool(nvl, name) ? "true" : "false");
+			xo_emit("{Lw:}{L:(}{:nvtype/number}{Lw:)}");
+			break;
 		case NV_TYPE_NUMBER:
-			xo_emit_field(hfield, "value", "%ju", NULL, (uintmax_t)nvlist_get_number(nvl, name));
+			xo_emit_field(hfield, "value", "%ju", NULL,
+			    (uintmax_t)nvlist_get_number(nvl, name));
 			xo_emit("{Lw:}{L:(}{:nvtype/number}{Lw:)}");
 			break;
 		case NV_TYPE_STRING:
 			xo_emit("{:value/%s}", nvlist_get_string(nvl, name));
 			xo_emit("{Lw:}{L:(}{:nvtype/string}{Lw:)}");
 			break;
-		default:
-			xo_emit("{L:N/A}");
+		case NV_TYPE_NVLIST:
+			xo_open_container("nvlist");
+			xo_emit("{:value/%s}", "UNSUPPORTED");
+			xo_emit("{Lw:}{L:(}{:nvtype/string}{Lw:)}");
+			xo_close_container("nvlist");
+			break;
+		case NV_TYPE_DESCRIPTOR:
+			/* useless: ifndef _KERNEL in sys/nv.h */
+			break;
+		case NV_TYPE_BINARY:
+			binary = nvlist_get_binary(nvl, name, &to);
+				for (i = 0; i < to; i++) {
+				xo_emit("{:value/%02x}", ((unsigned char*)binary)[i]);
+			}
+			xo_emit("{Lw:}{L:(}{:nvtype/binary}{Lw:)}");
+			break;
+		case NV_TYPE_BOOL_ARRAY:
+			binary = nvlist_get_bool_array(nvl, name, &to);
+			for (i = 0; i < to; i++) {
+				if(i>0)
+					xo_emit("{Lw:}");
+				xo_emit("{:value/%s}",
+				    ((bool*)binary)[i] ? "true" : "false");
+			}
+			xo_emit("{Lw:}{L:(}{:nvtype/bool-array}{Lw:)}");
+			break;
+		case NV_TYPE_NUMBER_ARRAY:
+			binary = nvlist_get_number_array(nvl, name, &to);
+			for (i = 0; i < to; i++) {
+				if(i>0)
+					xo_emit("{Lw:}");
+				xo_emit("{:value/%ju}", ((uintmax_t*)binary)[i]);
+			}
+			xo_emit("{Lw:}{L:(}{:nvtype/number-array}{Lw:)}");
+			break;
+		case NV_TYPE_STRING_ARRAY:
+			strings = nvlist_get_string_array(nvl, name, &to);
+			for (i = 0; i < to; i++) {
+				if(i>0)
+					xo_emit("{Lw:}");
+				//printf("name: %s\n", names[i]);
+				xo_emit("{:value/%s}", strings[i]);
+			}
+			xo_emit("{Lw:}{L:(}{:nvtype/string-array}{Lw:)}");
+			break;
+		case NV_TYPE_NVLIST_ARRAY:
+			xo_open_container("nvlist");
+			xo_emit("{:value/%s}", "UNSUPPORTED");
+			xo_emit("{Lw:}{L:(}{:nvtype/string}{Lw:)}");
+			xo_close_container("nvlist");
+			break;
+		case NV_TYPE_DESCRIPTOR_ARRAY:
+			/* useless: ifndef _KERNEL in sys/nv.h */
 			break;
 		}
 		xo_close_container("nv");
