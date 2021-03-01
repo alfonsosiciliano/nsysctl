@@ -85,15 +85,14 @@ The following options are available:
 .It Fl -libxo Ar options
 Generate output via
 .Xr libxo 3
-in a selection of different human
-and machine readable formats, see
+in a selection of different human and machine readable formats, see
 .Xr xo_parse_args 3 .
 .It Fl A
 Equivalent to
 .Fl a Fl o ,
 obsolete.
 .It Fl a
-Display every object.
+Display all objects.
 .It Fl b
 Print value in binary format.
 .It Fl B Ar <bufsize>
@@ -112,14 +111,14 @@ as separator.
 .It Fl F
 Display format string.
 .It Fl f Ar <filename>
-Load objects to get or set from
+Load objects from
 .Ar <filename> .
 .It Fl G
-Show true-flags.
+Show true flags.
 .It Fl g
 Print flags.
 .It Fl H
-Show if the object has a handler.
+Show the object handler status.
 .It Fl h
 Try to show values in a human-friendly format.
 .It Fl I
@@ -132,7 +131,7 @@ Show object with
 flag with
 .Fl a .
 .It Fl l
-Display aggregation label.
+Print aggregation label.
 .It Fl m
 Alias for
 .Fl S .
@@ -165,7 +164,7 @@ Use
 .Ar <sep>
 as separator.
 .It Fl T
-Show only objects that are settable via loader.
+Show only settable objects via loader.
 .It Fl t
 Print type.
 .It Fl V
@@ -173,12 +172,12 @@ By default
 .Fl a
 hides an object without a value, this option disable this feature.
 .It Fl v
-Show version and quit.
+.Nm nsysctl version.
 .It Fl W
 Display only writable objects that are not statistical.
 .It Fl X
 Equivalent to
-.Fl a Fl xa ,
+.Fl a Fl x ,
 obsolete.
 .It Fl x
 Print value in hex format.
@@ -189,8 +188,7 @@ Alias for
 .Sh EXIT STATUS
 .Ex -std
 .Sh EXAMPLES
-To get an object value, e.g.,
-.Dq hostname :
+To get an object value:
 .Pp
 .Dl "nsysctl kern.hostname"
 .Pp
@@ -204,7 +202,7 @@ Print object info:
 .Pp
 Print object info in xml:
 .Pp
-.Dl "nsysctl --libxo=xml,pretty -r 'ROOTNAME' -D kern.ostype"
+.Dl "nsysctl --libxo=xml,pretty -D kern.ostype"
 .Sh COMPATIBILITY
 .Xr sysctl 8
 prints internal and
