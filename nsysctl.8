@@ -83,9 +83,11 @@ sysctlinfo_load="YES"
 The following options are available:
 .Bl -tag -width indent
 .It Fl -libxo Ar options
-Generate output via libxo(3) in a selection of different human
+Generate output via
+.Xr libxo 3
+in a selection of different human
 and machine readable formats, see
-.Xr xo_parse_args(3) .
+.Xr xo_parse_args 3 .
 .It Fl A
 Equivalent to
 .Fl a Fl o ,
@@ -176,7 +178,7 @@ Show version and quit.
 Display only writable objects that are not statistical.
 .It Fl X
 Equivalent to
-.Fl a Fl xa,
+.Fl a Fl xa ,
 obsolete.
 .It Fl x
 Print value in hex format.
