@@ -1,4 +1,4 @@
-version 2.0
+2021-03-02 version 2.0
 
 	* change: sysctl library sysctlmibinfo -> sysctlmibinfo2
 	* delete: undocumented interface (kern/kern_sysctl.c) support
@@ -25,12 +25,12 @@ version 2.0
 	* change: opt -v show value -> show version
 	* change: show value by default like sysctl
 	* change: opt -V with -a, show object with/without a value
-	* add: -n hide name, like sysctl
+	* add: opt -n hide name, like sysctl
 	* change: -N show name -> hide value
 	* change: show name by default like sysctl
 	* delete: -A, in compatibility like sysctl
 	* delete: -X, in compatibility like sysctl
- 	* change: opt -D like -dFGHlOt, human output
+ 	* change: opt -D = -dFGHlOt
 
 2019-10-5 version 1.2.1
 

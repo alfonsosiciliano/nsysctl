@@ -1,12 +1,10 @@
-nsysctl 1.2.1
-=============
+nsysctl 2.0
+===========
 
 The **nsysctl** utility can get and set the [FreeBSD](http://www.freebsd.org)
-kernel state at runtime, supporting
-[libxo](http://juniper.github.io/libxo/libxo-manual.html) and a lof of options;
-it depends on [sysctlmibinfo](https://gitlab.com/alfix/sysctlmibinfo) and
-[sysctlinfo](https://gitlab.com/alfix/sysctlinfo)
-([sysctlmibinfo2](https://gitlab.com/alfix/sysctlmibinfo2) in the future).
+kernel state at runtime, it depends on
+[sysctlmibinfo2](https://gitlab.com/alfix/sysctlmibinfo2) and (implicitly)
+[sysctlinfo](https://gitlab.com/alfix/sysctlinfo).
 
 **Features**
 
@@ -36,7 +34,6 @@ To add the package:
 
  * Manual Page:
    [manual nsysctl](https://alfonsosiciliano.gitlab.io/posts/2019-02-23-manual-nsysctl.html)
-   or [man.freebsd.org/nsysctl/8](https://man.freebsd.org/nsysctl/8) (could be outdated)
  * Tutorial:
    ["Step-by-step Tutorial"](https://alfonsosiciliano.gitlab.io/posts/2019-02-19-nsysctl-tutorial.html)
 
