@@ -1,11 +1,10 @@
 version 2.0
 
-	* change: sysctl library sysctlmibinfo -> sysctlmibinfo2, so:
-	   * delete: undocumented interface (kern/kern_sysctl.c) support
-	   * delete: sysctlinfo_helpers.h/c
-	   * change: use sysctlinfo via sysctlmibinfo2
+	* change: sysctl library sysctlmibinfo -> sysctlmibinfo2
+	* delete: undocumented interface (kern/kern_sysctl.c) support
+	* delete: sysctlinfo_helpers.h/c, use sysctlinfo via sysctlmibinfo2
 	* improve: manual DESCRIPTION
-	* add: libnv(9) as opaque
+	* add: libnv(9) Format
 	* add: opt -k, print SKIP with -a
 	* add: opt -H, print object handler "Defined/Undefined"
 	* add: opaque S,pagesizes for hw.pagesizes
@@ -23,11 +22,11 @@ version 2.0
 	* change: opt -e <sep> -> -s <sep>
 	* add: opt -e, like sysctl
 	* change: opt -pF [FORMAT-STRING] -> [FORMAT]
-	* change: opt -v (show value) -> (show version), show value default
+	* change: opt -v show value -> show version
 	* change: show value by default like sysctl
 	* change: opt -V with -a, show object with/without a value
 	* add: -n hide name, like sysctl
-	* change: -N (show name) -> (hide value)
+	* change: -N show name -> hide value
 	* change: show name by default like sysctl
 	* delete: -A, in compatibility like sysctl
 	* delete: -X, in compatibility like sysctl
