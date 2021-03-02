@@ -25,7 +25,7 @@
  * SUCH DAMAGE.
  */
 
-/* 'Special values' are strings parsed for xo-output */
+/* 'Special values' are strings parsed for libxo output */
 
 #include <libxo/xo.h>
 #include <string.h>
