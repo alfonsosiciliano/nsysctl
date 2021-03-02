@@ -25,8 +25,8 @@
  * SUCH DAMAGE.
  */
 
-#ifndef _SPECIAL_VALUE_H_
-#define _SPECIAL_VALUE_H_
+#ifndef _NSYSCTL_SPECIAL_VALUE_H_
+#define _NSYSCTL_SPECIAL_VALUE_H_
 
 #include <sysctlmibinfo2.h>
 
@@ -36,4 +36,4 @@ display_special_value(struct sysctlmif_object *object, void* value,
     size_t value_size);
 bool parse_string(char *start, char **next, char *endbuffer, char sep);
 
-#endif /* _SPECIAL_VALUE_H_ */
+#endif /* _NSYSCTL_SPECIAL_VALUE_H_ */
