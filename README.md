@@ -32,10 +32,12 @@ To add the package:
 
 **Documentation**
 
- * Manual Page:
-   [manual nsysctl](https://alfonsosiciliano.gitlab.io/posts/2019-02-23-manual-nsysctl.html)
- * Tutorial:
-   ["Step-by-step Tutorial"](https://alfonsosiciliano.gitlab.io/posts/2019-02-19-nsysctl-tutorial.html)
+ * Manual Page: *coming soon new manual*
+   (old [manual](https://alfonsosiciliano.gitlab.io/posts/2019-02-23-manual-nsysctl.html)
+   \<= 1.2.1)
+ * Tutorial: *coming soon new tutorial*
+   (old [Tutorial](https://alfonsosiciliano.gitlab.io/posts/2019-02-19-nsysctl-tutorial.html)
+   \<= 1.2.1)
 
 **TODO**
 
