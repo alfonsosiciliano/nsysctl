@@ -35,7 +35,7 @@ To add the package:
  * Manual Page: [nsysctl(8)](https://alfonsosiciliano.gitlab.io/posts/2021-03-07-manual-nsysctl-2.html)
    ([old manual](https://alfonsosiciliano.gitlab.io/posts/2019-02-23-manual-nsysctl.html)
    nsysctl <= 1.2.1)
- * Tutorial
+ * Tutorial:
    [Tutorial nsysctl version 2](https://alfonsosiciliano.gitlab.io/posts/2021-03-08-tutorial-nsysctl-2.html)
    ([old tutorial](https://alfonsosiciliano.gitlab.io/posts/2019-02-19-nsysctl-tutorial.html)
    nsysctl <= 1.2.1)
