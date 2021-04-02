@@ -2,9 +2,7 @@ nsysctl 2.0
 ===========
 
 The **nsysctl** utility can get and set the [FreeBSD](http://www.freebsd.org)
-kernel state at runtime, it depends on
-[sysctlmibinfo2](https://gitlab.com/alfix/sysctlmibinfo2) and (implicitly)
-[sysctlinfo](https://gitlab.com/alfix/sysctlinfo).
+kernel state at runtime.
 
 **Features**
 
