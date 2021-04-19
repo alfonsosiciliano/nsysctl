@@ -42,4 +42,5 @@ To add the package:
 
  * [ ] Test: opaque S,efi\_map\_header (machdep.efi\_map)
  * [ ] Improve: -f (trim like sysctl)
+ * [ ] Fix: delete CTLMASK\_SECURE
 
