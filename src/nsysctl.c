@@ -105,23 +105,24 @@ static const struct ctl_type ctl_types[CTLTYPE+1] = {
 void usage(void);
 int parse_line_or_argv(char *arg);
 int display_tree(struct sysctlmif_object *root);
-int visit_object(struct sysctlmif_object *object, char *newvalue, bool *printed);
+int visit_object(struct sysctlmif_object *object, char *newvalue, bool toggle,
+    bool *printed);
 int display_basic_value(struct sysctlmif_object *object, void *value, size_t valuesize);
 int set_basic_value(struct sysctlmif_object *object, char *input);
 
 bool aflag, bflag, dflag, Fflag, fflag, hflag, Gflag, gflag, Hflag;
 bool Iflag, iflag, kflag, lflag, Nflag, nflag, Oflag, oflag, pflag;
-bool qflag, rflag, Sflag, Tflag, tflag, Vflag, Wflag, xflag;
+bool qflag, rflag, Sflag, Tflag, tflag, Vflag, Wflag, xflag, zflag;
 char *sep, *rflagstr;
 unsigned int Bflagsize;
 
 void usage()
 {
 
-    printf("usage: nsysctl [--libxo options [-r tagroot]] [-DdeFGgHIilnOpqTtvW]\n");
+    printf("usage: nsysctl [--libxo options [-r tagroot]] [-DdeFGgHIilnOpqTtvWz]\n");
     printf("               [-N | -h [b | o | x]] [-B bufsize] [-f filename] [-s sep]\n");
     printf("               name[=value[,value]] ...\n");
-    printf("       nsysctl [--libxo options [-r tagroot]] [-DdeFGgHIklnOpqSTtvW]\n");
+    printf("       nsysctl [--libxo options [-r tagroot]] [-DdeFGgHIklnOpqSTtvWz]\n");
     printf("               [-N | -Vh [b | o | x]] [-B bufsize] [-s sep] -a\n");
 }
 
@@ -138,7 +139,7 @@ int main(int argc, char *argv[argc])
     Bflagsize = 0;
     aflag = bflag = dflag = Fflag = fflag = Gflag = gflag = Hflag = hflag = false;
     Iflag = iflag = kflag = lflag = Nflag = nflag = Oflag = oflag = pflag = false;
-    qflag = rflag = Sflag = Tflag = tflag = Vflag = Wflag = xflag = false;
+    qflag = rflag = Sflag = Tflag = tflag = Vflag = Wflag = xflag = zflag = false;
 
     atexit(xo_finish_atexit);
     xo_set_flags(NULL, XOF_UNITS | XOF_FLUSH);
@@ -148,7 +149,7 @@ int main(int argc, char *argv[argc])
     if(kld_isloaded("sysctlinfo") == 0)
         xo_errx(1, "\'sysctlinfo\' kmod unloaded");
 
-    while ((ch = getopt(argc, argv, "AaB:bDdeFf:GgHhiIklmNnOopqr:Ss:TtVvWwXxy")) != -1) {
+    while ((ch = getopt(argc, argv, "AaB:bDdeFf:GgHhiIklmNnOopqr:Ss:TtVvWwXxyz")) != -1) {
 	switch (ch) {
 	case 'A': aflag = true; oflag = true; break;
 	case 'a': aflag = true; break;
@@ -187,6 +188,7 @@ int main(int argc, char *argv[argc])
 	case 'X': aflag = true; xflag = true; break;
 	case 'x': xflag = true; break;
 	case 'y': Oflag = true; break;  /* compatibility <= 1.2.1 */
+	case 'z': zflag = true; break;
 	default:
 	    usage();
 	    return (1);
@@ -282,14 +284,19 @@ int parse_line_or_argv(char *arg)
 	}
     }
     else if (valuestr == NULL) { /* only nodename */
-	error = display_tree(node);
+	if (zflag && IS_LEAF(node)) { /* leaf */
+	    error = visit_object(node, NULL, true, &printed);
+	    if (printed)
+	        xo_close_instance("object");
+	} else /* internal node */
+	    error = display_tree(node);
     }
     else { /* nodename=value */
 	if (!IS_LEAF(node)) {
 	    xo_warnx("oid \'%s\' isn't a leaf node", node->name);
 	    error++;
-	} else { /* here node is a leaf */
-	    error = visit_object(node, valuestr, &printed);
+	} else { /* leaf */
+	    error = visit_object(node, valuestr, false, &printed);
 	    if (printed)
 	        xo_close_instance("object");
         }
@@ -307,7 +314,7 @@ int display_tree(struct sysctlmif_object *root)
     int error = 0;
     bool printed;
     
-    if ((error = visit_object(root, NULL, &printed)) == !0)
+    if ((error = visit_object(root, NULL, false, &printed)) == !0)
     	return error;
 
     if (!IS_LEAF(root)) {
@@ -329,7 +336,8 @@ int display_tree(struct sysctlmif_object *root)
 
 
 
-int visit_object(struct sysctlmif_object *object, char *newvalue, bool *printed)
+int visit_object(struct sysctlmif_object *object, char *newvalue, bool toggle,
+    bool *printed)
 {
     bool showsep = false, showvalue, hashandler;
     int i, error = 0;
@@ -361,7 +369,8 @@ int visit_object(struct sysctlmif_object *object, char *newvalue, bool *printed)
     if(showvalue && !Vflag && aflag && !IS_LEAF(object))
 	return error;
 
-    if (showvalue)
+    value = NULL;
+    if (showvalue || toggle)
     {
 	if (Bflagsize > 0) {
 	    value_size = Bflagsize;
@@ -472,9 +481,27 @@ int visit_object(struct sysctlmif_object *object, char *newvalue, bool *printed)
 	else if ( object->id[0] != 0)
 	    error += display_basic_value(object, value, value_size);
 
-	free(value);
 	showsep = true;
     }
+
+    if (toggle) {
+	if (object->type == CTLTYPE_STRING) {
+	    xo_emit("{L:\n}");
+	    xo_warnx("'%s' cannot toggle a string", object->name);
+	    error++;
+	} else {
+	    newvalue = "1";
+	    for (i=0; i < value_size; i++) {
+		if (((int8_t*)value)[i] != 0) {
+		    newvalue = "0";
+		    break;
+		}
+	    }
+	}
+    }
+
+    if (value != NULL)
+	free(value);
 
     if(newvalue != NULL)
 	if(set_basic_value(object, newvalue) != 0)
