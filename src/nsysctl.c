@@ -314,7 +314,7 @@ int display_tree(struct sysctlmif_object *root)
     int error = 0;
     bool printed;
     
-    if ((error = visit_object(root, NULL, false, &printed)) == !0)
+    if ((error = visit_object(root, NULL, false, &printed)) != 0)
     	return error;
 
     if (!IS_LEAF(root)) {
