@@ -401,13 +401,13 @@ int visit_object(struct sysctlmif_object *object, char *newvalue, bool toggle,
     *printed = true;
     xo_open_instance("object");
 
-#define XOEMITPROP(propname,content,value) do {	\
-	if(showsep)				\
-	    xo_emit("{L:/%s}",sep);		\
-	if (pflag)				\
-	    xo_emit("{L:[" propname "]: }");	\
-	xo_emit(content,value);			\
-	showsep = true;				\
+#define XOEMITPROP(propname, content, propvalue) do {	\
+	if(showsep)					\
+	    xo_emit("{L:/%s}",sep);			\
+	if (pflag)					\
+	    xo_emit("{L:[" propname "]: }");		\
+	xo_emit(content, propvalue);			\
+	showsep = true;					\
     } while(0)
 
     if (Oflag)
