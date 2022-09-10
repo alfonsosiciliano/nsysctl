@@ -377,7 +377,7 @@ int visit_object(struct sysctlmif_object *object, char *newvalue, bool toggle,
 	} else {
 	    sysctl(object->id, object->idlevel, NULL, &value_size, NULL, 0);
 	    // value_size change with 2 sysctl calls (e.g., hw.dri.0.vblank,
-	    // kern.file and hw.dri.0.info.i915_drpc_info) /sbin/sysctl.c solution:
+	    // kern.file and hw.dri.0.info.i915_drpc_info), /sbin/sysctl.c solution:
 	    value_size += value_size;
 	}
 
