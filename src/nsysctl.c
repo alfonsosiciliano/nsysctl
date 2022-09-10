@@ -390,6 +390,9 @@ int visit_object(struct sysctlmif_object *object, char *newvalue, bool toggle,
 	error =sysctl(object->id, object->idlevel, value, &value_size, NULL, 0);
 	if (error != 0 || (value_size == 0 && object->type == CTLTYPE_OPAQUE)) {
 	    free(value);
+	    // avoid the double free() down, otherwise clang 14.0.5 frees
+	    // random object->* members causing segmentation fault
+	    value = NULL;
 	    if (!Vflag && aflag)
 		return error;
 	    else
