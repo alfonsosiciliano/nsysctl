@@ -1,3 +1,7 @@
+Next
+
+	* fix: double free() segmentation fault with BASE clang 14.0.5
+
 2022-01-02 version 2.1
 
 	* add: opt -z to toggle numeric value
