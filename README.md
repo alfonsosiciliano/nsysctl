@@ -1,5 +1,5 @@
-nsysctl 2.1
-===========
+nsysctl 2.1.1
+=============
 
 The **nsysctl** utility can get and set the [FreeBSD](http://www.freebsd.org)
 kernel state at runtime.
