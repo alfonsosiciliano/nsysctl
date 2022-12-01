@@ -1,3 +1,7 @@
+Next
+
+	* fix: -O, to reproduce nsysctl -O net.inet.ip.portrange
+
 2022-09-19 version 2.1.1
 
 	* fix: double free() segmentation fault with BASE clang 14.0.5

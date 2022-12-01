@@ -343,7 +343,7 @@ int visit_object(struct sysctlmif_object *object, char *newvalue, bool toggle,
     int i, error = 0;
     size_t value_size = 0;
     void *value;
-    char *oid = NULL, oidlevel[100]; /* MAX_INT in char digits */
+    char *oid = NULL, *tmpoid;
     
     *printed = false;
 
@@ -417,11 +417,11 @@ int visit_object(struct sysctlmif_object *object, char *newvalue, bool toggle,
     {
 	for (i = 0; i < object->idlevel; i++)
 	{
-	    snprintf(oidlevel, sizeof(oidlevel), xflag ? "%x." : "%d.", object->id[i]);
-	    oid = realloc((void*)oid, strlen(oidlevel) + 2); /* check NULL */
-	    if (i == 0)
-	        (oid[0] = '\0');
-	    memcpy(oid + strlen(oid), &(oidlevel[0]), strlen(oidlevel)+1);
+	    asprintf(&tmpoid, xflag ? "%s%x." : "%s%d.",
+	        oid == NULL ? "" : oid, object->id[i]);
+	    if (oid != NULL)
+	        free(oid);
+	    oid = tmpoid;
 	}
 	oid[strlen(oid) - 1] = '\0';
 	XOEMITPROP("OID","{:OID/%s}", oid);
