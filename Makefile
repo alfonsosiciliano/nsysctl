@@ -7,7 +7,7 @@ OUTPUT= nsysctl
 SOURCES= nsysctl.c opaque.c special_value.c
 .PATH : ./src
 OBJECTS= ${SOURCES:.c=.o}
-CCFLAGS= -I/usr/local/include -Wall
+CCFLAGS= -I/usr/local/include -Wall -Wextra
 LDFLAGS= -L/usr/local/lib -lsysctlmibinfo2 -lxo -lutil -lnv
 SBINDIR= /usr/local/sbin
 

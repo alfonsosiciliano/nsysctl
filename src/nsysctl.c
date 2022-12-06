@@ -339,8 +339,8 @@ int visit_object(struct sysctlmif_object *object, char *newvalue, bool toggle,
     bool *printed)
 {
     bool showsep = false, showvalue, hashandler;
-    int i, error = 0;
-    size_t value_size = 0;
+    int error = 0;
+    size_t i, value_size = 0;
     void *value;
     char *oid = NULL, *tmpoid;
     
@@ -520,10 +520,11 @@ int visit_object(struct sysctlmif_object *object, char *newvalue, bool toggle,
 
 int display_basic_value(struct sysctlmif_object *object, void *value, size_t value_size)
 {
-    int i, error = 0, j;
+    int error = 0, j;
     unsigned char *hexvalue;
     uintmax_t zero = 0;
     char *hfield = hflag ? "hn" : NULL;
+    size_t i;
 
     if (object->type == CTLTYPE_NODE) {
 	xo_warnx("'%s' is a node", object->name);
@@ -562,7 +563,7 @@ int display_basic_value(struct sysctlmif_object *object, void *value, size_t val
 	switch (object->type) {
 	case CTLTYPE_INT:
 	    if (strncmp(object->fmt, "IK", 2) == 0)
-		error += display_IK_value(object, value, value_size, hflag);
+		error += display_IK_value(object, value, hflag);
 	    else
 		xo_emit_field(hfield, "value", "%d", NULL, ((int*)value)[i]);
 	    break;

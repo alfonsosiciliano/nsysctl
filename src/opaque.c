@@ -57,16 +57,16 @@
 /* Func declarations */
 static int NV(void *value, size_t value_size, bool tflag, bool hflag);
 static int S_clockinfo(void *value, size_t value_size, bool hflag);
-static int S_input_id(void *value, size_t value_size, bool hflag);
-static int S_loadavg(void *value, size_t value_size, bool hflag);
+static int S_input_id(void *value, size_t value_size);
+static int S_loadavg(void *value, size_t value_size);
 static int S_timeval(void *value, size_t value_size, bool hflag);
 static int S_vmtotal(void *value, size_t value_size, bool hflag);
 static int S_pagesizes(void *value, size_t value_size, bool hflag);
 #ifdef __amd64__
-static int S_efi_map(void *value, size_t value_size, bool hflag);
+static int S_efi_map(void *value, size_t value_size);
 #endif
 #if defined(__amd64__) || defined(__i386__)
-static int S_bios_smap_xattr(void *value, size_t value_size, bool hflag);
+static int S_bios_smap_xattr(void *value, size_t value_size);
 #endif
 
 bool is_opaque_defined(struct sysctlmif_object *object)
@@ -106,22 +106,22 @@ display_opaque_value(struct sysctlmif_object *object, void *value,
 	} else if (strcmp(object->fmt, "S,timeval") == 0) {
 		error += S_timeval(value, value_size, hflag);
 	} else if (strcmp(object->fmt, "S,loadavg") == 0) {
-		error += S_loadavg(value, value_size, hflag);
+		error += S_loadavg(value, value_size);
 	} else if (strcmp(object->fmt, "S,vmtotal") == 0) {
 		error += S_vmtotal(value, value_size, hflag);
 	} else if (strcmp(object->fmt, "S,pagesizes") == 0) {
 		error += S_pagesizes(value, value_size, hflag);
 	} else if (strcmp(object->fmt, "S,input_id") == 0) {
-		error += S_input_id(value, value_size, hflag);
+		error += S_input_id(value, value_size);
 	}
 #ifdef __amd64__
 	else if (strcmp(object->fmt, "S,efi_map_header") == 0) {
-		error += S_efi_map(value, value_size, hflag);
+		error += S_efi_map(value, value_size);
 	}
 #endif
 #if defined(__amd64__) || defined(__i386__)
 	else if (strcmp(object->fmt, "S,bios_smap_xattr") == 0) {
-		error += S_bios_smap_xattr(value, value_size, hflag);
+		error += S_bios_smap_xattr(value, value_size);
 	}
 #endif
 	else if (oflag || xflag) {
@@ -153,8 +153,8 @@ static int NV(void *value, size_t value_size, bool tflag, bool hflag)
 	const nvlist_t *nvl = nvlist_unpack(value, value_size, 0);
 	void *cookie;
 	const void *binary;
-	int type, i, innerlist = 0;
-	size_t to;
+	int type;
+	size_t to, i, innerlist = 0;
 	const char *name;
 	const char *const *strings;
 	char *hfield = hflag ? "h,hn-decimal" : NULL;
@@ -177,7 +177,7 @@ static int NV(void *value, size_t value_size, bool tflag, bool hflag)
 		}
 		xo_open_container("nv");
 		xo_emit("{L:\n}");
-		for (i=0; i< innerlist; i++)
+		for (i = 0; i < innerlist; i++)
 			xo_emit("{Lw:}");
 		xo_emit("{:name/%s}", name);
 		if(type != NV_TYPE_NULL)
@@ -309,7 +309,7 @@ static int S_clockinfo(void *value, size_t value_size, bool hflag)
 }
 
 
-static int S_loadavg(void *value, size_t value_size, bool hflag)
+static int S_loadavg(void *value, size_t value_size)
 {
 	struct loadavg *tv = (struct loadavg*)value;
 	/* libxo 'h' modifier does not affect the size and treatment of %f */
@@ -334,7 +334,7 @@ static int S_loadavg(void *value, size_t value_size, bool hflag)
 	return (0);
 }
 
-static int S_input_id(void *value, size_t value_size, bool hflag)
+static int S_input_id(void *value, size_t value_size)
 {
     struct input_id *id = (struct input_id *)value;
     /*libxo 'h' modifier does not affect the size and treatment of %f */
@@ -459,7 +459,7 @@ static int S_vmtotal(void *value, size_t value_size, bool hflag)
 
 
 #ifdef __amd64__
-static int S_efi_map(void *value, size_t value_size, bool hflag)
+static int S_efi_map(void *value, size_t value_size)
 {
 	struct efi_map_header *efihdr;
 	struct efi_md *map;
@@ -548,7 +548,7 @@ static int S_efi_map(void *value, size_t value_size, bool hflag)
 #endif
 
 #if defined(__amd64__) || defined(__i386__)
-static int S_bios_smap_xattr(void* value, size_t value_size, bool hflag)
+static int S_bios_smap_xattr(void* value, size_t value_size)
 {
 	struct bios_smap_xattr *smap, *end;
 
@@ -636,8 +636,7 @@ int strIK_to_int(const char *str, int *kelvin, const char *fmt)
 }
 
 int
-display_IK_value(struct sysctlmif_object *obj, void *value, size_t value_size,
-		 bool hflag)
+display_IK_value(struct sysctlmif_object *obj, void *value, bool hflag)
 {
     int i, prec = 1, intvalue = *((int*)value);
     float base;
