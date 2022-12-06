@@ -1,6 +1,7 @@
 Next
 
 	* fix: -O, to reproduce nsysctl -O net.inet.ip.portrange
+	* fix: machdep.efi_map (md_virt) output like sysctl
 
 2022-09-19 version 2.1.1
 

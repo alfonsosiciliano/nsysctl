@@ -519,7 +519,7 @@ static int S_efi_map(void *value, size_t value_size, bool hflag)
 			type = "<INVALID>";
 		xo_emit("{L:\n}{:types/%23s}{L: }{:md_phys/%012jx}",
 			type, (uintmax_t)map->md_phys);
-		xo_emit("{L: }{:md_virt/%12p}{L: }{:md_pages/%08jx}{L: }",
+		xo_emit("{L: }{:md_virt/%012jx}{L: }{:md_pages/%08jx}{L: }",
 			map->md_virt, (uintmax_t)map->md_pages);
 		xo_open_container("md_attrs");
 		if (map->md_attr & EFI_MD_ATTR_UC)
