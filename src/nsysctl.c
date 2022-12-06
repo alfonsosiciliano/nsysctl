@@ -49,7 +49,7 @@ struct ctl_flag {
     const char *flag_name;
 };
 
-#define NUM_CTLFLAGS 22
+#define NUM_CTLFLAGS 21
 #ifndef CTLFLAG_NEEDGIANT
 #define CTLFLAG_NEEDGIANT 0x00000800
 #endif
@@ -63,7 +63,6 @@ static const struct ctl_flag ctl_flags[NUM_CTLFLAGS] = {
     { CTLFLAG_PRISON,    "PRISON"   },
     { CTLFLAG_DYN,       "DYN"      },
     { CTLFLAG_SKIP,      "SKIP"     },
-    { CTLMASK_SECURE,    "SECURE"   },
     { CTLFLAG_TUN,       "TUN"      },
     { CTLFLAG_RDTUN,     "RDTUN"    },
     { CTLFLAG_RWTUN,     "RWTUN"    },

@@ -41,5 +41,4 @@ To add the package:
 **TODO**
 
  * [ ] Improve: -f (trim like sysctl)
- * [ ] Fix: delete CTLMASK\_SECURE
 
